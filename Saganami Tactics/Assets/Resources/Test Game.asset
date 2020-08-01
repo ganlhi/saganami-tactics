@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de7cd949520542feaf4fc06e233fdb64, type: 3}
+  m_Name: Test Game
+  m_EditorClassIdentifier: 
+  state:
+    turn: 1
+    step: 0
+    ships:
+    - uid: n3HLL9LT1UWpabYNa7K9SA
+      name: Havok
+      team: 0
+      ssdName: Havok
+      ssd: {fileID: 11400000, guid: f306ca9aa602c5b44a9cf42e5aa43740, type: 2}
+      position: {x: -15, y: 0, z: 0}
+      rotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+      velocity: {x: 4, y: 0, z: 0}
+      thrust: {x: 0, y: 0, z: 0}
+      endMarkerPosition: {x: -11, y: 0, z: 0}
+      endMarkerRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+    - uid: _E4XYL6Qmkmbe7pySipRiw
+      name: Bastogne
+      team: 1
+      ssdName: Bastogne
+      ssd: {fileID: 11400000, guid: 1a99fa0bdfc78fd40acb50102aa58c5c, type: 2}
+      position: {x: 15, y: 0, z: 0}
+      rotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+      velocity: {x: -4, y: 0, z: 0}
+      thrust: {x: 0, y: 0, z: 0}
+      endMarkerPosition: {x: 11, y: 0, z: 0}
+      endMarkerRotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
+    setup:
+      nbPlayers: 1
+      maxCost: 100
