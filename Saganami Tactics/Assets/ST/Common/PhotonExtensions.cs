@@ -12,7 +12,6 @@ namespace ST.Common
         {
             try
             {
-                Debug.Log("Player color index " + player.GetColorIndex());
                 return TeamHelper.FromIndex(player.GetColorIndex());
             }
             catch (ArgumentOutOfRangeException)
@@ -47,7 +46,6 @@ namespace ST.Common
             }
 
             var newIndex = team.ToIndex();
-            Debug.Log("Cycling to team "+team+ " / " + newIndex);
             
             if (!player.SetCustomProperties(new Hashtable()
             {
@@ -55,11 +53,6 @@ namespace ST.Common
             }))
             {
                 Debug.LogError("Failed to cycle color index");
-            }
-            else
-            {
-                Debug.Log(player.CustomProperties.ToStringFull());
-                Debug.Log("Cycled to index "+player.GetColorIndex());
             }
         }
 
@@ -80,8 +73,6 @@ namespace ST.Common
             player.SetCustomProperties(new Hashtable() {
                 { GameSettings.ReadyProp, ready },
             });
-            
-            Debug.Log("SetReady " + player.CustomProperties.ToStringFull());
         }
     }
 

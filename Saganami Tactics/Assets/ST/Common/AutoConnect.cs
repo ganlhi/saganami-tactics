@@ -41,6 +41,7 @@ namespace ST.Common
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
+            PhotonNetwork.LocalPlayer.NickName = "ganlhi";
             PhotonNetwork.LocalPlayer.CycleColorIndex();
         }
 
