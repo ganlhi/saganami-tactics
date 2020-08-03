@@ -3040,6 +3040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnPanel: {fileID: 1050673735}
+  shipsList: {fileID: 1115446968}
 --- !u!114 &592222522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4791,6 +4792,7 @@ GameObject:
   - component: {fileID: 1115446965}
   - component: {fileID: 1115446967}
   - component: {fileID: 1115446966}
+  - component: {fileID: 1115446968}
   m_Layer: 5
   m_Name: ShipsPanel
   m_TagString: Untagged
@@ -4840,6 +4842,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1115446964}
   m_CullTransparentMesh: 0
+--- !u!114 &1115446968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115446964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811c2bff59cc474e926d051bb012a8c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  content: {fileID: 415472734}
+  shipListButtonPrefab: {fileID: 2759623753899039698, guid: 07d34bd0cc86af647bd6476bf0010065, type: 3}
 --- !u!1 &1143426435
 GameObject:
   m_ObjectHideFlags: 0
@@ -5368,6 +5384,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2868797238725451438, guid: 07d34bd0cc86af647bd6476bf0010065, type: 3}
       propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2868815353733141114, guid: 07d34bd0cc86af647bd6476bf0010065, type: 3}
+      propertyPath: colorType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2873174062466300832, guid: 07d34bd0cc86af647bd6476bf0010065, type: 3}
+      propertyPath: colorType
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5669548395732458856, guid: 07d34bd0cc86af647bd6476bf0010065, type: 3}

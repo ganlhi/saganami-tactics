@@ -18,6 +18,8 @@ namespace ST.Play
         [SerializeField] private new Moba_Camera camera;
 #pragma warning restore 649
 
+        private int _expectedShips;
+
         private int _turn;
 
         public int Turn
@@ -54,9 +56,23 @@ namespace ST.Play
             }
         }
 
+        private ShipView _selectedShip;
+
+        public ShipView SelectedShip
+        {
+            get => _selectedShip;
+            set
+            {
+                _selectedShip = value;
+                OnSelectShip?.Invoke(this, value);
+            }
+        }
+
         public event EventHandler<bool> OnBusyChange;
         public event EventHandler<int> OnTurnChange;
         public event EventHandler<TurnStep> OnTurnStepChange;
+        public event EventHandler OnShipsInit;
+        public event EventHandler<ShipView> OnSelectShip;
 
         private void Start()
         {
@@ -90,7 +106,6 @@ namespace ST.Play
                 InitShips();
 
                 photonView.RPC("RPC_SetStep", RpcTarget.All, _state.turn, _state.step);
-                photonView.RPC("RPC_FocusPlayerShip", RpcTarget.All);
                 OnStepStart(_state.turn, _state.step);
             }
         }
@@ -112,6 +127,8 @@ namespace ST.Play
 
         private void InitShips()
         {
+            photonView.RPC("RPC_ExpectShips", RpcTarget.All, _state.ships.Count);
+            
             foreach (var shipState in _state.ships)
             {
                 var ship = ShipState.ToShip(shipState);
@@ -204,6 +221,14 @@ namespace ST.Play
         #region AllClients
 
         [PunRPC]
+        private void RPC_ExpectShips(int nbShips)
+        {
+            _expectedShips = nbShips;
+
+            StartCoroutine(WaitForShipsInit());
+        }
+
+        [PunRPC]
         private void RPC_SetStep(int turn, TurnStep step)
         {
             Turn = turn;
@@ -216,8 +241,7 @@ namespace ST.Play
             StartCoroutine(AnimateMoveShipsToMarkers());
         }
 
-        [PunRPC]
-        private void RPC_FocusPlayerShip()
+        private void FocusPlayerShip()
         {
             var ship = GetAllShips().First(s => s.OwnedByClient);
             if (ship != null)
@@ -230,6 +254,20 @@ namespace ST.Play
         {
             camera.settings.lockTargetTransform = ship.transform;
             camera.settings.cameraLocked = true;
+        }
+
+        private IEnumerator WaitForShipsInit()
+        {
+            Busy = true;
+            do
+            {
+                yield return null;
+            } while (GetAllShips().Count < _expectedShips);
+
+            FocusPlayerShip();
+            OnShipsInit?.Invoke(this, EventArgs.Empty);
+            
+            Busy = false;
         }
 
         private IEnumerator AnimateMoveShipsToMarkers()

@@ -176,8 +176,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d90ccc875c589834595b30b6d47ae025, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teamColorImage: {fileID: 2758547410835312581}
-  buttonTitleObj: {fileID: 2868797238725451438}
   ship:
     uid: 
     name: 
@@ -189,6 +187,12 @@ MonoBehaviour:
     thrust: {x: 0, y: 0, z: 0}
     endMarkerPosition: {x: 0, y: 0, z: 0}
     endMarkerRotation: {x: 0, y: 0, z: 0, w: 0}
+  selected: 0
+  teamColorImage: {fileID: 2758547410835312581}
+  buttonTitleObj: {fileID: 2868797238725451438}
+  focusCameraBtn: {fileID: 2869032793811347892}
+  icon: {fileID: 2868815353733141114}
+  text: {fileID: 2873174062466300832}
 --- !u!114 &2873062104659061822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -967,3 +971,25 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 224369298542278148, guid: fa782df6ccaa99344bdf73a660bf1684, type: 3}
   m_PrefabInstance: {fileID: 2758547411607805038}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2869032793811347892 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114998339520869850, guid: fa782df6ccaa99344bdf73a660bf1684, type: 3}
+  m_PrefabInstance: {fileID: 2758547411607805038}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2868815353733141114 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114912280332176916, guid: fa782df6ccaa99344bdf73a660bf1684, type: 3}
+  m_PrefabInstance: {fileID: 2758547411607805038}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f12069492762c9048b6c2edda60be228, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
