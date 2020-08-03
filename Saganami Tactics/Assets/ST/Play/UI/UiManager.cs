@@ -7,6 +7,7 @@ namespace ST.Play.UI
     public class UiManager : MonoBehaviour
     {
         private GameManager _gameManager;
+        [SerializeField] private CanvasGroup loadingGroup;
 
         #region Turn management
 
@@ -45,15 +46,41 @@ namespace ST.Play.UI
 
         #endregion Ships management
 
+        #region Ship info management
+
+#pragma warning disable 649
+        [SerializeField] private ShipInfo shipInfo;
+#pragma warning restore 649
+
+        private void UpdateShipInfoOnChanges()
+        {
+            _gameManager.OnSelectShip += (sender, shipView) =>
+            {
+                shipInfo.ship = shipView.ship;
+                if (_gameManager.AvailableSsds.TryGetValue(shipView.ship.ssdName, out var ssd));
+                shipInfo.ssd = ssd;
+            };
+
+        }
+
+        #endregion Ship info management
+
         private void Awake()
         {
             _gameManager = GetComponent<GameManager>();
+
+            _gameManager.OnShipsInit += (sender, args) =>
+            {
+                loadingGroup.alpha = 0f;
+                loadingGroup.blocksRaycasts = false;
+            };
         }
 
         private void Start()
         {
             UpdateTurnPanelOnChanges();
             UpdateShipsListOnChanges();
+            UpdateShipInfoOnChanges();
         }
     }
 }
