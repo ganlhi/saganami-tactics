@@ -60,15 +60,25 @@ namespace ST.Play
 
         private void Start()
         {
-            if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
-            {
-                Init();
-            }
+            InitWhenReady();
         }
 
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
+            InitWhenReady();
+        }
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            base.OnPlayerEnteredRoom(newPlayer);
+            InitWhenReady();
+        }
+
+        private void InitWhenReady()
+        {
+            if (!PhotonNetwork.IsConnected || !PhotonNetwork.InRoom) return;
+            if (PhotonNetwork.CurrentRoom.MaxPlayers > PhotonNetwork.CurrentRoom.PlayerCount) return;
             Init();
         }
 

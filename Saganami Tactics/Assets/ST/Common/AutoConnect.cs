@@ -7,11 +7,13 @@ namespace ST.Common
 {
     public class AutoConnect : MonoBehaviourPunCallbacks
     {
+        [Range(1, 4)]
+        public int expectedPlayers = 1; 
         public GameObject manager; 
         
         private void Awake()
         {
-            if (PhotonNetwork.IsConnected || !Application.isEditor)
+            if (PhotonNetwork.IsConnected)
             {
                 Destroy(gameObject);
             }
@@ -24,12 +26,12 @@ namespace ST.Common
         public override void OnConnectedToMaster()
         {
             base.OnConnectedToMaster();
-            PhotonNetwork.CreateRoom("AutoConnect_Room", new RoomOptions()
+            PhotonNetwork.JoinOrCreateRoom("AutoConnect_Room", new RoomOptions()
             {
-                IsOpen = false,
+                IsOpen = true,
                 IsVisible = false,
-                MaxPlayers = 1,
-            });
+                MaxPlayers = (byte)expectedPlayers,
+            }, TypedLobby.Default);
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message)
@@ -41,14 +43,16 @@ namespace ST.Common
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
-            PhotonNetwork.LocalPlayer.NickName = "ganlhi";
-            PhotonNetwork.LocalPlayer.CycleColorIndex();
+
+            var n = PhotonNetwork.CurrentRoom.PlayerCount;
+            PhotonNetwork.LocalPlayer.NickName = "Player "+n;
+            PhotonNetwork.LocalPlayer.SetColorIndex(n);
         }
 
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-            if (changedProps.ContainsKey(GameSettings.ColorIndexProp))
+            if (targetPlayer.IsLocal && changedProps.ContainsKey(GameSettings.ColorIndexProp))
             {
                 manager.SetActive(true);
                 Destroy(gameObject);

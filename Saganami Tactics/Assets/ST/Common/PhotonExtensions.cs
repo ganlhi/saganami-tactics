@@ -32,6 +32,21 @@ namespace ST.Common
             }
         }
 
+        public static void SetColorIndex(this Player player, int colorIndex)
+        {
+            // Throws exception if index is out of range
+            TeamHelper.FromIndex(colorIndex);
+            
+            // Index is valid
+            if (!player.SetCustomProperties(new Hashtable()
+            {
+                {GameSettings.ColorIndexProp, colorIndex},
+            }))
+            {
+                Debug.LogError("Failed to cycle color index");
+            }
+        }
+
         public static void CycleColorIndex(this Player player)
         {
             var index = player.GetColorIndex();
