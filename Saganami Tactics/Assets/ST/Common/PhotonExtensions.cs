@@ -7,7 +7,6 @@ namespace ST.Common
 {
     public static class PlayerExtensions
     {
-
         public static Team? GetTeam(this Player player)
         {
             try
@@ -19,12 +18,13 @@ namespace ST.Common
                 return null;
             }
         }
-        
+
         public static int GetColorIndex(this Player player)
         {
-            if (player.CustomProperties.TryGetValue(GameSettings.ColorIndexProp, out var idx))
+            if (player?.CustomProperties != null &&
+                player.CustomProperties.TryGetValue(GameSettings.ColorIndexProp, out var idx))
             {
-                return (int)idx;
+                return (int) idx;
             }
             else
             {
@@ -46,7 +46,7 @@ namespace ST.Common
             }
 
             var newIndex = team.ToIndex();
-            
+
             if (!player.SetCustomProperties(new Hashtable()
             {
                 {GameSettings.ColorIndexProp, newIndex},
@@ -60,7 +60,7 @@ namespace ST.Common
         {
             if (player.CustomProperties.TryGetValue(GameSettings.ReadyProp, out var rdy))
             {
-                return (bool)rdy;
+                return (bool) rdy;
             }
             else
             {
@@ -70,8 +70,9 @@ namespace ST.Common
 
         public static void SetReady(this Player player, bool ready = true)
         {
-            player.SetCustomProperties(new Hashtable() {
-                { GameSettings.ReadyProp, ready },
+            player.SetCustomProperties(new Hashtable()
+            {
+                {GameSettings.ReadyProp, ready},
             });
         }
     }
@@ -82,8 +83,9 @@ namespace ST.Common
         {
             if (room.CustomProperties.TryGetValue(GameSettings.MaxPointsProp, out var points))
             {
-                return (int)points;
+                return (int) points;
             }
+
             return 0;
         }
     }

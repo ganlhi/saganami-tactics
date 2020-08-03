@@ -14,6 +14,10 @@ namespace ST.Play
     [RequireComponent(typeof(PhotonView))]
     public class GameManager : MonoBehaviourPunCallbacks
     {
+#pragma warning disable 649
+        [SerializeField] private new Moba_Camera camera;
+#pragma warning restore 649
+        
         public int Turn { get; private set; }
         public TurnStep Step { get; private set; }
         public bool Busy { get; private set; }
@@ -40,6 +44,7 @@ namespace ST.Play
                 InitShips();
 
                 photonView.RPC("RPC_SetStep", RpcTarget.All, _state.turn, _state.step);
+                photonView.RPC("RPC_FocusPlayerShip", RpcTarget.All);
                 OnStepStart(_state.turn, _state.step);
             }
         }
@@ -163,6 +168,22 @@ namespace ST.Play
         private void RPC_AnimateMoveShipsToMarkers()
         {
             StartCoroutine(AnimateMoveShipsToMarkers());
+        }
+        
+        [PunRPC]
+        private void RPC_FocusPlayerShip()
+        {
+            var ship = GetAllShips().First(s => s.OwnedByClient);
+            if (ship != null)
+            {
+                LockCameraToShip(ship);
+            }
+        }
+
+        public void LockCameraToShip(ShipView ship)
+        {
+            camera.settings.lockTargetTransform = ship.transform;
+            camera.settings.cameraLocked = true;
         }
 
         private IEnumerator AnimateMoveShipsToMarkers()

@@ -19,6 +19,8 @@ namespace ST.Play.UI
 
         private void Start()
         {
+            if (player == null) return;
+
             var team = player.GetTeam();
             teamColorImage.color = team?.ToColor() ?? Color.white;
 
