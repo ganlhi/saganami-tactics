@@ -1,4 +1,5 @@
 using System;
+using ST.Common;
 using UnityEngine;
 
 namespace ST.Play
@@ -8,6 +9,7 @@ namespace ST.Play
     {
         private ShipView shipView;
         private LineRenderer vectorLine;
+        [SerializeField] private float widthCoefficient = 0.004f;
         
         private void Awake()
         {
@@ -19,6 +21,12 @@ namespace ST.Play
         {
             vectorLine.SetPosition(0, transform.position);
             vectorLine.SetPosition(1, shipView.EndMarker.transform.position);
+            if (Camera.main != null)
+            {
+                var camPos = Camera.main.transform.position;
+                vectorLine.startWidth = camPos.DistanceTo(transform.position) * widthCoefficient;
+                vectorLine.endWidth = camPos.DistanceTo(shipView.EndMarker.transform.position) * widthCoefficient;
+            }
         }
     }
 }

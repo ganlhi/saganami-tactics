@@ -1,4 +1,5 @@
 using System;
+using ST.Common;
 using UnityEngine;
 
 namespace ST.Play
@@ -10,6 +11,7 @@ namespace ST.Play
         private LineRenderer verticalLine;
         private LineRenderer hex;
         private Vector3[] hexLinePositions; 
+        [SerializeField] private float widthCoefficient = 0.004f;
         
         private void Awake()
         {
@@ -42,6 +44,16 @@ namespace ST.Play
             hex.endColor = color;
             verticalLine.startColor = color;
             verticalLine.endColor = color;
+            
+            if (Camera.main != null)
+            {
+                var camPos = Camera.main.transform.position;
+                verticalLine.startWidth = camPos.DistanceTo(p) * widthCoefficient;
+                verticalLine.endWidth = camPos.DistanceTo(p0) * widthCoefficient;
+                
+                hex.startWidth = camPos.DistanceTo(p0) * widthCoefficient;
+                hex.endWidth = camPos.DistanceTo(p0) * widthCoefficient;
+            }
         }
     }
 }

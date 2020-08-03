@@ -19,14 +19,7 @@ namespace ST.Play
     {
         public Ship ship;
 
-        public bool OwnedByClient
-        {
-            get
-            {
-                Debug.Log("Player team " + PhotonNetwork.LocalPlayer.GetTeam() + " / Ship team " + ship.team);
-                return PhotonNetwork.LocalPlayer.GetTeam() == ship.team;
-            }
-        }
+        public bool OwnedByClient => PhotonNetwork.LocalPlayer.GetTeam() == ship.team;
 
         public bool Busy { get; private set; }
         public bool ReadyToMove { get; private set; }
@@ -141,7 +134,6 @@ namespace ST.Play
                 case PostSyncAction.None:
                     break;
                 case PostSyncAction.PlaceMarker:
-                    Debug.Log("PlaceMarker " + ship.endMarkerPosition);
                     var emTransform = EndMarker.transform;
                     emTransform.position = ship.endMarkerPosition;
                     emTransform.rotation = ship.endMarkerRotation;
