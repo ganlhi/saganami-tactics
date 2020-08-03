@@ -17,11 +17,47 @@ namespace ST.Play
 #pragma warning disable 649
         [SerializeField] private new Moba_Camera camera;
 #pragma warning restore 649
-        
-        public int Turn { get; private set; }
-        public TurnStep Step { get; private set; }
-        public bool Busy { get; private set; }
-        
+
+        private int _turn;
+
+        public int Turn
+        {
+            get => _turn;
+            private set
+            {
+                _turn = value;
+                OnTurnChange?.Invoke(this, value);
+            }
+        }
+
+        private TurnStep _step;
+
+        public TurnStep Step
+        {
+            get => _step;
+            private set
+            {
+                _step = value;
+                OnTurnStepChange?.Invoke(this, value);
+            }
+        }
+
+        private bool _busy;
+
+        public bool Busy
+        {
+            get => _busy;
+            private set
+            {
+                _busy = value;
+                OnBusyChange?.Invoke(this, value);
+            }
+        }
+
+        public event EventHandler<bool> OnBusyChange;
+        public event EventHandler<int> OnTurnChange;
+        public event EventHandler<TurnStep> OnTurnStepChange;
+
         private void Start()
         {
             if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
@@ -69,7 +105,7 @@ namespace ST.Play
             foreach (var shipState in _state.ships)
             {
                 var ship = ShipState.ToShip(shipState);
-                
+
                 var sv = PhotonNetwork
                     .InstantiateSceneObject("Prefabs/ShipView", ship.position, ship.rotation)
                     .GetComponent<ShipView>();
@@ -100,7 +136,7 @@ namespace ST.Play
 
             OnStepStart(nextTurn, nextStep);
         }
-        
+
         private void OnStepEnd(int turn, TurnStep step)
         {
             var gameEvents = Game.OnStepEnd(turn, step);
@@ -116,7 +152,7 @@ namespace ST.Play
         private void ProcessEvents(IEnumerable<GameEvent> gameEvents)
         {
             if (!PhotonNetwork.IsMasterClient) return;
-            
+
             foreach (var gameEvent in gameEvents)
             {
                 switch (gameEvent)
@@ -142,9 +178,9 @@ namespace ST.Play
         private IEnumerator MoveShipsToMarkers()
         {
             var ships = GetAllShips();
-            
+
             ships.ForEach(shipView => shipView.ApplyMovement());
-            
+
             do
             {
                 yield return null;
@@ -163,13 +199,13 @@ namespace ST.Play
             Turn = turn;
             Step = step;
         }
-        
+
         [PunRPC]
         private void RPC_AnimateMoveShipsToMarkers()
         {
             StartCoroutine(AnimateMoveShipsToMarkers());
         }
-        
+
         [PunRPC]
         private void RPC_FocusPlayerShip()
         {
@@ -190,9 +226,9 @@ namespace ST.Play
         {
             Busy = true;
             var ships = GetAllShips();
-        
+
             ships.ForEach(shipView => shipView.AutoMove());
-        
+
             do
             {
                 yield return null;
@@ -201,7 +237,7 @@ namespace ST.Play
             SetReady(true);
             Busy = false;
         }
-        
+
         public List<ShipView> GetAllShips()
         {
             return PhotonNetwork

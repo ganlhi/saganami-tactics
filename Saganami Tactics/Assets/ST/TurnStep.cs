@@ -7,7 +7,7 @@ namespace ST
         Start,
 //        Plotting,
         Movement,
-//        FirePlotting,
+//        Targetting,
 //        Missiles,
 //        Beams,
 //        CrewActions,
