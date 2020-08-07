@@ -60,10 +60,13 @@ namespace ST.Play
                 ship.position,
                 ship.rotation,
                 ship.velocity,
-                ship.thrust,
                 ship.endMarkerPosition,
                 ship.endMarkerRotation,
                 ship.Status,
+                ship.Yaw,
+                ship.Pitch,
+                ship.Roll,
+                ship.Thrust,
                 andThen);
         }
 
@@ -89,7 +92,39 @@ namespace ST.Play
         public void ResetThrustAndPlottings()
         {
             ship.ResetThrustAndPlottings();
-            SyncShip(andThen: PostSyncAction.None);
+            SyncShip(andThen: PostSyncAction.PlaceMarker);
+        }
+
+        public void Plot(PlottingAction action, int value)
+        {
+            switch (action)
+            {
+                case PlottingAction.Yaw:
+                    ship.Yaw += value;
+                    break;
+                case PlottingAction.Pitch:
+                    ship.Pitch += value;
+                    break;
+                case PlottingAction.Roll:
+                    ship.Roll += value;
+                    break;
+                case PlottingAction.SetThrust:
+                    ship.Thrust = value;
+                    break;
+                case PlottingAction.ResetPivot:
+                    ship.Yaw = 0;
+                    ship.Pitch = 0;
+                    break;
+                case PlottingAction.ResetRoll:
+                    ship.Roll = 0;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(action), action, null);
+            }
+            
+            ship.PlaceMarker();
+            ship.ApplyDisplacement(); // TODO delay for non owners?
+            SyncShip(andThen: PostSyncAction.PlaceMarker);
         }
 
         [PunRPC]
@@ -111,10 +146,13 @@ namespace ST.Play
             Vector3 position,
             Quaternion rotation,
             Vector3 velocity,
-            Vector3 thrust,
             Vector3 endMarkerPosition,
             Quaternion endMarkerRotation,
             ShipStatus status,
+            int yaw,
+            int pitch,
+            int roll,
+            int thrust,
             PostSyncAction andThen)
         {
             ship.uid = uid;
@@ -124,10 +162,13 @@ namespace ST.Play
             ship.position = position;
             ship.rotation = rotation;
             ship.velocity = velocity;
-            ship.thrust = thrust;
             ship.endMarkerPosition = endMarkerPosition;
             ship.endMarkerRotation = endMarkerRotation;
             ship.Status = status;
+            ship.Yaw = yaw;
+            ship.Pitch = pitch;
+            ship.Roll = roll;
+            ship.Thrust = thrust;
 
             switch (andThen)
             {
@@ -208,7 +249,7 @@ namespace ST.Play
 
             return marker;
         }
-
+        
         #endregion AllClients
     }
 }

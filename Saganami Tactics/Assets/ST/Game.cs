@@ -20,6 +20,9 @@ namespace ST
             switch (step)
             {
                 case TurnStep.Start:
+                    nextStep = TurnStep.Plotting;
+                    break;
+                case TurnStep.Plotting:
                     nextStep = TurnStep.Movement;
                     break;
                 case TurnStep.Movement:
@@ -44,6 +47,9 @@ namespace ST
                     if (turn == 1) events.Add(GameEvent.PlaceShipsMarkers);
                     break;
                 
+                case TurnStep.Plotting:
+                    break;
+                
                 case TurnStep.Movement:
                     events.Add(GameEvent.MoveShipsToMarkers);
                     break;
@@ -66,13 +72,17 @@ namespace ST
             {
                 case TurnStep.Start:
                     break;
+                
+                case TurnStep.Plotting:
+                    // TODO broadcast displacement?
+                    break;
 
                 case TurnStep.Movement:
                     events.Add(GameEvent.UpdateShipsFutureMovement);
+                    events.Add(GameEvent.ResetThrustAndPlottings);
                     break;
 
                 case TurnStep.End:
-                    events.Add(GameEvent.ResetThrustAndPlottings);
                     break;
 
                 default:

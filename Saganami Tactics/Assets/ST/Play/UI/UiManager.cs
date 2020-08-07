@@ -9,7 +9,7 @@ namespace ST.Play.UI
         private GameManager _gameManager;
         [SerializeField] private CanvasGroup loadingGroup;
 
-        #region Turn management
+        #region Turn
 
 #pragma warning disable 649
         [SerializeField] private TurnPanel turnPanel;
@@ -22,14 +22,22 @@ namespace ST.Play.UI
             turnPanel.busy = _gameManager.Busy;
 
             _gameManager.OnTurnChange += (sender, turn) => { turnPanel.turn = turn; };
-            _gameManager.OnTurnStepChange += (sender, step) => { turnPanel.step = step; };
+            _gameManager.OnTurnStepChange += (sender, step) =>
+            {
+                turnPanel.step = step;
+                turnPanel.ready = false;
+            };
             _gameManager.OnBusyChange += (sender, busy) => { turnPanel.busy = busy; };
-            turnPanel.OnReady += (sender, args) => { _gameManager.SetReady(true); };
+            turnPanel.OnReady += (sender, args) =>
+            {
+                _gameManager.SetReady(true);
+                turnPanel.ready = true;
+            };
         }
 
-        #endregion Turn management
+        #endregion Turn
 
-        #region Ships management
+        #region Ships
 
 #pragma warning disable 649
         [SerializeField] private ShipsList shipsList;
@@ -44,9 +52,9 @@ namespace ST.Play.UI
             shipsList.OnFocusCameraOnShip += (sender, shipView) => { _gameManager.LockCameraToShip(shipView); };
         }
 
-        #endregion Ships management
+        #endregion Ships
 
-        #region Ship info management
+        #region Ship info
 
 #pragma warning disable 649
         [SerializeField] private ShipInfo shipInfo;
@@ -57,13 +65,77 @@ namespace ST.Play.UI
             _gameManager.OnSelectShip += (sender, shipView) =>
             {
                 shipInfo.ship = shipView.ship;
-                if (_gameManager.AvailableSsds.TryGetValue(shipView.ship.ssdName, out var ssd));
+                if (_gameManager.AvailableSsds.TryGetValue(shipView.ship.ssdName, out var ssd)) ;
                 shipInfo.ssd = ssd;
             };
-
         }
 
-        #endregion Ship info management
+        #endregion Ship info
+
+        #region Plotting panel
+
+#pragma warning disable 649
+        [SerializeField] private PlottingPanel plottingPanel;
+#pragma warning restore 649
+
+        private void UpdatePlottingPanelOnChanges()
+        {
+            _gameManager.OnTurnStepChange += (sender, step) => SetPlottingPanelVisibility();
+            _gameManager.OnSelectShip += (sender, ship) => SetPlottingPanelVisibility();
+
+            plottingPanel.OnResetPivot += (sender, args) =>
+                _gameManager.SelectedShip.Plot(PlottingAction.ResetPivot, 0);
+
+            plottingPanel.OnResetRoll += (sender, args) =>
+                _gameManager.SelectedShip.Plot(PlottingAction.ResetRoll, 0);
+
+            plottingPanel.OnSetThrust += (sender, thrust) =>
+                _gameManager.SelectedShip.Plot(PlottingAction.SetThrust, thrust);
+
+            plottingPanel.OnYaw += (sender, yaw) =>
+                _gameManager.SelectedShip.Plot(PlottingAction.Yaw, yaw);
+
+            plottingPanel.OnPitch += (sender, pitch) =>
+                _gameManager.SelectedShip.Plot(PlottingAction.Pitch, pitch);
+
+            plottingPanel.OnRoll += (sender, roll) =>
+                _gameManager.SelectedShip.Plot(PlottingAction.Roll, roll);
+        }
+
+        private void UpdatePlottingPanelEachFrame()
+        {
+            if (!plottingPanel.Active) return;
+            
+            var ship = _gameManager.SelectedShip.ship;
+
+            plottingPanel.Thrust = ship.Thrust;
+            plottingPanel.MaxThrust = ship.MaxThrust;
+            plottingPanel.UsedPivots = (float) ship.UsedPivots / ship.MaxPivots;
+            plottingPanel.UsedRolls = (float) ship.UsedRolls / ship.MaxRolls;
+        }
+
+        private void SetPlottingPanelVisibility()
+        {
+            plottingPanel.Active = _gameManager.Step == TurnStep.Plotting && _gameManager.SelectedShip.OwnedByClient;
+//
+//            if (!plottingPanel.Active) return;
+//
+//            var ship = _gameManager.SelectedShip.ship;
+//
+//            plottingPanel.Thrust = ship.Thrust;
+//            plottingPanel.MaxThrust = ship.MaxThrust;
+
+//            SetPlottingPanelBoundaries();
+        }
+
+//        private void SetPlottingPanelBoundaries()
+//        {
+//            var ship = _gameManager.SelectedShip.ship;
+//            plottingPanel.UsedPivots = (float) ship.UsedPivots / ship.MaxPivots;
+//            plottingPanel.UsedRolls = (float) ship.UsedRolls / ship.MaxRolls;
+//        }
+
+        #endregion Plotting panel
 
         private void Awake()
         {
@@ -81,6 +153,12 @@ namespace ST.Play.UI
             UpdateTurnPanelOnChanges();
             UpdateShipsListOnChanges();
             UpdateShipInfoOnChanges();
+            UpdatePlottingPanelOnChanges();
+        }
+
+        private void Update()
+        {
+            UpdatePlottingPanelEachFrame();
         }
     }
 }

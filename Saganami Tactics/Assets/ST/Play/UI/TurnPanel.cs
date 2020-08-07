@@ -10,6 +10,7 @@ namespace ST.Play.UI
         public int turn;
         public TurnStep step;
         public bool busy;
+        public bool ready;
         public event EventHandler OnReady;
 
 #pragma warning disable 649
@@ -18,6 +19,9 @@ namespace ST.Play.UI
         [SerializeField] private GameObject content;
         [SerializeField] private GameObject loading;
         [SerializeField] private Button readyBtn;
+        [SerializeField] private Image readyBtnImage;
+        [SerializeField] private Sprite notReadySprite;
+        [SerializeField] private Sprite readySprite;
 #pragma warning restore 649
 
         private void Start()
@@ -29,6 +33,7 @@ namespace ST.Play.UI
         {
             turnText.text = turn.ToString();
             stepText.text = step.ToFriendlyString();
+            readyBtnImage.sprite = ready ? readySprite : notReadySprite;
             content.SetActive(!busy);
             loading.SetActive(busy);
         }

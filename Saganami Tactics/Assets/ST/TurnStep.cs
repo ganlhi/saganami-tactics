@@ -5,7 +5,7 @@ namespace ST
     public enum TurnStep
     {
         Start,
-//        Plotting,
+        Plotting,
         Movement,
 //        Targetting,
 //        Missiles,
@@ -22,6 +22,8 @@ namespace ST
             {
                 case TurnStep.Start:
                     return "Start";
+                case TurnStep.Plotting:
+                    return "Plotting";
                 case TurnStep.Movement:
                     return "Movement";
                 case TurnStep.End:
