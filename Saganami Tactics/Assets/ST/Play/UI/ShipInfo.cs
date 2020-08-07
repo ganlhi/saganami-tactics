@@ -24,7 +24,7 @@ namespace ST.Play.UI
                 flagImage.sprite = ssd.faction.Flag;
                 teamColorImage.color = ship.team.ToColor();
                 nameText.text = ship.name;
-                classText.text = ship.ssdName + "(" + ssd.category.Code + ")";
+                classText.text = ship.ssdName + " (" + ssd.category.Code + ")";
             }
         }
     }

@@ -1,4 +1,6 @@
 using System;
+using JetBrains.Annotations;
+using TMPro;
 using UnityEngine;
 
 namespace ST.Play.UI
@@ -7,7 +9,9 @@ namespace ST.Play.UI
     public class UiManager : MonoBehaviour
     {
         private GameManager _gameManager;
+#pragma warning disable 649
         [SerializeField] private CanvasGroup loadingGroup;
+#pragma warning restore 649
 
         #region Turn
 
@@ -65,8 +69,8 @@ namespace ST.Play.UI
             _gameManager.OnSelectShip += (sender, shipView) =>
             {
                 shipInfo.ship = shipView.ship;
-                if (_gameManager.AvailableSsds.TryGetValue(shipView.ship.ssdName, out var ssd)) ;
-                shipInfo.ssd = ssd;
+                if (_gameManager.AvailableSsds.TryGetValue(shipView.ship.ssdName, out var ssd))
+                    shipInfo.ssd = ssd;
             };
         }
 
@@ -117,25 +121,33 @@ namespace ST.Play.UI
         private void SetPlottingPanelVisibility()
         {
             plottingPanel.Active = _gameManager.Step == TurnStep.Plotting && _gameManager.SelectedShip.OwnedByClient;
-//
-//            if (!plottingPanel.Active) return;
-//
-//            var ship = _gameManager.SelectedShip.ship;
-//
-//            plottingPanel.Thrust = ship.Thrust;
-//            plottingPanel.MaxThrust = ship.MaxThrust;
-
-//            SetPlottingPanelBoundaries();
         }
 
-//        private void SetPlottingPanelBoundaries()
-//        {
-//            var ship = _gameManager.SelectedShip.ship;
-//            plottingPanel.UsedPivots = (float) ship.UsedPivots / ship.MaxPivots;
-//            plottingPanel.UsedRolls = (float) ship.UsedRolls / ship.MaxRolls;
-//        }
-
         #endregion Plotting panel
+
+        #region Hover info
+        
+#pragma warning disable 649
+        [SerializeField] private GameObject hoverShipInfo;
+        [SerializeField] private TextMeshProUGUI hoverShipInfoText;
+        // TODO handle missiles
+#pragma warning restore 649
+
+        public void SetHoverShipInfo([CanBeNull] ShipView shipView)
+        {
+            if (shipView == null)
+            {
+                hoverShipInfo.SetActive(false);
+            }
+            else
+            {
+                hoverShipInfo.SetActive(true);
+                hoverShipInfoText.text = shipView.ship.name;
+                hoverShipInfoText.color = shipView.ship.team.ToColor();
+            }
+        }
+
+        #endregion Hover info
 
         private void Awake()
         {

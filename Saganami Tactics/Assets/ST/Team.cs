@@ -1,4 +1,5 @@
 using System;
+using ST.Scriptable;
 using UnityEngine;
 
 namespace ST
@@ -18,13 +19,13 @@ namespace ST
             switch (me)
             {
                 case Team.Blue:
-                    return Color.blue;
+                    return GameSettings.Default.BlueTeam;
                 case Team.Yellow:
-                    return Color.yellow;
+                    return GameSettings.Default.YellowTeam;
                 case Team.Green:
-                    return Color.green;
+                    return GameSettings.Default.GreenTeam;
                 case Team.Magenta:
-                    return Color.magenta;
+                    return GameSettings.Default.MagentaTeam;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(me), me, null);
             }

@@ -29,7 +29,6 @@ namespace ST.Play
         {
             forLocalPlayer.SetActive(ownedByClient);
             forDistantPlayer.SetActive(!ownedByClient);
-//            forDistantPlayerMesh.material.color = Saganami_Tactics.GameSettings.GetColor(photonView.Owner.GetColorIndex());
         }
         #endregion
     }

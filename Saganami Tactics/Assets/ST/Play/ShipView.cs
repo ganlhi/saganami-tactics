@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using Photon.Pun;
 using ST.Common;
+using ST.Scriptable;
 using UnityEngine;
 
 namespace ST.Play
@@ -222,7 +223,7 @@ namespace ST.Play
             var toRot = ship.endMarkerRotation;
 
             var elapsedTime = 0f;
-            var duration = GameSettings.MoveDuration;
+            var duration = GameSettings.Default.MoveDuration;
 
             Busy = true;
 

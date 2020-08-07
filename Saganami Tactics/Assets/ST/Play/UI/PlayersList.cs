@@ -2,6 +2,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using ST.Common;
+using ST.Scriptable;
 using UnityEngine;
 
 namespace ST.Play.UI
@@ -45,8 +46,8 @@ namespace ST.Play.UI
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-            if (changedProps.ContainsKey(GameSettings.ColorIndexProp) ||
-                changedProps.ContainsKey(GameSettings.ReadyProp)) UpdateUi();
+            if (changedProps.ContainsKey(GameSettings.Default.ColorIndexProp) ||
+                changedProps.ContainsKey(GameSettings.Default.ReadyProp)) UpdateUi();
         }
 
         private void UpdateUi()

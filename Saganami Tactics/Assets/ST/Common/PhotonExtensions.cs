@@ -1,6 +1,7 @@
 ﻿using System;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using ST.Scriptable;
 using UnityEngine;
 
 namespace ST.Common
@@ -22,7 +23,7 @@ namespace ST.Common
         public static int GetColorIndex(this Player player)
         {
             if (player?.CustomProperties != null &&
-                player.CustomProperties.TryGetValue(GameSettings.ColorIndexProp, out var idx))
+                player.CustomProperties.TryGetValue(GameSettings.Default.ColorIndexProp, out var idx))
             {
                 return (int) idx;
             }
@@ -40,7 +41,7 @@ namespace ST.Common
             // Index is valid
             if (!player.SetCustomProperties(new Hashtable()
             {
-                {GameSettings.ColorIndexProp, colorIndex},
+                {GameSettings.Default.ColorIndexProp, colorIndex},
             }))
             {
                 Debug.LogError("Failed to cycle color index");
@@ -64,7 +65,7 @@ namespace ST.Common
 
             if (!player.SetCustomProperties(new Hashtable()
             {
-                {GameSettings.ColorIndexProp, newIndex},
+                {GameSettings.Default.ColorIndexProp, newIndex},
             }))
             {
                 Debug.LogError("Failed to cycle color index");
@@ -73,7 +74,7 @@ namespace ST.Common
 
         public static bool IsReady(this Player player)
         {
-            if (player.CustomProperties.TryGetValue(GameSettings.ReadyProp, out var rdy))
+            if (player.CustomProperties.TryGetValue(GameSettings.Default.ReadyProp, out var rdy))
             {
                 return (bool) rdy;
             }
@@ -87,7 +88,7 @@ namespace ST.Common
         {
             player.SetCustomProperties(new Hashtable()
             {
-                {GameSettings.ReadyProp, ready},
+                {GameSettings.Default.ReadyProp, ready},
             });
         }
     }
@@ -96,7 +97,7 @@ namespace ST.Common
     {
         public static int GetMaxPoints(this RoomInfo room)
         {
-            if (room.CustomProperties.TryGetValue(GameSettings.MaxPointsProp, out var points))
+            if (room.CustomProperties.TryGetValue(GameSettings.Default.MaxPointsProp, out var points))
             {
                 return (int) points;
             }

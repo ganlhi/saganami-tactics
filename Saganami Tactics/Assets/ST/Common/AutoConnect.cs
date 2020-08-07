@@ -1,6 +1,7 @@
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using ST.Scriptable;
 using UnityEngine;
 
 namespace ST.Common
@@ -52,7 +53,7 @@ namespace ST.Common
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-            if (targetPlayer.IsLocal && changedProps.ContainsKey(GameSettings.ColorIndexProp))
+            if (targetPlayer.IsLocal && changedProps.ContainsKey(GameSettings.Default.ColorIndexProp))
             {
                 manager.SetActive(true);
                 Destroy(gameObject);
