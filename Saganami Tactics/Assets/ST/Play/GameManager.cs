@@ -257,6 +257,11 @@ namespace ST.Play
             camera.settings.cameraLocked = true;
         }
 
+        public void LockCameraToSelectedShip()
+        {
+            LockCameraToShip(_selectedShip);
+        }
+
         private IEnumerator WaitForShipsInit()
         {
             Busy = true;
