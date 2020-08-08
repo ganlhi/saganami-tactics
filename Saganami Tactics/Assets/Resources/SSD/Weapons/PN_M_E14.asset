@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7d20f849896410b961c7831045b0ba8, type: 3}
+  m_Name: PN_M_E14
+  m_EditorClassIdentifier: 
+  name: E14 Anti Ship Missile
+  type: 0
+  evasion: 7
+  bands:
+  - from: 0
+    to: 6
+    accuracy: 5
+    damage: 3
+    penetration: 1
+  - from: 7
+    to: 17
+    accuracy: 7
+    damage: 3
+    penetration: 1
+  - from: 18
+    to: 26
+    accuracy: 10
+    damage: 3
+    penetration: 1

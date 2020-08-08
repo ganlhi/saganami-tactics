@@ -17,8 +17,8 @@ MonoBehaviour:
     step: 0
     ships:
     - uid: whdgKsbuQUKRyjltPSe-lA
-      name: Havok
-      ssdName: Havok
+      name: Havoc
+      ssdName: Havoc
       team: 0
       status: 0
       position: {x: 0, y: 0, z: 0}

@@ -17,27 +17,21 @@ MonoBehaviour:
     step: 0
     ships:
     - uid: n3HLL9LT1UWpabYNa7K9SA
-      name: Havok
+      name: Havoc
+      ssdName: Havoc
       team: 0
-      ssdName: Havok
-      ssd: {fileID: 11400000, guid: f306ca9aa602c5b44a9cf42e5aa43740, type: 2}
+      status: 0
       position: {x: -15, y: 0, z: 0}
       rotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
       velocity: {x: 4, y: 0, z: 0}
-      thrust: {x: 0, y: 0, z: 0}
-      endMarkerPosition: {x: -11, y: 0, z: 0}
-      endMarkerRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
     - uid: _E4XYL6Qmkmbe7pySipRiw
       name: Bastogne
-      team: 1
       ssdName: Bastogne
-      ssd: {fileID: 11400000, guid: 1a99fa0bdfc78fd40acb50102aa58c5c, type: 2}
+      team: 1
+      status: 0
       position: {x: 15, y: 0, z: 0}
       rotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
       velocity: {x: -4, y: 0, z: 0}
-      thrust: {x: 0, y: 0, z: 0}
-      endMarkerPosition: {x: 11, y: 0, z: 0}
-      endMarkerRotation: {x: 0, y: -0.7071068, z: -0, w: 0.7071068}
     setup:
       nbPlayers: 1
       maxCost: 100
