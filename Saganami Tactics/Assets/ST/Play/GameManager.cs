@@ -68,22 +68,6 @@ namespace ST.Play
             }
         }
 
-        private Dictionary<string, Ssd> _availableSsds;
-
-        public Dictionary<string, Ssd> AvailableSsds
-        {
-            get
-            {
-                if (_availableSsds != null) return _availableSsds;
-                
-                var ssds = Resources.LoadAll<Ssd>("SSD");
-                _availableSsds = ssds.ToDictionary((ssd) => ssd.className);
-
-                return _availableSsds;
-            }
-        }
-
-
         public event EventHandler<bool> OnBusyChange;
         public event EventHandler<int> OnTurnChange;
         public event EventHandler<TurnStep> OnTurnStepChange;

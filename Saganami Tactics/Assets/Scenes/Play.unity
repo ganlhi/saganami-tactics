@@ -19616,6 +19616,7 @@ MonoBehaviour:
     velocity: {x: 0, y: 0, z: 0}
     endMarkerPosition: {x: 0, y: 0, z: 0}
     endMarkerRotation: {x: 0, y: 0, z: 0, w: 0}
+    alterations: []
   ssd: {fileID: 0}
   flagImage: {fileID: 345669114}
   teamColorImage: {fileID: 780137083}

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using ST.Scriptable;
 using UnityEngine;
 
 namespace ST
@@ -19,6 +21,19 @@ namespace ST
         public Vector3 endMarkerPosition;
         public Quaternion endMarkerRotation;
 
+        public Ssd Ssd
+        {
+            get
+            {
+                if (SsdHelper.AvailableSsds.TryGetValue(ssdName, out var ssd))
+                    return ssd;
+                
+                throw new ArgumentOutOfRangeException(nameof(ssdName), ssdName, "Unknown SSD");
+            }
+        }
+
+        public List<SsdAlteration> alterations;
+        
         private ShipStatus _status;
 
         public ShipStatus Status
@@ -86,20 +101,11 @@ namespace ST
         public int UsedPivots => Math.Abs(Yaw) + Math.Abs(Pitch);
         public int UsedRolls => Math.Abs(Roll);
 
-        public int MaxPivots
-        {
-            get => 6;
-        } // TODO
+        public int MaxPivots => (int) SsdHelper.GetMaxPivot(Ssd, alterations);
 
-        public int MaxRolls
-        {
-            get => 6;
-        } // TODO
+        public int MaxRolls => (int) SsdHelper.GetMaxRoll(Ssd, alterations);
 
-        public int MaxThrust
-        {
-            get => 3;
-        } // TODO
+        public int MaxThrust => (int) SsdHelper.GetMaxThrust(Ssd, alterations);
 
         #endregion Plotting
 
@@ -119,6 +125,7 @@ namespace ST
             _pitch = 0;
             _roll = 0;
             _thrust = 0;
+            alterations = new List<SsdAlteration>();
         }
 
         public void UpdateFutureMovement()

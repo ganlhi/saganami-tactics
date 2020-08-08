@@ -1,4 +1,3 @@
-using System;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
@@ -69,8 +68,7 @@ namespace ST.Play.UI
             _gameManager.OnSelectShip += (sender, shipView) =>
             {
                 shipInfo.ship = shipView.ship;
-                if (_gameManager.AvailableSsds.TryGetValue(shipView.ship.ssdName, out var ssd))
-                    shipInfo.ssd = ssd;
+                shipInfo.ssd = shipView.ship.Ssd;
             };
         }
 
@@ -109,7 +107,7 @@ namespace ST.Play.UI
         private void UpdatePlottingPanelEachFrame()
         {
             if (!plottingPanel.Active) return;
-            
+
             var ship = _gameManager.SelectedShip.ship;
 
             plottingPanel.Thrust = ship.Thrust;
@@ -126,7 +124,7 @@ namespace ST.Play.UI
         #endregion Plotting panel
 
         #region Hover info
-        
+
 #pragma warning disable 649
         [SerializeField] private GameObject hoverShipInfo;
         [SerializeField] private TextMeshProUGUI hoverShipInfoText;
