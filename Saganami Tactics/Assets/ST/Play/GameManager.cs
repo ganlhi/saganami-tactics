@@ -188,7 +188,7 @@ namespace ST.Play
                         GetAllShips().ForEach(shipView => shipView.UpdateFutureMovement());
                         break;
                     case GameEvent.MoveShipsToMarkers:
-                        StartCoroutine(MoveShipsToMarkers());
+                        MoveShipsToMarkers();
                         break;
                     case GameEvent.PlaceShipsMarkers:
                         GetAllShips().ForEach(shipView => shipView.PlaceMarker());
@@ -202,18 +202,9 @@ namespace ST.Play
             }
         }
 
-        private IEnumerator MoveShipsToMarkers()
+        private void MoveShipsToMarkers()
         {
-            var ships = GetAllShips();
-
-            ships.ForEach(shipView => shipView.ApplyMovement());
-
-            do
-            {
-                yield return null;
-            } while (ships.Any(s => !s.ReadyToMove));
-
-            photonView.RPC("RPC_AnimateMoveShipsToMarkers", RpcTarget.All);
+            photonView.RPC("RPC_MoveShipsToMarkers", RpcTarget.All);
         }
 
         #endregion MasterClient
@@ -236,7 +227,7 @@ namespace ST.Play
         }
 
         [PunRPC]
-        private void RPC_AnimateMoveShipsToMarkers()
+        private void RPC_MoveShipsToMarkers()
         {
             StartCoroutine(AnimateMoveShipsToMarkers());
         }
@@ -244,11 +235,9 @@ namespace ST.Play
         private void FocusPlayerShip()
         {
             var ship = GetAllShips().First(s => s.OwnedByClient);
-            if (ship != null)
-            {
-                LockCameraToShip(ship);
-                SelectedShip = ship;
-            }
+            if (ship == null) return;
+            LockCameraToShip(ship);
+            SelectedShip = ship;
         }
 
         public void LockCameraToShip(ShipView ship)

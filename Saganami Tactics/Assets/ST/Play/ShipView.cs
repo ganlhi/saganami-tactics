@@ -23,7 +23,6 @@ namespace ST.Play
         public bool OwnedByClient => PhotonNetwork.LocalPlayer.GetTeam() == ship.team;
 
         public bool Busy { get; private set; }
-        public bool ReadyToMove { get; private set; }
 
         private ShipMarker _endMarker;
 
@@ -63,6 +62,7 @@ namespace ST.Play
                 ship.velocity,
                 ship.endMarkerPosition,
                 ship.endMarkerRotation,
+                ship.halfRotation,
                 ship.Status,
                 ship.Yaw,
                 ship.Pitch,
@@ -83,20 +83,14 @@ namespace ST.Play
             SyncShip(andThen: PostSyncAction.PlaceMarker);
         }
 
-        public void ApplyMovement()
-        {
-            ReadyToMove = false;
-            ship.MoveToMarker();
-            SyncShip(andThen: PostSyncAction.MarkReadyToMove);
-        }
-
         public void ResetThrustAndPlottings()
         {
             ship.ResetThrustAndPlottings();
             SyncShip(andThen: PostSyncAction.PlaceMarker);
         }
 
-        public void Plot(PlottingAction action, int value)
+        [PunRPC]
+        public void RPC_Plot(PlottingAction action, int value)
         {
             switch (action)
             {
@@ -122,16 +116,9 @@ namespace ST.Play
                 default:
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);
             }
-            
-            ship.PlaceMarker();
+
             ship.ApplyDisplacement(); // TODO delay for non owners?
             SyncShip(andThen: PostSyncAction.PlaceMarker);
-        }
-
-        [PunRPC]
-        private void RPC_SetReadyToMove(bool ready)
-        {
-            ReadyToMove = ready;
         }
 
         #endregion MasterClient
@@ -149,6 +136,7 @@ namespace ST.Play
             Vector3 velocity,
             Vector3 endMarkerPosition,
             Quaternion endMarkerRotation,
+            Quaternion halfRotation,
             ShipStatus status,
             int yaw,
             int pitch,
@@ -165,6 +153,7 @@ namespace ST.Play
             ship.velocity = velocity;
             ship.endMarkerPosition = endMarkerPosition;
             ship.endMarkerRotation = endMarkerRotation;
+            ship.halfRotation = halfRotation;
             ship.Status = status;
             ship.Yaw = yaw;
             ship.Pitch = pitch;
@@ -214,13 +203,13 @@ namespace ST.Play
         private IEnumerator MakeMovement()
         {
             var shipTransform = transform;
-            var emTransform = EndMarker.transform;
 
             var fromPos = shipTransform.position;
             var fromRot = shipTransform.rotation;
 
             var toPos = ship.endMarkerPosition;
             var toRot = ship.endMarkerRotation;
+            var halfRot = ship.halfRotation;
 
             var elapsedTime = 0f;
             var duration = GameSettings.Default.MoveDuration;
@@ -230,8 +219,14 @@ namespace ST.Play
             while (elapsedTime < duration)
             {
                 elapsedTime += Time.deltaTime;
-                transform.position = Vector3.Lerp(fromPos, toPos, elapsedTime / duration);
-                transform.rotation = Quaternion.Lerp(fromRot, toRot, elapsedTime / duration);
+                var timeRatio = elapsedTime / duration;
+
+                transform.position = Vector3.Lerp(fromPos, toPos, timeRatio);
+
+                transform.rotation = timeRatio <= .5f
+                    ? Quaternion.Slerp(fromRot, halfRot, timeRatio * 2f)
+                    : Quaternion.Slerp(halfRot, toRot, (timeRatio - .5f) * 2f);
+
                 yield return null;
             }
 
@@ -250,7 +245,17 @@ namespace ST.Play
 
             return marker;
         }
-        
+
+        public void Plot(PlottingAction action, int value)
+        {
+            photonView.RPC("RPC_Plot", RpcTarget.MasterClient, action, value);
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawLine(ship.position, ship.position + (ship.halfRotation * Vector3.forward));
+        }
+
         #endregion AllClients
     }
 }

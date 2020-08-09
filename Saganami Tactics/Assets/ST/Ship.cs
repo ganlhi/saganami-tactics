@@ -20,6 +20,7 @@ namespace ST
 
         public Vector3 endMarkerPosition;
         public Quaternion endMarkerRotation;
+        public Quaternion halfRotation;
 
         public Ssd Ssd
         {
@@ -61,6 +62,7 @@ namespace ST
                 var prev = _yaw;
                 _yaw = value;
                 if (UsedPivots > MaxPivots) _yaw = prev;
+                ApplyPlottings();
             }
         }
 
@@ -72,6 +74,7 @@ namespace ST
                 var prev = _pitch;
                 _pitch = value;
                 if (UsedPivots > MaxPivots) _pitch = prev;
+                ApplyPlottings();
             }
         }
 
@@ -83,6 +86,7 @@ namespace ST
                 var prev = _roll;
                 _roll = value;
                 if (UsedRolls > MaxRolls) _roll = prev;
+                ApplyPlottings();
             }
         }
 
@@ -93,10 +97,11 @@ namespace ST
             {
                 if (_thrust >= 0 && _thrust <= MaxThrust)
                     _thrust = value;
+                ApplyPlottings();
             }
         }
 
-        public Vector3 ThrustVector => (rotation * Vector3.forward) * Thrust;
+        public Vector3 ThrustVector => halfRotation * Vector3.forward * Thrust;
 
         public int UsedPivots => Math.Abs(Yaw) + Math.Abs(Pitch);
         public int UsedRolls => Math.Abs(Roll);
@@ -120,6 +125,7 @@ namespace ST
             velocity = Vector3.zero;
             endMarkerPosition = Vector3.zero;
             endMarkerRotation = Quaternion.identity;
+            halfRotation = Quaternion.identity;
             _status = ShipStatus.Ok;
             _yaw = 0;
             _pitch = 0;
@@ -130,6 +136,8 @@ namespace ST
 
         public void UpdateFutureMovement()
         {
+            position = endMarkerPosition;
+            rotation = endMarkerRotation;
             velocity += ThrustVector;
             PlaceMarker();
         }
@@ -137,11 +145,38 @@ namespace ST
         public void PlaceMarker()
         {
             endMarkerPosition = position + velocity;
+            endMarkerRotation = rotation;
+        }
+        
+        private void ApplyPlottings()
+        {
+            halfRotation = rotation;
+            endMarkerRotation = rotation;
 
-            endMarkerRotation = rotation *
-                                Quaternion.AngleAxis(30f * Yaw, Vector3.up) *
-                                Quaternion.AngleAxis(30f * Pitch, Vector3.right) *
-                                Quaternion.AngleAxis(30f * Roll, Vector3.forward);
+            var yaw = Math.Abs(Yaw);
+            var yawSign = Math.Sign(Yaw);
+            var pitch = Math.Abs(Pitch);
+            var pitchSign = Math.Sign(Pitch);
+            var roll = Math.Abs(Roll);
+            var rollSign = Math.Sign(Roll);
+            
+            for (var i = 0; i < yaw; i++)
+            {
+                endMarkerRotation *= Quaternion.AngleAxis(30f * yawSign, Vector3.up);
+                halfRotation *= Quaternion.AngleAxis(15f * yawSign, Vector3.up);
+            }
+            
+            for (var i = 0; i < pitch; i++)
+            {
+                endMarkerRotation *= Quaternion.AngleAxis(30f * pitchSign, Vector3.right);
+                halfRotation *= Quaternion.AngleAxis(15f * pitchSign, Vector3.right);
+            }
+            
+            for (var i = 0; i < roll; i++)
+            {
+                endMarkerRotation *= Quaternion.AngleAxis(30f * rollSign, Vector3.forward);
+                halfRotation *= Quaternion.AngleAxis(15f * rollSign, Vector3.forward);
+            }
         }
 
         public void ApplyDisplacement()
@@ -150,12 +185,6 @@ namespace ST
             {
                 endMarkerPosition = position + velocity + ThrustVector.normalized * (Thrust / 2f);
             }
-        }
-
-        public void MoveToMarker()
-        {
-            position = endMarkerPosition;
-            rotation = endMarkerRotation;
         }
 
         public void ResetThrustAndPlottings()
