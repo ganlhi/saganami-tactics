@@ -251,11 +251,6 @@ namespace ST.Play
             photonView.RPC("RPC_Plot", RpcTarget.MasterClient, action, value);
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawLine(ship.position, ship.position + (ship.halfRotation * Vector3.forward));
-        }
-
         #endregion AllClients
     }
 }

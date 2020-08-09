@@ -7,26 +7,28 @@ namespace ST.Play
     [RequireComponent(typeof(ShipView))]
     public class ShipVelocityVector : MonoBehaviour
     {
-        private ShipView shipView;
-        private LineRenderer vectorLine;
+        private ShipView _shipView;
+        private LineRenderer _vectorLine;
+        private Camera _camera;
         [SerializeField] private float widthCoefficient = 0.004f;
-        
+
         private void Awake()
         {
-            shipView = GetComponent<ShipView>();
-            vectorLine = transform.Find("VelocityVector").GetComponent<LineRenderer>();
+            _camera = Camera.main;
+            _shipView = GetComponent<ShipView>();
+            _vectorLine = transform.Find("VelocityVector").GetComponent<LineRenderer>();
         }
 
         private void Update()
         {
-            vectorLine.SetPosition(0, transform.position);
-            vectorLine.SetPosition(1, shipView.EndMarker.transform.position);
-            if (Camera.main != null)
-            {
-                var camPos = Camera.main.transform.position;
-                vectorLine.startWidth = camPos.DistanceTo(transform.position) * widthCoefficient;
-                vectorLine.endWidth = camPos.DistanceTo(shipView.EndMarker.transform.position) * widthCoefficient;
-            }
+            _vectorLine.SetPosition(0, transform.position);
+            _vectorLine.SetPosition(1, _shipView.EndMarker.transform.position);
+            
+            if (_camera == null) return;
+            
+            var camPos = _camera.transform.position;
+            _vectorLine.startWidth = camPos.DistanceTo(transform.position) * widthCoefficient;
+            _vectorLine.endWidth = camPos.DistanceTo(_shipView.EndMarker.transform.position) * widthCoefficient;
         }
     }
 }
