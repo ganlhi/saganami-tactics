@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Photon.Realtime;
+using ST.Common;
 using ST.Scriptable;
 using UnityEngine;
 
@@ -194,6 +197,33 @@ namespace ST
             Roll = 0;
             Thrust = 0;
             PlaceMarker();
+        }
+
+        public Tuple<Side, Side> GetBearingTo(Vector3 targetPosition)
+        {
+            var direction = position.DirectionTo(targetPosition);
+            var forward = rotation * Vector3.forward;
+            var right = rotation * Vector3.right;
+            var up = rotation * Vector3.up;
+            
+            var angles = new Dictionary<Side, float>()
+            {
+                {Side.Forward, Vector3.Angle(forward, direction)},
+                {Side.Aft, Vector3.Angle(-forward, direction)},
+                {Side.Port, Vector3.Angle(-right, direction)},
+                {Side.Starboard, Vector3.Angle(right, direction)},
+                {Side.Top, Vector3.Angle(up, direction)},
+                {Side.Bottom, Vector3.Angle(-up, direction)},
+            };
+            
+            var ordered = angles.OrderBy(p => p.Value).ToList();
+            var first = ordered.First();
+            var second = ordered.Skip(1).First();
+            
+            if (first.Key == Side.Top || first.Key == Side.Bottom) 
+                return new Tuple<Side, Side>(first.Key, second.Key);
+            
+            return new Tuple<Side, Side>(first.Key, first.Key); 
         }
     }
 }

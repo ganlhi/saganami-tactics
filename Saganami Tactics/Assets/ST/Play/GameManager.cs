@@ -68,6 +68,14 @@ namespace ST.Play
             }
         }
 
+        private Dictionary<string, Dictionary<Tuple<Side, int>, List<TargettingContext>>>
+            _potentialTargetsByShipIdSideWeaponMountIndex;
+
+        public Dictionary<Tuple<Side, int>, List<TargettingContext>> SelectedShipPotentialTargets =>
+            _potentialTargetsByShipIdSideWeaponMountIndex.ContainsKey(SelectedShip.ship.uid)
+                ? _potentialTargetsByShipIdSideWeaponMountIndex[SelectedShip.ship.uid]
+                : new Dictionary<Tuple<Side, int>, List<TargettingContext>>();
+
         public event EventHandler<bool> OnBusyChange;
         public event EventHandler<int> OnTurnChange;
         public event EventHandler<TurnStep> OnTurnStepChange;
@@ -128,7 +136,7 @@ namespace ST.Play
         private void InitShips()
         {
             photonView.RPC("RPC_ExpectShips", RpcTarget.All, _state.ships.Count);
-            
+
             foreach (var shipState in _state.ships)
             {
                 var ship = ShipState.ToShip(shipState);
@@ -196,6 +204,9 @@ namespace ST.Play
                     case GameEvent.ResetThrustAndPlottings:
                         GetAllShips().ForEach(shipView => shipView.ResetThrustAndPlottings());
                         break;
+                    case GameEvent.IdentifyTargets:
+                        IdentifyTargets();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -205,6 +216,11 @@ namespace ST.Play
         private void MoveShipsToMarkers()
         {
             photonView.RPC("RPC_MoveShipsToMarkers", RpcTarget.All);
+        }
+
+        private void IdentifyTargets()
+        {
+            photonView.RPC("RPC_IdentifyTargets", RpcTarget.All);
         }
 
         #endregion MasterClient
@@ -230,6 +246,32 @@ namespace ST.Play
         private void RPC_MoveShipsToMarkers()
         {
             StartCoroutine(AnimateMoveShipsToMarkers());
+        }
+
+        [PunRPC]
+        private void RPC_IdentifyTargets()
+        {
+            _potentialTargetsByShipIdSideWeaponMountIndex =
+                new Dictionary<string, Dictionary<Tuple<Side, int>, List<TargettingContext>>>();
+
+            var ships = GetPlayerShips().Select(s => s.ship);
+            var allShips = GetAllShips().Select(s => s.ship).ToList();
+            foreach (var ship in ships)
+            {
+                var targets = Game.IdentifyTargets(ship, allShips);
+                
+                _potentialTargetsByShipIdSideWeaponMountIndex.Add(ship.uid, new Dictionary<Tuple<Side, int>, List<TargettingContext>>());
+
+                foreach (var target in targets)
+                {
+                    var key = new Tuple<Side, int>(target.Side, target.MountIndex);
+
+                    if (_potentialTargetsByShipIdSideWeaponMountIndex[ship.uid].ContainsKey(key))
+                        _potentialTargetsByShipIdSideWeaponMountIndex[ship.uid][key].Add(target);
+                    else
+                        _potentialTargetsByShipIdSideWeaponMountIndex[ship.uid].Add(key, new List<TargettingContext>() {target});
+                }
+            }
         }
 
         private void FocusPlayerShip()
@@ -261,7 +303,7 @@ namespace ST.Play
 
             FocusPlayerShip();
             OnShipsInit?.Invoke(this, EventArgs.Empty);
-            
+
             Busy = false;
         }
 
@@ -287,6 +329,11 @@ namespace ST.Play
                 .FindGameObjectsWithComponent(typeof(ShipView))
                 .Select(go => go.GetComponent<ShipView>())
                 .ToList();
+        }
+
+        public List<ShipView> GetPlayerShips()
+        {
+            return GetAllShips().Where(s => s.ship.team == PhotonNetwork.LocalPlayer.GetTeam()).ToList();
         }
 
         public void SetReady(bool ready)

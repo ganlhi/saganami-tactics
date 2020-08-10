@@ -7,7 +7,7 @@ namespace ST
         Start,
         Plotting,
         Movement,
-//        Targetting,
+        Targeting,
 //        Missiles,
 //        Beams,
 //        CrewActions,
@@ -26,6 +26,8 @@ namespace ST
                     return "Plotting";
                 case TurnStep.Movement:
                     return "Movement";
+                case TurnStep.Targeting:
+                    return "Targeting";
                 case TurnStep.End:
                     return "End";
                 default:
