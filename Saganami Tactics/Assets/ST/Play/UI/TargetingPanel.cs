@@ -9,11 +9,8 @@ namespace ST.Play.UI
     public class TargetingPanel : MonoBehaviour
     {
 #pragma warning disable 649
-        [SerializeField] private GameObject targetSelectorPrefab;
-        [SerializeField] private Transform forwardContent;
-        [SerializeField] private Transform aftContent;
-        [SerializeField] private Transform portContent;
-        [SerializeField] private Transform starboardContent;
+        [SerializeField] private TargetInfo targetInfoPrefab;
+        [SerializeField] private Transform content;
 #pragma warning restore 649
 
         private Animator _animator;
@@ -38,42 +35,23 @@ namespace ST.Play.UI
             }
         }
 
-        public List<Tuple<WeaponMount, List<TargettingContext>>> ForwardWeapons {
-            set => UpdateContent(forwardContent, value);
+        private void Awake()
+        {
+            _animator = GetComponent<Animator>();
         }
 
-        public List<Tuple<WeaponMount, List<TargettingContext>>> AftWeapons {
-            set => UpdateContent(aftContent, value);
-        }
-        public List<Tuple<WeaponMount, List<TargettingContext>>> PortWeapons {
-            set => UpdateContent(portContent, value);
-        }
-        public List<Tuple<WeaponMount, List<TargettingContext>>> StarboardWeapons {
-            set => UpdateContent(starboardContent, value);
-        }
-
-        private void UpdateContent(Transform content, List<Tuple<WeaponMount, List<TargettingContext>>> weaponsWithTargets)
+        public void UpdateContent(List<TargettingContext> locks)
         {
             foreach (Transform child in content)
             {
                 Destroy(child.gameObject);
             }
 
-            foreach (var (weaponMount, targets) in weaponsWithTargets)
+            foreach (var target in locks)
             {
-                var selector = Instantiate(targetSelectorPrefab, content).GetComponent<WeaponTargetSelector>();
-                selector.Mount = weaponMount;
-                selector.PotentialTargets = targets;
+                var info = Instantiate(targetInfoPrefab, content).GetComponent<TargetInfo>();
+                info.TargettingContext = target;
             }
-        }
-
-        private void Awake()
-        {
-            _animator = GetComponent<Animator>();
-        }
-
-        private void Start()
-        {
         }
     }
 }

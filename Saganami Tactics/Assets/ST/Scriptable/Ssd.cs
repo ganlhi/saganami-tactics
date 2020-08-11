@@ -17,42 +17,25 @@ namespace ST.Scriptable
         public uint[] movement;
         public uint[] structuralIntegrity;
 
-        public WeaponMounts weaponMounts;
-        public SidesDefenses defenses;
+        public WeaponMount[] weaponMounts;
+        public SideDefenses[] defenses;
         public HitLocation[] hitLocations;
     }
-
-    [Serializable]
-    public struct WeaponMounts
-    {
-        public WeaponMount[] forward;
-        public WeaponMount[] aft;
-        public WeaponMount[] port;
-        public WeaponMount[] starboard;
-    }
+    
 
     [Serializable]
     public struct WeaponMount
     {
+        public Side side;
         public Weapon model;
         public uint[] weapons;
         public int ammo;
     }
 
     [Serializable]
-    public struct SidesDefenses
-    {
-        public SideDefenses forward;
-        public SideDefenses aft;
-        public SideDefenses port;
-        public SideDefenses starboard;
-        public SideDefenses top;
-        public SideDefenses bottom;
-    }
-
-    [Serializable]
     public struct SideDefenses
     {
+        public Side side;
         public bool wedge;
         public uint[] sidewall;
         public uint[] counterMissiles;

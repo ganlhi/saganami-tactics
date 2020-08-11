@@ -211,6 +211,8 @@ namespace ST.Play
             var toRot = ship.endMarkerRotation;
             var halfRot = ship.halfRotation;
 
+            if (fromPos == toPos && fromRot == toRot) yield break;
+
             var elapsedTime = 0f;
             var duration = GameSettings.Default.MoveDuration;
 

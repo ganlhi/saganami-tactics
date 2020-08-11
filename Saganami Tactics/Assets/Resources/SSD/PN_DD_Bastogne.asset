@@ -20,71 +20,75 @@ MonoBehaviour:
   movement: 03000000030000000300000002000000020000000200000002000000010000000100000001000000
   structuralIntegrity: 00000000000000000000000000000000000000000000000000000000
   weaponMounts:
-    forward:
-    - model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
-      weapons: 00000000
-      ammo: 9
-    - model: {fileID: 11400000, guid: 880f5a0d356ebf34c9d5fb547334842b, type: 2}
-      weapons: 00000000
-      ammo: 0
-    aft:
-    - model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
-      weapons: 00000000
-      ammo: 9
-    - model: {fileID: 11400000, guid: 880f5a0d356ebf34c9d5fb547334842b, type: 2}
-      weapons: 00000000
-      ammo: 0
-    port:
-    - model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
-      weapons: 0000000000000000000000000000000000000000000000000000000000000000
-      ammo: 72
-    - model: {fileID: 11400000, guid: 2a5f892f91c65b1438dc61707c9689ff, type: 2}
-      weapons: 000000000000000000000000
-      ammo: 0
-    starboard:
-    - model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
-      weapons: 0000000000000000000000000000000000000000000000000000000000000000
-      ammo: 72
-    - model: {fileID: 11400000, guid: 2a5f892f91c65b1438dc61707c9689ff, type: 2}
-      weapons: 000000000000000000000000
-      ammo: 0
+  - side: 1
+    model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
+    weapons: 00000000
+    ammo: 9
+  - side: 1
+    model: {fileID: 11400000, guid: 880f5a0d356ebf34c9d5fb547334842b, type: 2}
+    weapons: 00000000
+    ammo: 0
+  - side: 0
+    model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
+    weapons: 00000000
+    ammo: 9
+  - side: 0
+    model: {fileID: 11400000, guid: 880f5a0d356ebf34c9d5fb547334842b, type: 2}
+    weapons: 00000000
+    ammo: 0
+  - side: 2
+    model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
+    weapons: 0000000000000000000000000000000000000000000000000000000000000000
+    ammo: 72
+  - side: 2
+    model: {fileID: 11400000, guid: 2a5f892f91c65b1438dc61707c9689ff, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 0
+  - side: 3
+    model: {fileID: 11400000, guid: 41f4e1484d5bc734da389c588e0856a2, type: 2}
+    weapons: 0000000000000000000000000000000000000000000000000000000000000000
+    ammo: 72
+  - side: 3
+    model: {fileID: 11400000, guid: 2a5f892f91c65b1438dc61707c9689ff, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 0
   defenses:
-    forward:
-      wedge: 0
-      sidewall: 
-      counterMissiles: 0100000001000000
-      pointDefense: 0100000001000000
-      armorStrength: 1
-    aft:
-      wedge: 0
-      sidewall: 01000000
-      counterMissiles: 0100000001000000
-      pointDefense: 0100000001000000
-      armorStrength: 1
-    port:
-      wedge: 0
-      sidewall: 0200000001000000
-      counterMissiles: 0100000001000000
-      pointDefense: 0100000001000000
-      armorStrength: 1
-    starboard:
-      wedge: 0
-      sidewall: 0200000001000000
-      counterMissiles: 0100000001000000
-      pointDefense: 0100000001000000
-      armorStrength: 1
-    top:
-      wedge: 1
-      sidewall: 
-      counterMissiles: 
-      pointDefense: 
-      armorStrength: 1
-    bottom:
-      wedge: 1
-      sidewall: 
-      counterMissiles: 
-      pointDefense: 
-      armorStrength: 1
+  - side: 1
+    wedge: 0
+    sidewall: 
+    counterMissiles: 0100000001000000
+    pointDefense: 0100000001000000
+    armorStrength: 1
+  - side: 0
+    wedge: 0
+    sidewall: 01000000
+    counterMissiles: 0100000001000000
+    pointDefense: 0100000001000000
+    armorStrength: 1
+  - side: 2
+    wedge: 0
+    sidewall: 0200000001000000
+    counterMissiles: 0100000001000000
+    pointDefense: 0100000001000000
+    armorStrength: 1
+  - side: 3
+    wedge: 0
+    sidewall: 0200000001000000
+    counterMissiles: 0100000001000000
+    pointDefense: 0100000001000000
+    armorStrength: 1
+  - side: 4
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 1
+  - side: 5
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 1
   hitLocations:
   - coreArmor: 0
     passThrough: 1

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Photon.Pun;
 using Photon.Realtime;
 using ST.Common;
@@ -68,19 +69,13 @@ namespace ST.Play
             }
         }
 
-        private Dictionary<string, Dictionary<Tuple<Side, int>, List<TargettingContext>>>
-            _potentialTargetsByShipIdSideWeaponMountIndex;
-
-        public Dictionary<Tuple<Side, int>, List<TargettingContext>> SelectedShipPotentialTargets =>
-            _potentialTargetsByShipIdSideWeaponMountIndex.ContainsKey(SelectedShip.ship.uid)
-                ? _potentialTargetsByShipIdSideWeaponMountIndex[SelectedShip.ship.uid]
-                : new Dictionary<Tuple<Side, int>, List<TargettingContext>>();
-
         public event EventHandler<bool> OnBusyChange;
         public event EventHandler<int> OnTurnChange;
         public event EventHandler<TurnStep> OnTurnStepChange;
         public event EventHandler OnShipsInit;
         public event EventHandler<ShipView> OnSelectShip;
+        public event EventHandler OnTargetsIdentified;
+
 
         private void Start()
         {
@@ -251,27 +246,15 @@ namespace ST.Play
         [PunRPC]
         private void RPC_IdentifyTargets()
         {
-            _potentialTargetsByShipIdSideWeaponMountIndex =
-                new Dictionary<string, Dictionary<Tuple<Side, int>, List<TargettingContext>>>();
-
-            var ships = GetPlayerShips().Select(s => s.ship);
+            var playerShips = GetPlayerShips();
             var allShips = GetAllShips().Select(s => s.ship).ToList();
-            foreach (var ship in ships)
+            foreach (var shipView in playerShips)
             {
-                var targets = Game.IdentifyTargets(ship, allShips);
-                
-                _potentialTargetsByShipIdSideWeaponMountIndex.Add(ship.uid, new Dictionary<Tuple<Side, int>, List<TargettingContext>>());
-
-                foreach (var target in targets)
-                {
-                    var key = new Tuple<Side, int>(target.Side, target.MountIndex);
-
-                    if (_potentialTargetsByShipIdSideWeaponMountIndex[ship.uid].ContainsKey(key))
-                        _potentialTargetsByShipIdSideWeaponMountIndex[ship.uid][key].Add(target);
-                    else
-                        _potentialTargetsByShipIdSideWeaponMountIndex[ship.uid].Add(key, new List<TargettingContext>() {target});
-                }
+                var potentialTargets = Game.IdentifyTargets(shipView.ship, allShips);
+                shipView.GetComponent<FireControl>().PotentialTargets = potentialTargets;
             }
+            
+            OnTargetsIdentified?.Invoke(this, EventArgs.Empty);
         }
 
         private void FocusPlayerShip()
@@ -334,6 +317,12 @@ namespace ST.Play
         public List<ShipView> GetPlayerShips()
         {
             return GetAllShips().Where(s => s.ship.team == PhotonNetwork.LocalPlayer.GetTeam()).ToList();
+        }
+
+        [CanBeNull]
+        public ShipView GetShipById(string shipId)
+        {
+            return GetAllShips().First(s => s.ship.uid == shipId);
         }
 
         public void SetReady(bool ready)

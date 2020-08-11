@@ -115,6 +115,8 @@ namespace ST
 
             foreach (var ennemyShip in ennemyShips)
             {
+                var targetingContexts = new List<TargettingContext>();
+                
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Missile));
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Laser));
             }
@@ -147,24 +149,7 @@ namespace ST
             
             var distance = attacker.position.DistanceTo(targetPos);
 
-            WeaponMount[] mounts;
-            switch (mainBearing)
-            {
-                case Side.Aft:
-                    mounts = attacker.Ssd.weaponMounts.aft;
-                    break;
-                case Side.Forward:
-                    mounts = attacker.Ssd.weaponMounts.forward;
-                    break;
-                case Side.Port:
-                    mounts = attacker.Ssd.weaponMounts.port;
-                    break;
-                case Side.Starboard:
-                    mounts = attacker.Ssd.weaponMounts.starboard;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            var mounts = attacker.Ssd.weaponMounts.Where(m => m.side == mainBearing).ToArray();
 
             for (var i = 0; i < mounts.Length; i++)
             {
@@ -182,13 +167,14 @@ namespace ST
                 
                 targettingContexts.Add(new TargettingContext()
                 {
-                    MountIndex = i,
                     Mount = mount,
                     Side = mainBearing,
                     Target = target,
                     LaunchPoint = attacker.position,
                     LaunchDistance = distance,
-                    Number = Math.Min((int) nbWeapons, mount.ammo)
+                    Number = type == WeaponType.Missile
+                        ? Math.Min((int) nbWeapons, mount.ammo)
+                        : (int) nbWeapons
                 });
             }
 

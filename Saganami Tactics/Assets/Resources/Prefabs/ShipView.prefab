@@ -346,11 +346,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1579898504509391664}
   - component: {fileID: 1516377609607356826}
+  - component: {fileID: 5582413767973605692}
   - component: {fileID: 1578224281213481541}
   - component: {fileID: 6925798203063239497}
   - component: {fileID: 5707125248111211823}
   - component: {fileID: 4083142128612587972}
-  - component: {fileID: 5582413767973605692}
+  - component: {fileID: 2465454328595327436}
   m_Layer: 8
   m_Name: ShipView
   m_TagString: Untagged
@@ -390,6 +391,28 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.5267985, y: 0.6376636, z: 0.8513706}
   m_Center: {x: -0.000013947487, y: -0.0024594069, z: -0.0024138093}
+--- !u!114 &5582413767973605692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578224281213481538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!114 &1578224281213481541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   widthCoefficient: 0.004
---- !u!114 &5582413767973605692
+--- !u!114 &2465454328595327436
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -463,19 +486,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1578224281213481538}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Script: {fileID: 11500000, guid: 44cdec7f7c0a4c67931e861ab5d4e6cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  ObservedComponents:
-  - {fileID: 0}
-  viewIdField: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
 --- !u!1 &1578280227619222470
 GameObject:
   m_ObjectHideFlags: 0

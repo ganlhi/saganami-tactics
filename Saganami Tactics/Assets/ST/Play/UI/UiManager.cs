@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
-using ST.Scriptable;
 using TMPro;
 using UnityEngine;
 
@@ -141,34 +139,7 @@ namespace ST.Play.UI
         private void UpdateTargetingPanelEachFrame()
         {
             if (!targetingPanel.Active) return;
-
-            targetingPanel.ForwardWeapons =
-                GetWeaponsWithTargetsForSide(_gameManager.SelectedShip.ship.Ssd.weaponMounts.forward, Side.Forward);
-            targetingPanel.AftWeapons =
-                GetWeaponsWithTargetsForSide(_gameManager.SelectedShip.ship.Ssd.weaponMounts.aft, Side.Aft);
-            targetingPanel.PortWeapons =
-                GetWeaponsWithTargetsForSide(_gameManager.SelectedShip.ship.Ssd.weaponMounts.port, Side.Port);
-            targetingPanel.StarboardWeapons =
-                GetWeaponsWithTargetsForSide(_gameManager.SelectedShip.ship.Ssd.weaponMounts.starboard, Side.Starboard);
-        }
-
-        private List<Tuple<WeaponMount, List<TargettingContext>>> GetWeaponsWithTargetsForSide(WeaponMount[] mounts,
-            Side side)
-        {
-            var list = new List<Tuple<WeaponMount, List<TargettingContext>>>();
-            var i = 0;
-            
-            foreach (var mount in mounts)
-            {
-                if (_gameManager.SelectedShipPotentialTargets.TryGetValue(new Tuple<Side, int>(side, i), out var targets))
-                {
-                    list.Add(new Tuple<WeaponMount, List<TargettingContext>>(mount, targets));
-                }
-
-                i++;
-            }
-
-            return list;
+            targetingPanel.UpdateContent(_gameManager.SelectedShip.GetComponent<FireControl>().Locks.Values.ToList());
         }
 
         private void SetTargetingPanelVisibility()
@@ -194,12 +165,8 @@ namespace ST.Play.UI
             }
             else
             {
-                var bearing = _gameManager.SelectedShip != shipView
-                    ? (" " + _gameManager.SelectedShip.ship.GetBearingTo(shipView.ship.position))
-                    : "";
-
                 hoverShipInfo.SetActive(true);
-                hoverShipInfoText.text = shipView.ship.name + bearing;
+                hoverShipInfoText.text = shipView.ship.name;
                 hoverShipInfoText.color = shipView.ship.team.ToColor();
             }
         }
