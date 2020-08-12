@@ -14,6 +14,9 @@ namespace ST
         PlaceShipsMarkers,
         ResetThrustAndPlottings,
         IdentifyTargets,
+        ClearTargets,
+        FireMissiles,
+        UpdateMissiles,
     }
 
     public static class Game
@@ -34,6 +37,12 @@ namespace ST
                     nextStep = TurnStep.Targeting;
                     break;
                 case TurnStep.Targeting:
+                    nextStep = TurnStep.Missiles;
+                    break;
+                case TurnStep.Missiles:
+                    nextStep = TurnStep.Beams;
+                    break;
+                case TurnStep.Beams:
                     nextStep = TurnStep.End;
                     break;
                 case TurnStep.End:
@@ -66,9 +75,17 @@ namespace ST
                     events.Add(GameEvent.IdentifyTargets);
                     break;
 
-                case TurnStep.End:
+                case TurnStep.Missiles:
+                    events.Add(GameEvent.FireMissiles);
+                    events.Add(GameEvent.UpdateMissiles);
                     break;
 
+                case TurnStep.Beams:
+                    break;
+
+                case TurnStep.End:
+                    events.Add(GameEvent.ClearTargets);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -97,6 +114,12 @@ namespace ST
                 case TurnStep.Targeting:
                     break;
 
+                case TurnStep.Missiles:
+                    break;
+
+                case TurnStep.Beams:
+                    break;
+
                 case TurnStep.End:
                     break;
 
@@ -116,7 +139,7 @@ namespace ST
             foreach (var ennemyShip in ennemyShips)
             {
                 var targetingContexts = new List<TargettingContext>();
-                
+
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Missile));
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Laser));
             }
@@ -143,28 +166,26 @@ namespace ST
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            
+
             var (mainBearing, _) = attacker.GetBearingTo(targetPos);
             if (mainBearing == Side.Bottom || mainBearing == Side.Top) return targettingContexts;
-            
+
             var distance = attacker.position.DistanceTo(targetPos);
 
             var mounts = attacker.Ssd.weaponMounts.Where(m => m.side == mainBearing).ToArray();
 
-            for (var i = 0; i < mounts.Length; i++)
+            foreach (var mount in mounts)
             {
-                var mount = mounts[i];
-                
-                if  (mount.model.type != type) continue;
-                
+                if (mount.model.type != type) continue;
+
                 var nbWeapons = SsdHelper.GetUndamagedValue(mount.weapons,
                     attacker.alterations.Where(a =>
                         a.side == mainBearing && a.type == SsdAlterationType.Slot && a.slotType == slotType));
-                
+
                 if (nbWeapons == 0 || (type == WeaponType.Missile && mount.ammo == 0)) continue;
 
                 if (mount.model.GetMaxRange() < distance) continue;
-                
+
                 targettingContexts.Add(new TargettingContext()
                 {
                     Mount = mount,
@@ -179,6 +200,38 @@ namespace ST
             }
 
             return targettingContexts;
+        }
+
+        public static Missile UpdateMissile(Missile missile, Ship target)
+        {
+            switch (missile.status)
+            {
+                case MissileStatus.Launched:
+                    missile.status = MissileStatus.Accelerating;
+                    missile.nextMovePosition =
+                        missile.launchPoint + .5f * (target.endMarkerPosition - missile.launchPoint);
+                    break;
+                case MissileStatus.Accelerating:
+//                    if (!CanStillCatchTarget() || !CanTrackTarget())
+//                    {
+//                        missile.status = MissileStatus.Missed;
+//                    }
+//                    else if (!CanPassActiveDefenses())
+//                    {
+//                        missile.status = MissileStatus.Destroyed;
+//                    }
+//                    else
+//                    {
+                        missile.status = MissileStatus.Hitting;
+                        missile.nextMovePosition = target.position;
+//                        MakeReportToTarget(ReportType.MissilesHit,
+//                            "Missiles from " + TargetData.Attacker.Name + ": " + TargetData.Missiles + " hits");
+//                    }
+
+                    break;
+            }
+
+            return missile;
         }
     }
 }

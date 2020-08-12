@@ -8,8 +8,8 @@ namespace ST
         Plotting,
         Movement,
         Targeting,
-//        Missiles,
-//        Beams,
+        Missiles,
+        Beams,
 //        CrewActions,
         End
     }
@@ -30,6 +30,10 @@ namespace ST
                     return "Targeting";
                 case TurnStep.End:
                     return "End";
+                case TurnStep.Missiles:
+                    return "Missiles";
+                case TurnStep.Beams:
+                    return "Beams";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(me), me, null);
             }

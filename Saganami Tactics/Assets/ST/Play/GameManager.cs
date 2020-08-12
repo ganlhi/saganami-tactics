@@ -119,7 +119,8 @@ namespace ST.Play
         [SerializeField] private GameStateHolder stateHolder;
 #pragma warning restore 0649
         private GameState _state;
-
+        private int _clientsReadyToContinue;
+        
         private void LoadStateFromHolder()
         {
             if (stateHolder != null)
@@ -191,7 +192,7 @@ namespace ST.Play
                         GetAllShips().ForEach(shipView => shipView.UpdateFutureMovement());
                         break;
                     case GameEvent.MoveShipsToMarkers:
-                        MoveShipsToMarkers();
+                        photonView.RPC("RPC_MoveShipsToMarkers", RpcTarget.All);
                         break;
                     case GameEvent.PlaceShipsMarkers:
                         GetAllShips().ForEach(shipView => shipView.PlaceMarker());
@@ -200,7 +201,16 @@ namespace ST.Play
                         GetAllShips().ForEach(shipView => shipView.ResetThrustAndPlottings());
                         break;
                     case GameEvent.IdentifyTargets:
-                        IdentifyTargets();
+                        photonView.RPC("RPC_IdentifyTargets", RpcTarget.All);
+                        break;
+                    case GameEvent.ClearTargets:
+                        photonView.RPC("RPC_ClearTargets", RpcTarget.All);
+                        break;
+                    case GameEvent.FireMissiles:
+                        FireMissiles();
+                        break;
+                    case GameEvent.UpdateMissiles:
+                        UpdateMissiles();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -208,14 +218,70 @@ namespace ST.Play
             }
         }
 
-        private void MoveShipsToMarkers()
+        private void FireMissiles()
         {
-            photonView.RPC("RPC_MoveShipsToMarkers", RpcTarget.All);
+            GetAllShips().ForEach(shipView =>
+            {
+                var fcon = shipView.GetComponent<FireControl>();
+
+                foreach (var targettingContext in fcon.Locks.Values)
+                {
+                    var missile = new Missile(shipView.ship, targettingContext);
+
+                    var mv = PhotonNetwork
+                        .InstantiateSceneObject("Prefabs/MissileView", missile.position, missile.rotation)
+                        .GetComponent<MissileView>();
+
+                    mv.missile = missile;
+
+                    // TODO consume ammo from weapon mount
+                }
+            });
         }
 
-        private void IdentifyTargets()
+        private void UpdateMissiles()
         {
-            photonView.RPC("RPC_IdentifyTargets", RpcTarget.All);
+            StartCoroutine(UpdateMoveAndDestroyMissiles());
+        }
+
+        private IEnumerator UpdateMoveAndDestroyMissiles()
+        {
+            _clientsReadyToContinue = 0;
+
+            GetAllMissiles().ForEach(missileView =>
+            {
+                var target = GetShipById(missileView.missile.targetId);
+                if (target == null) return;
+                missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, target.ship));
+            });
+            
+            photonView.RPC("RPC_MoveMissiles", RpcTarget.All);
+
+            do
+            {
+                yield return null;
+            } while (_clientsReadyToContinue < PhotonNetwork.CurrentRoom.PlayerCount);
+            
+            DestroyMissiles();
+        }
+
+        private void DestroyMissiles()
+        {
+            GetAllMissiles().ForEach(missileView =>
+            {
+                if (missileView.missile.status == MissileStatus.Destroyed ||
+                    missileView.missile.status == MissileStatus.Hitting ||
+                    missileView.missile.status == MissileStatus.Missed)
+                {
+                    PhotonNetwork.Destroy(missileView.gameObject);
+                }
+            });
+        }
+
+        [PunRPC]
+        private void RPC_ReadyToContinue()
+        {
+            _clientsReadyToContinue += 1;
         }
 
         #endregion MasterClient
@@ -253,8 +319,20 @@ namespace ST.Play
                 var potentialTargets = Game.IdentifyTargets(shipView.ship, allShips);
                 shipView.GetComponent<FireControl>().PotentialTargets = potentialTargets;
             }
-            
+
             OnTargetsIdentified?.Invoke(this, EventArgs.Empty);
+        }
+
+        [PunRPC]
+        private void RPC_ClearTargets()
+        {
+            GetPlayerShips().ForEach(s => s.GetComponent<FireControl>().Clear());
+        }
+
+        [PunRPC]
+        private void RPC_MoveMissiles()
+        {
+            StartCoroutine(AnimateMoveMissilesToNextPosition());
         }
 
         private void FocusPlayerShip()
@@ -306,7 +384,24 @@ namespace ST.Play
             Busy = false;
         }
 
-        public List<ShipView> GetAllShips()
+        private IEnumerator AnimateMoveMissilesToNextPosition()
+        {
+            Busy = true;
+            var missiles = GetAllMissiles();
+
+            missiles.ForEach(missileView => missileView.AutoMove());
+
+            do
+            {
+                yield return null;
+            } while (missiles.Any(s => s.Busy));
+
+            Busy = false;
+            
+            photonView.RPC("RPC_ReadyToContinue", RpcTarget.MasterClient);
+        }
+
+        public static List<ShipView> GetAllShips()
         {
             return PhotonNetwork
                 .FindGameObjectsWithComponent(typeof(ShipView))
@@ -314,18 +409,26 @@ namespace ST.Play
                 .ToList();
         }
 
-        public List<ShipView> GetPlayerShips()
+        public static List<ShipView> GetPlayerShips()
         {
             return GetAllShips().Where(s => s.ship.team == PhotonNetwork.LocalPlayer.GetTeam()).ToList();
         }
 
         [CanBeNull]
-        public ShipView GetShipById(string shipId)
+        public static ShipView GetShipById(string shipId)
         {
             return GetAllShips().First(s => s.ship.uid == shipId);
         }
 
-        public void SetReady(bool ready)
+        public static List<MissileView> GetAllMissiles()
+        {
+            return PhotonNetwork
+                .FindGameObjectsWithComponent(typeof(MissileView))
+                .Select(go => go.GetComponent<MissileView>())
+                .ToList();
+        }
+
+        public static void SetReady(bool ready)
         {
             PhotonNetwork.LocalPlayer.SetReady(ready);
         }

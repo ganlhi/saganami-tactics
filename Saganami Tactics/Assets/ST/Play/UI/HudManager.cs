@@ -13,6 +13,7 @@ namespace ST.Play.UI
         private Camera _camera;
 
         [CanBeNull] private ShipView _hoverShip;
+        [CanBeNull] private MissileView _hoverMissile;
 
         // TODO handle missiles
 #pragma warning disable 649
@@ -75,9 +76,9 @@ namespace ST.Play.UI
         private void DetectOveredObject()
         {
             _hoverShip = null;
+            _hoverMissile = null;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
-            // TODO handle missiles
 
             if (Physics.Raycast(ray, out var hit, Mathf.Infinity, hoverMask))
             {
@@ -87,16 +88,13 @@ namespace ST.Play.UI
                 {
                     _hoverShip = shipView;
                 }
-
-                // TODO
-//            else if (go.TryGetComponent<MissilesView>(out var missilesView))
-//            {
-//                
-//            }
+                else if (go.TryGetComponent<MissileView>(out var missileView))
+                {
+                    _hoverMissile = missileView;
+                }
             }
 
-            _uiManager.SetHoverShipInfo(_hoverShip);
-            // TODO handle missiles
+            _uiManager.SetHoverInfo(_hoverShip, _hoverMissile);
         }
 
         private void HandleClick()
@@ -135,7 +133,7 @@ namespace ST.Play.UI
                         .GetComponent<TargetMarker>();
 
                     targetMarker.fcon = fcon;
-                    targetMarker.shipView = _gameManager.GetShipById(shipId);
+                    targetMarker.shipView = GameManager.GetShipById(shipId);
                     targetMarker.targettingContexts = new List<TargettingContext>() {potentialTarget};
 
                     targetMarker.OnLockTarget += (sender, tuple) =>

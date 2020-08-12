@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ST.Play
 {
-    enum PostSyncAction
+    internal enum ShipPostSyncAction
     {
         None,
         PlaceMarker,
@@ -44,13 +44,13 @@ namespace ST.Play
         {
             if (PhotonNetwork.IsMasterClient)
             {
-                SyncShip(PostSyncAction.None);
+                SyncShip(ShipPostSyncAction.None);
             }
         }
 
         #region MasterClient
 
-        private void SyncShip(PostSyncAction andThen)
+        private void SyncShip(ShipPostSyncAction andThen)
         {
             photonView.RPC("RPC_SetShip", RpcTarget.All,
                 ship.uid,
@@ -74,19 +74,19 @@ namespace ST.Play
         public void UpdateFutureMovement()
         {
             ship.UpdateFutureMovement();
-            SyncShip(PostSyncAction.PlaceMarker);
+            SyncShip(ShipPostSyncAction.PlaceMarker);
         }
 
         public void PlaceMarker()
         {
             ship.PlaceMarker();
-            SyncShip(andThen: PostSyncAction.PlaceMarker);
+            SyncShip(andThen: ShipPostSyncAction.PlaceMarker);
         }
 
         public void ResetThrustAndPlottings()
         {
             ship.ResetThrustAndPlottings();
-            SyncShip(andThen: PostSyncAction.PlaceMarker);
+            SyncShip(andThen: ShipPostSyncAction.PlaceMarker);
         }
 
         [PunRPC]
@@ -118,7 +118,7 @@ namespace ST.Play
             }
 
             ship.ApplyDisplacement(); // TODO delay for non owners?
-            SyncShip(andThen: PostSyncAction.PlaceMarker);
+            SyncShip(andThen: ShipPostSyncAction.PlaceMarker);
         }
 
         #endregion MasterClient
@@ -142,7 +142,7 @@ namespace ST.Play
             int pitch,
             int roll,
             int thrust,
-            PostSyncAction andThen)
+            ShipPostSyncAction andThen)
         {
             ship.uid = uid;
             ship.name = shipName;
@@ -162,15 +162,15 @@ namespace ST.Play
 
             switch (andThen)
             {
-                case PostSyncAction.None:
+                case ShipPostSyncAction.None:
                     break;
-                case PostSyncAction.PlaceMarker:
+                case ShipPostSyncAction.PlaceMarker:
                     var emTransform = EndMarker.transform;
                     emTransform.position = ship.endMarkerPosition;
                     emTransform.rotation = ship.endMarkerRotation;
                     EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition);
                     break;
-                case PostSyncAction.MarkReadyToMove:
+                case ShipPostSyncAction.MarkReadyToMove:
                     MarkReadyToMove();
                     break;
                 default:

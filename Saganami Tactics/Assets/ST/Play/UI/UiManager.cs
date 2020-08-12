@@ -34,7 +34,7 @@ namespace ST.Play.UI
             _gameManager.OnBusyChange += (sender, busy) => { turnPanel.busy = busy; };
             turnPanel.OnReady += (sender, args) =>
             {
-                _gameManager.SetReady(true);
+                GameManager.SetReady(true);
                 turnPanel.ready = true;
             };
         }
@@ -49,7 +49,7 @@ namespace ST.Play.UI
 
         private void UpdateShipsListOnChanges()
         {
-            _gameManager.OnShipsInit += (sender, args) => { shipsList.Ships = _gameManager.GetAllShips(); };
+            _gameManager.OnShipsInit += (sender, args) => { shipsList.Ships = GameManager.GetAllShips(); };
             _gameManager.OnSelectShip += (sender, shipView) => { shipsList.SetSelectedShip(shipView); };
 
             shipsList.OnSelectShip += (sender, shipView) => { _gameManager.SelectedShip = shipView; };
@@ -152,22 +152,39 @@ namespace ST.Play.UI
         #region Hover info
 
 #pragma warning disable 649
-        [SerializeField] private GameObject hoverShipInfo;
-        [SerializeField] private TextMeshProUGUI hoverShipInfoText;
+        [SerializeField] private GameObject hoverInfo;
+        [SerializeField] private TextMeshProUGUI hoverInfoText;
         // TODO handle missiles
 #pragma warning restore 649
 
-        public void SetHoverShipInfo([CanBeNull] ShipView shipView)
+        public void SetHoverInfo([CanBeNull] ShipView shipView, [CanBeNull] MissileView missileView)
         {
-            if (shipView == null)
+            if (shipView != null)
             {
-                hoverShipInfo.SetActive(false);
+                hoverInfo.SetActive(true);
+                hoverInfoText.text = shipView.ship.name;
+                hoverInfoText.color = shipView.ship.team.ToColor();
+            }
+            else if (missileView != null)
+            {
+                var missile = missileView.missile;
+                var attacker = GameManager.GetShipById(missile.attackerId);
+                var target = GameManager.GetShipById(missile.targetId);
+
+                if (attacker != null && target != null)
+                {
+                    hoverInfo.SetActive(true);
+                    hoverInfoText.text = $"{missile.number} missiles from {attacker.ship.name} to {target.ship.name}";
+                    hoverInfoText.color = attacker.ship.team.ToColor();
+                }
+                else
+                {
+                    hoverInfo.SetActive(false);
+                }
             }
             else
             {
-                hoverShipInfo.SetActive(true);
-                hoverShipInfoText.text = shipView.ship.name;
-                hoverShipInfoText.color = shipView.ship.team.ToColor();
+                hoverInfo.SetActive(false);
             }
         }
 

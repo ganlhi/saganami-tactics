@@ -5981,7 +5981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 1648275788}
-  stateHolder: {fileID: 11400000, guid: 17a6990ef9b5a2e49b920f50ef3593f7, type: 2}
+  stateHolder: {fileID: 11400000, guid: 8a847470696e10c4497fce1ced7258c5, type: 2}
 --- !u!114 &592222521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6000,8 +6000,8 @@ MonoBehaviour:
   shipInfo: {fileID: 3088707936619853058}
   plottingPanel: {fileID: 1175203246}
   targetingPanel: {fileID: 573616445}
-  hoverShipInfo: {fileID: 876597679}
-  hoverShipInfoText: {fileID: 472057846}
+  hoverInfo: {fileID: 876597679}
+  hoverInfoText: {fileID: 472057846}
 --- !u!114 &592222522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7737,7 +7737,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1193393634}
-  - {fileID: 1210574524}
   m_Father: {fileID: 1965693144}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9995,7 +9994,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1193393634}
   m_Layer: 5
-  m_Name: HoverShip
+  m_Name: HoverInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10319,41 +10318,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2689872673443789484, guid: 07d34bd0cc86af647bd6476bf0010065, type: 3}
   m_PrefabInstance: {fileID: 100666620}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1210574523
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1210574524}
-  m_Layer: 5
-  m_Name: TODO HoverMissile
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1210574524
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210574523}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 876597680}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1218576245
 GameObject:
   m_ObjectHideFlags: 0
@@ -24820,9 +24784,9 @@ RectTransform:
   m_Father: {fileID: 224931843112220985}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 139.00003, y: -25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 139.00003, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224674836521786095

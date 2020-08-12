@@ -68,13 +68,13 @@ namespace ST.Play.UI
                 {
                     if (isOn)
                     {
-                        fcon.Locks.Add(targettingContext.Mount, targettingContext);
+                        fcon.LockTarget(targettingContext.Mount, targettingContext);
                     }
                     else if (fcon.Locks.TryGetValue(targettingContext.Mount, out var lockedTargetingContext))
                     {
                         if (lockedTargetingContext == targettingContext)
                         {
-                            fcon.Locks.Remove(targettingContext.Mount);
+                            fcon.UnlockTarget(targettingContext.Mount);
                         }
                     }
 

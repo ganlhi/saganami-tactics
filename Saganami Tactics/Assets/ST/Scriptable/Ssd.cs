@@ -21,7 +21,7 @@ namespace ST.Scriptable
         public SideDefenses[] defenses;
         public HitLocation[] hitLocations;
     }
-    
+
 
     [Serializable]
     public struct WeaponMount
@@ -30,6 +30,24 @@ namespace ST.Scriptable
         public Weapon model;
         public uint[] weapons;
         public int ammo;
+
+        public bool Equals(WeaponMount other)
+        {
+            return side == other.side && Equals(model, other.model);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is WeaponMount other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int) side * 397) ^ (model != null ? model.GetHashCode() : 0);
+            }
+        }
     }
 
     [Serializable]
@@ -88,14 +106,14 @@ namespace ST.Scriptable
             get
             {
                 if (_availableSsds != null) return _availableSsds;
-                
+
                 var ssds = Resources.LoadAll<Ssd>("SSD");
                 _availableSsds = ssds.ToDictionary((ssd) => ssd.className);
 
                 return _availableSsds;
             }
         }
-        
+
         public static uint GetUndamagedValue(IEnumerable<uint> boxes, IEnumerable<SsdAlteration> alterations)
         {
             var nbDamaged = alterations.Count(a =>
@@ -126,7 +144,7 @@ namespace ST.Scriptable
             }
 
             return GetUndamagedValue(boxes, pivotAlterations);
-        } 
+        }
 
         public static uint GetMaxRoll(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
@@ -144,13 +162,13 @@ namespace ST.Scriptable
             }
 
             return GetUndamagedValue(boxes, rollAlterations);
-        } 
+        }
 
         public static uint GetMaxThrust(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var mvtAlterations = alterations.Where(a => a.type == SsdAlterationType.Movement);
             var boxes = ssd.movement;
             return GetUndamagedValue(boxes, mvtAlterations);
-        } 
+        }
     }
 }

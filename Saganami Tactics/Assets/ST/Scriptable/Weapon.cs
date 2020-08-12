@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace ST.Scriptable
@@ -27,6 +29,26 @@ namespace ST.Scriptable
 
             return okBands.First();
         }
+        
+        private bool Equals(Weapon other)
+        {
+            return base.Equals(other) && string.Equals(name, other.name);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == this.GetType() && Equals((Weapon) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ (name != null ? name.GetHashCode() : 0);
+            }
+        }
     }
 
     [Serializable]
@@ -44,5 +66,22 @@ namespace ST.Scriptable
         Missile,
         Laser,
         // TODO add other types needing special rules
+    }
+
+    public static class WeaponHelper
+    {
+        private static Dictionary<string, Weapon> _weapons;
+
+        [CanBeNull]
+        public static Weapon GetWeaponByName(string name)
+        {
+            if (_weapons == null)
+            {
+                var weapons = Resources.LoadAll<Weapon>("SSD/Weapons");
+                _weapons = weapons.ToDictionary((w) => w.name);
+            }
+
+            return _weapons.TryGetValue(name, out var weapon) ? weapon : null;
+        }
     }
 }
