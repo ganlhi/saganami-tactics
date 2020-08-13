@@ -4,6 +4,7 @@ using System.Linq;
 using ST.Common;
 using ST.Scriptable;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ST
 {
@@ -111,7 +112,6 @@ namespace ST
                     break;
 
                 case TurnStep.Plotting:
-//                    events.Add(GameEvent.PlaceShipsMarkers);
                     break;
 
                 case TurnStep.Movement:
@@ -149,8 +149,6 @@ namespace ST
 
             foreach (var ennemyShip in ennemyShips)
             {
-                var targetingContexts = new List<TargettingContext>();
-
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Missile));
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Laser));
             }
@@ -226,27 +224,35 @@ namespace ST
             {
                 case MissileStatus.Launched:
                     missile.status = MissileStatus.Accelerating;
-                    missile.nextMovePosition =
+                    missile.position =
                         missile.launchPoint + .5f * (target.endMarkerPosition - missile.launchPoint);
                     break;
                 case MissileStatus.Accelerating:
-                    if (!CanStillCatchTarget(missile, attacker, target, out var r))
+                    if (!CanStillCatchTarget(missile, attacker, target, ref reports))
                     {
-                        reports.AddRange(r);
                         missile.status = MissileStatus.Missed;
+
+                        var dir = missile.launchPoint.DirectionTo(missile.position);
+                        var distToTarget = missile.launchPoint.DistanceTo(target.position);
+                        var distMaxRange = missile.weapon.GetMaxRange();
+                        missile.position = missile.launchPoint + dir * Mathf.Min(distMaxRange, distToTarget);
                     }
-//                    else if (!CanTrackTarget())
-                    //                    {
-                    //                        missile.status = MissileStatus.Missed;
-                    //                    }
-                    //                    else if (!CanPassActiveDefenses())
-                    //                    {
-                    //                        missile.status = MissileStatus.Destroyed;
-                    //                    }
+                    else if (!CanTrackTarget(ref missile, attacker, target, ref reports))
+                    {
+                        missile.status = MissileStatus.Missed;
+
+                        missile.position = target.position + Random.onUnitSphere;
+                    }
+                    else if (!CanPassActiveDefenses(ref missile, attacker, target, ref reports))
+                    {
+                        missile.status = MissileStatus.Destroyed;
+
+                        missile.position += .75f * (target.position - missile.position);
+                    }
                     else
                     {
                         missile.status = MissileStatus.Hitting;
-                        missile.nextMovePosition = target.position;
+                        missile.position = target.position;
                         reports.Add(new Tuple<ReportType, string>(ReportType.MissilesHit,
                             "Missiles from " + attacker.name + ": " + missile.number + " hits"));
                     }
@@ -261,10 +267,8 @@ namespace ST
 
 
         private static bool CanStillCatchTarget(Missile missile, Ship attacker, Ship target,
-            out List<Tuple<ReportType, string>> reports)
+            ref List<Tuple<ReportType, string>> reports)
         {
-            reports = new List<Tuple<ReportType, string>>();
-
             if (target.Status != ShipStatus.Ok)
             {
                 reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
@@ -282,72 +286,86 @@ namespace ST
 
             reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
                 "Missiles from " + attacker.name + " are out of range"));
+
             return false;
         }
 
-//        private static bool CanTrackTarget()
-//        {
-//            var activeEcm = TargetData.Target.SSD.ECM;
-//            var activeEccm = TargetData.Attacker.SSD.ECCM;
-//
-//            if (TargetData.Attacker.AttemptCrewRateCheck())
-//            {
-//                activeEcm = Math.Max(0, activeEcm - activeEccm);
-//            }
-//
-//            var totalRange = Mathf.CeilToInt(TargetData.LaunchPoint.DistanceTo(TargetData.Target.transform.position));
-//            var rangeBand = TargetData.Weapon.GetRangeBand(totalRange);
-//
-//            if (!rangeBand.HasValue)
-//            {
-//                // Should not happen, but let's consider this case a miss
-//                MakeReportToTarget(ReportType.MissilesMissed,
-//                    "Missiles from " + TargetData.Attacker.Name + " are out of range");
-//                return false;
-//            }
-//
-//            var accuracy = rangeBand.Value.accuracy + activeEcm;
-//            var diceRolls = Dice.D10s(TargetData.Missiles);
-//            Debug.Log("Rolled against " + accuracy + "+ accuracy: " + string.Join(", ", diceRolls));
-//            var successes = diceRolls.Count(r => r >= accuracy);
-//            Debug.Log("Successes: " + successes);
-//            if (successes == 0)
-//            {
-//                MakeReportToTarget(ReportType.MissilesMissed,
-//                    "Missiles from " + TargetData.Attacker.Name + " lost their target");
-//                return false;
-//            }
-//
-//            TargetData.Missiles = successes;
-//
-//            return true;
-//        }
-//
-//        private static bool CanPassActiveDefenses()
-//        {
-//            var defenseBearing = Bearing.Compute(TargetData.Target.transform, TargetData.LaunchPoint);
-//
-//            var cm = defenseBearing.Wedge.HasValue ? 0 : TargetData.Target.SSD.CM(defenseBearing.Side);
-//            var pd = TargetData.Target.SSD.PD(defenseBearing.Side);
-//            var activeDefenses = cm + pd;
-//            Debug.Log("Active defenses: " + cm + " CM + " + pd + " PD = " + activeDefenses);
-//
-//            var remaining = Math.Min(TargetData.Missiles, activeDefenses);
-//            Debug.Log("Potential intercepts: " + remaining);
-//            var diceRolls = Dice.D10s(remaining);
-//            Debug.Log("Rolled against " + TargetData.Weapon.evasion + "+ evasion: " + string.Join(", ", diceRolls));
-//            var failures = diceRolls.Count(r => r < TargetData.Weapon.evasion);
-//            Debug.Log("Failures: " + failures);
-//            TargetData.Missiles = Math.Max(0, TargetData.Missiles - failures);
-//            Debug.Log("Remaining missiles: " + TargetData.Missiles);
-//            if (TargetData.Missiles == 0)
-//            {
-//                MakeReportToTarget(ReportType.MissilesStopped,
-//                    "Missiles from " + TargetData.Attacker.Name + " have been destroyed by active defenses");
-//                return false;
-//            }
-//
-//            return true;
-//        }
+        private static bool CanTrackTarget(ref Missile missile, Ship attacker, Ship target,
+            ref List<Tuple<ReportType, string>> reports)
+        {
+            var activeEcm = SsdHelper.GetECM(target.Ssd, target.alterations);
+            var activeEccm = SsdHelper.GetECCM(attacker.Ssd, attacker.alterations);
+
+            if (SsdHelper.AttemptCrewRateCheck(attacker.Ssd))
+            {
+                activeEcm = Math.Max(0, activeEcm - activeEccm);
+            }
+
+            var totalRange = Mathf.CeilToInt(missile.launchPoint.DistanceTo(target.position));
+            var rangeBand = missile.weapon.GetRangeBand(totalRange);
+
+            if (!rangeBand.HasValue)
+            {
+                // Should not happen, but let's consider this case a miss
+                reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
+                    "Missiles from " + attacker.name + " are out of range"));
+                return false;
+            }
+
+            var (mainBearing, _) = target.GetBearingTo(missile.position);
+            var wedgeMalus = SsdHelper.HasWedge(target.Ssd, mainBearing) ? 4 : 0;
+
+            var accuracy = rangeBand.Value.accuracy + activeEcm + wedgeMalus;
+            var diceRolls = Dice.D10s(missile.number);
+
+            var successes = diceRolls.Count(r => r >= accuracy);
+            
+            if (successes == 0)
+            {
+                reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
+                    "Missiles from " + attacker.name + " lost their target"));
+                return false;
+            }
+
+            missile.number = successes;
+
+            return true;
+        }
+
+        private static bool CanPassActiveDefenses(ref Missile missile, Ship attacker, Ship target,
+            ref List<Tuple<ReportType, string>> reports)
+        {
+            var (mainBearing, secondaryBearing) = target.GetBearingTo(missile.position);
+
+            uint cm, pd;
+            if (SsdHelper.HasWedge(target.Ssd, mainBearing))
+            {
+                cm = 0;
+                pd = SsdHelper.GetPD(target.Ssd, secondaryBearing, target.alterations);
+            }
+            else
+            {
+                cm = SsdHelper.GetCM(target.Ssd, mainBearing, target.alterations);
+                pd = SsdHelper.GetPD(target.Ssd, mainBearing, target.alterations);
+            }
+
+            var activeDefenses = (int) (cm + pd);
+
+            var remaining = Math.Min(missile.number, activeDefenses);
+            
+            var diceRolls = Dice.D10s(remaining);
+            var evasion = missile.weapon.evasion;
+            
+            var failures = diceRolls.Count(r => r < evasion);
+            
+            missile.number = Math.Max(0, missile.number - failures);
+
+            if (missile.number > 0) return true;
+
+            reports.Add(new Tuple<ReportType, string>(ReportType.MissilesStopped,
+                "Missiles from " + attacker.name + " have been destroyed by active defenses"));
+            
+            return false;
+        }
     }
 }

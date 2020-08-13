@@ -252,7 +252,14 @@ namespace ST.Play
                 var target = GetShipById(missileView.missile.targetId);
                 if (attacker == null || target == null) return;
                 missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, attacker.ship, target.ship, Turn, out var reports));
-                Debug.Log(reports.ToStringFull()); // TODO
+                
+                // TODO
+                reports.ForEach(r =>
+                {
+                    var (reportType, message) = r;
+                    Debug.Log($"   MISSILE REPORT [{reportType}] : {message}");
+                });
+                
             });
             
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);

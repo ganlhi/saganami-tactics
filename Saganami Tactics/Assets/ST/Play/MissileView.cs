@@ -48,7 +48,6 @@ namespace ST.Play
                 missile.weapon.name,
                 missile.position,
                 missile.rotation,
-                missile.nextMovePosition,
                 missile.status,
                 missile.updatedAtTurn,
                 andThen);
@@ -68,7 +67,6 @@ namespace ST.Play
             string weaponName,
             Vector3 position,
             Quaternion rotation,
-            Vector3 nextMovePosition,
             MissileStatus status,
             int updatedAtTurn,
             MissilePostSyncAction andThen)
@@ -81,7 +79,6 @@ namespace ST.Play
             missile.weapon = WeaponHelper.GetWeaponByName(weaponName);
             missile.position = position;
             missile.rotation = rotation;
-            missile.nextMovePosition = nextMovePosition;
             missile.status = status;
             missile.updatedAtTurn = updatedAtTurn;
 
@@ -107,7 +104,7 @@ namespace ST.Play
             var missileTransform = transform;
             var startPos = missileTransform.position;
 
-            var toPos = missile.nextMovePosition;
+            var toPos = missile.position;
             
             var startRot = missileTransform.rotation;
             var dir = toPos - startPos;

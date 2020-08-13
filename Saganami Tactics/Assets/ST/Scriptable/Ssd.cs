@@ -170,5 +170,68 @@ namespace ST.Scriptable
             var boxes = ssd.movement;
             return GetUndamagedValue(boxes, mvtAlterations);
         }
+
+        public static uint GetECM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        {
+            var ecmAlterations = alterations.Where(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.ECM);
+
+            var boxes = Array.Empty<uint>();
+            foreach (var hitLocation in ssd.hitLocations)
+            {
+                var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.ECM).ToList();
+                if (slots.Any())
+                {
+                    boxes = slots.First().boxes;
+                }
+            }
+
+            return GetUndamagedValue(boxes, ecmAlterations);
+        }
+
+        public static uint GetECCM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        {
+            var eccmAlterations = alterations.Where(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.ECCM);
+
+            var boxes = Array.Empty<uint>();
+            foreach (var hitLocation in ssd.hitLocations)
+            {
+                var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.ECCM).ToList();
+                if (slots.Any())
+                {
+                    boxes = slots.First().boxes;
+                }
+            }
+
+            return GetUndamagedValue(boxes, eccmAlterations);
+        }
+
+        public static bool AttemptCrewRateCheck(Ssd ssd)
+        {
+            var diceRoll = Dice.D10();
+            return diceRoll >= ssd.crewRate;
+        }
+
+        public static bool HasWedge(Ssd ssd, Side side)
+        {
+            return ssd.defenses.First(d => d.side == side).wedge;
+        }
+
+        public static uint GetCM(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
+        {
+            var defenses = ssd.defenses.First(d => d.side == side);
+            var cmAlterations = alterations.Where(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.CounterMissile && a.side == side);
+            return GetUndamagedValue(defenses.counterMissiles, cmAlterations);
+        }
+
+        public static uint GetPD(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
+        {
+            var defenses = ssd.defenses.First(d => d.side == side);
+            var pdAlterations = alterations.Where(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.PointDefense && a.side == side);
+            return GetUndamagedValue(defenses.pointDefense, pdAlterations);
+        }
     }
 }
