@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +19,9 @@ namespace ST.Play.UI
         [SerializeField] private Button rollLeftBtn;
         [SerializeField] private Button rollRightBtn;
         [SerializeField] private Button rollResetBtn;
-        [SerializeField] private Slider thrustSlider;
+        [SerializeField] private Button thrustPlusBtn;
+        [SerializeField] private Button thrustMinusBtn;
+        [SerializeField] private TextMeshProUGUI thrustValue;
 #pragma warning restore 649
 
         private Animator _animator;
@@ -27,7 +30,6 @@ namespace ST.Play.UI
         private float _usedPivots;
         private float _usedRolls;
         private int _thrust;
-        private int _maxThrust;
 
         public bool Active
         {
@@ -73,19 +75,11 @@ namespace ST.Play.UI
             set
             {
                 _thrust = value;
-                thrustSlider.value = value;
+                thrustValue.text = value.ToString();
             }
         }
 
-        public int MaxThrust
-        {
-            get => _maxThrust;
-            set
-            {
-                _maxThrust = value;
-                thrustSlider.maxValue = value;
-            }
-        }
+        public int MaxThrust { get; set; }
 
         public event EventHandler<int> OnYaw;
         public event EventHandler<int> OnPitch;
@@ -101,9 +95,12 @@ namespace ST.Play.UI
 
         private void Start()
         {
-            thrustSlider.onValueChanged.AddListener(value =>
-                OnSetThrust?.Invoke(this, Mathf.Clamp(Mathf.RoundToInt(value), 0, _maxThrust)));
+            thrustPlusBtn.onClick.AddListener(() =>
+                OnSetThrust?.Invoke(this, Mathf.Clamp(Mathf.RoundToInt(_thrust + 1), 0, MaxThrust)));
             
+            thrustMinusBtn.onClick.AddListener(() =>
+                OnSetThrust?.Invoke(this, Mathf.Clamp(Mathf.RoundToInt(_thrust - 1), 0, MaxThrust)));
+
             pivotLeftBtn.onClick.AddListener(() => OnYaw?.Invoke(this, -1));
             pivotRightBtn.onClick.AddListener(() => OnYaw?.Invoke(this, 1));
             pivotUpBtn.onClick.AddListener(() => OnPitch?.Invoke(this, -1));

@@ -352,6 +352,7 @@ MonoBehaviour:
     rotation: {x: 0, y: 0, z: 0, w: 0}
     status: 0
     nextMovePosition: {x: 0, y: 0, z: 0}
+    updatedAtTurn: 0
 --- !u!65 &4127260642639804238
 BoxCollider:
   m_ObjectHideFlags: 0

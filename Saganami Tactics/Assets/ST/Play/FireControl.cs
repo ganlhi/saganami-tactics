@@ -37,8 +37,7 @@ namespace ST.Play
 
         public void Clear()
         {
-            _potentialTargets.Clear();
-            _locks.Clear();
+            photonView.RPC("RPC_Clear", RpcTarget.All);
         }
 
         public void LockTarget(WeaponMount mount, TargettingContext targettingContext)
@@ -58,6 +57,13 @@ namespace ST.Play
         {
             var mountIndex = Array.FindIndex(_shipView.ship.Ssd.weaponMounts, weaponMount => weaponMount.Equals(mount));
             photonView.RPC("RPC_UnlockTarget", RpcTarget.All, mountIndex);
+        }
+
+        [PunRPC]
+        private void RPC_Clear()
+        {
+            _potentialTargets.Clear();
+            _locks.Clear();
         }
 
         [PunRPC]

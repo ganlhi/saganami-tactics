@@ -45,7 +45,7 @@ namespace ST.Play.UI
             weapon.text = TargettingContext.Mount.model.name;
             target.text = TargettingContext.Target.name;
             number.text = TargettingContext.Number.ToString();
-            distance.text = TargettingContext.LaunchDistance.ToString(CultureInfo.InvariantCulture);
+            distance.text = Mathf.CeilToInt(TargettingContext.LaunchDistance).ToString();
         }
     }
 }

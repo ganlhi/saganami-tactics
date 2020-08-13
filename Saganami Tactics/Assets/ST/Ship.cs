@@ -188,6 +188,10 @@ namespace ST
             {
                 endMarkerPosition = position + velocity + ThrustVector.normalized * (Thrust / 2f);
             }
+            else
+            {
+                endMarkerPosition = position + velocity;
+            }
         }
 
         public void ResetThrustAndPlottings()

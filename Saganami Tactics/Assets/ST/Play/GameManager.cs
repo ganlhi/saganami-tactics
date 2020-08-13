@@ -212,6 +212,9 @@ namespace ST.Play
                     case GameEvent.UpdateMissiles:
                         UpdateMissiles();
                         break;
+                    case GameEvent.MoveMissiles:
+                        StartCoroutine(MoveAndDestroyMissiles());
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -226,7 +229,7 @@ namespace ST.Play
 
                 foreach (var targettingContext in fcon.Locks.Values)
                 {
-                    var missile = new Missile(shipView.ship, targettingContext);
+                    var missile = new Missile(shipView.ship, targettingContext, Turn);
 
                     var mv = PhotonNetwork
                         .InstantiateSceneObject("Prefabs/MissileView", missile.position, missile.rotation)
@@ -241,20 +244,24 @@ namespace ST.Play
 
         private void UpdateMissiles()
         {
-            StartCoroutine(UpdateMoveAndDestroyMissiles());
+            var missileViews = GetAllMissiles();
+            
+            missileViews.ForEach(missileView =>
+            {
+                var attacker = GetShipById(missileView.missile.attackerId);
+                var target = GetShipById(missileView.missile.targetId);
+                if (attacker == null || target == null) return;
+                missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, attacker.ship, target.ship, Turn, out var reports));
+                Debug.Log(reports.ToStringFull()); // TODO
+            });
+            
+            photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
         }
 
-        private IEnumerator UpdateMoveAndDestroyMissiles()
+        private IEnumerator MoveAndDestroyMissiles()
         {
             _clientsReadyToContinue = 0;
 
-            GetAllMissiles().ForEach(missileView =>
-            {
-                var target = GetShipById(missileView.missile.targetId);
-                if (target == null) return;
-                missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, target.ship));
-            });
-            
             photonView.RPC("RPC_MoveMissiles", RpcTarget.All);
 
             do
@@ -330,6 +337,12 @@ namespace ST.Play
         }
 
         [PunRPC]
+        private void RPC_WaitForMissilesUpdates(int nbMissiles)
+        {
+            StartCoroutine(WaitForMissilesUpdates(nbMissiles));
+        }
+
+        [PunRPC]
         private void RPC_MoveMissiles()
         {
             StartCoroutine(AnimateMoveMissilesToNextPosition());
@@ -380,6 +393,23 @@ namespace ST.Play
                 yield return null;
             } while (ships.Any(s => s.Busy));
 
+            SetReady(true);
+            Busy = false;
+        }
+
+        private IEnumerator WaitForMissilesUpdates(int nbMissiles)
+        {
+            Busy = true;
+            Debug.Log("WaitForMissilesUpdates " + nbMissiles);
+
+            int nbUpdated;
+            do
+            {
+                yield return null;
+                nbUpdated = GetAllMissiles().Count(mv => mv.missile.updatedAtTurn == Turn);
+                Debug.Log($"Missiles updated: {nbUpdated} / {nbMissiles}");
+            } while (nbUpdated < nbMissiles);
+            
             SetReady(true);
             Busy = false;
         }

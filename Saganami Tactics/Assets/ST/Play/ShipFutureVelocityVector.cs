@@ -21,7 +21,7 @@ namespace ST.Play
 
         private void Update()
         {
-            _vectorLine.gameObject.SetActive(_shipView.ship.Thrust > 0);
+            _vectorLine.gameObject.SetActive(_shipView.OwnedByClient && _shipView.ship.Thrust > 0);
             
             var fromPos = transform.position;
             var toPos = fromPos + _shipView.ship.velocity + _shipView.ship.ThrustVector;

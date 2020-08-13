@@ -48,7 +48,9 @@ namespace ST.Play
                 missile.weapon.name,
                 missile.position,
                 missile.rotation,
+                missile.nextMovePosition,
                 missile.status,
+                missile.updatedAtTurn,
                 andThen);
         }
 
@@ -66,7 +68,9 @@ namespace ST.Play
             string weaponName,
             Vector3 position,
             Quaternion rotation,
+            Vector3 nextMovePosition,
             MissileStatus status,
+            int updatedAtTurn,
             MissilePostSyncAction andThen)
         {
             missile.uid = uid;
@@ -77,7 +81,9 @@ namespace ST.Play
             missile.weapon = WeaponHelper.GetWeaponByName(weaponName);
             missile.position = position;
             missile.rotation = rotation;
+            missile.nextMovePosition = nextMovePosition;
             missile.status = status;
+            missile.updatedAtTurn = updatedAtTurn;
 
             _attacker = GameManager.GetShipById(attackerId);
             _target = GameManager.GetShipById(targetId);

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 using Photon.Pun;
 using ST.Common;
 using ST.Scriptable;
@@ -12,7 +11,7 @@ namespace ST.Play
     {
         None,
         PlaceMarker,
-        MarkReadyToMove,
+        PlaceMarkerIfOwned,
     }
 
     [RequireComponent(typeof(PhotonView))]
@@ -117,8 +116,8 @@ namespace ST.Play
                     throw new ArgumentOutOfRangeException(nameof(action), action, null);
             }
 
-            ship.ApplyDisplacement(); // TODO delay for non owners?
-            SyncShip(andThen: ShipPostSyncAction.PlaceMarker);
+            ship.ApplyDisplacement();
+            SyncShip(andThen: ShipPostSyncAction.PlaceMarkerIfOwned);
         }
 
         #endregion MasterClient
@@ -165,38 +164,29 @@ namespace ST.Play
                 case ShipPostSyncAction.None:
                     break;
                 case ShipPostSyncAction.PlaceMarker:
-                    var emTransform = EndMarker.transform;
-                    emTransform.position = ship.endMarkerPosition;
-                    emTransform.rotation = ship.endMarkerRotation;
-                    EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition);
+                    UpdateMarkerTransform();
                     break;
-                case ShipPostSyncAction.MarkReadyToMove:
-                    MarkReadyToMove();
+                case ShipPostSyncAction.PlaceMarkerIfOwned:
+                    if (OwnedByClient) UpdateMarkerTransform();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(andThen), andThen, null);
             }
         }
 
-        private void MarkReadyToMove()
+        private void UpdateMarkerTransform()
         {
-            var shouldMarkItReady = false;
-            if (OwnedByClient)
-                shouldMarkItReady = true;
-            else
-            {
-                // If no player control this ship and we are the master, let's mark it ready
-                if (PhotonNetwork.CurrentRoom.Players.Values.All(p => p.GetTeam() != ship.team) &&
-                    PhotonNetwork.IsMasterClient)
-                    shouldMarkItReady = true;
-            }
-
-            if (shouldMarkItReady)
-                photonView.RPC("RPC_SetReadyToMove", RpcTarget.All, true);
+            var emTransform = EndMarker.transform;
+            emTransform.position = ship.endMarkerPosition;
+            emTransform.rotation = ship.endMarkerRotation;
+            EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition);
         }
 
         public void AutoMove()
         {
+            // Make sure the marker view is updated
+            UpdateMarkerTransform();
+            
             StartCoroutine(MakeMovement());
         }
 

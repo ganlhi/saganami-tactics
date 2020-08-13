@@ -17,6 +17,7 @@ namespace ST
         ClearTargets,
         FireMissiles,
         UpdateMissiles,
+        MoveMissiles,
     }
 
     public static class Game
@@ -37,6 +38,9 @@ namespace ST
                     nextStep = TurnStep.Targeting;
                     break;
                 case TurnStep.Targeting:
+                    nextStep = TurnStep.MissilesUpdates;
+                    break;
+                case TurnStep.MissilesUpdates:
                     nextStep = TurnStep.Missiles;
                     break;
                 case TurnStep.Missiles:
@@ -75,9 +79,13 @@ namespace ST
                     events.Add(GameEvent.IdentifyTargets);
                     break;
 
-                case TurnStep.Missiles:
+                case TurnStep.MissilesUpdates:
                     events.Add(GameEvent.FireMissiles);
                     events.Add(GameEvent.UpdateMissiles);
+                    break;
+
+                case TurnStep.Missiles:
+                    events.Add(GameEvent.MoveMissiles);
                     break;
 
                 case TurnStep.Beams:
@@ -103,7 +111,7 @@ namespace ST
                     break;
 
                 case TurnStep.Plotting:
-                    // TODO broadcast displacement?
+//                    events.Add(GameEvent.PlaceShipsMarkers);
                     break;
 
                 case TurnStep.Movement:
@@ -112,6 +120,9 @@ namespace ST
                     break;
 
                 case TurnStep.Targeting:
+                    break;
+
+                case TurnStep.MissilesUpdates:
                     break;
 
                 case TurnStep.Missiles:
@@ -202,8 +213,15 @@ namespace ST
             return targettingContexts;
         }
 
-        public static Missile UpdateMissile(Missile missile, Ship target)
+        public static Missile UpdateMissile(
+            Missile missile,
+            Ship attacker,
+            Ship target,
+            int turn,
+            out List<Tuple<ReportType, string>> reports)
         {
+            reports = new List<Tuple<ReportType, string>>();
+
             switch (missile.status)
             {
                 case MissileStatus.Launched:
@@ -212,26 +230,124 @@ namespace ST
                         missile.launchPoint + .5f * (target.endMarkerPosition - missile.launchPoint);
                     break;
                 case MissileStatus.Accelerating:
-//                    if (!CanStillCatchTarget() || !CanTrackTarget())
-//                    {
-//                        missile.status = MissileStatus.Missed;
-//                    }
-//                    else if (!CanPassActiveDefenses())
-//                    {
-//                        missile.status = MissileStatus.Destroyed;
-//                    }
-//                    else
-//                    {
+                    if (!CanStillCatchTarget(missile, attacker, target, out var r))
+                    {
+                        reports.AddRange(r);
+                        missile.status = MissileStatus.Missed;
+                    }
+//                    else if (!CanTrackTarget())
+                    //                    {
+                    //                        missile.status = MissileStatus.Missed;
+                    //                    }
+                    //                    else if (!CanPassActiveDefenses())
+                    //                    {
+                    //                        missile.status = MissileStatus.Destroyed;
+                    //                    }
+                    else
+                    {
                         missile.status = MissileStatus.Hitting;
                         missile.nextMovePosition = target.position;
-//                        MakeReportToTarget(ReportType.MissilesHit,
-//                            "Missiles from " + TargetData.Attacker.Name + ": " + TargetData.Missiles + " hits");
-//                    }
+                        reports.Add(new Tuple<ReportType, string>(ReportType.MissilesHit,
+                            "Missiles from " + attacker.name + ": " + missile.number + " hits"));
+                    }
 
                     break;
             }
 
+            missile.updatedAtTurn = turn;
+
             return missile;
         }
+
+
+        private static bool CanStillCatchTarget(Missile missile, Ship attacker, Ship target,
+            out List<Tuple<ReportType, string>> reports)
+        {
+            reports = new List<Tuple<ReportType, string>>();
+
+            if (target.Status != ShipStatus.Ok)
+            {
+                reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
+                    "Missiles from " + attacker.name + " lost their target"));
+                return false;
+            }
+
+            var totalRange = missile.launchPoint.DistanceTo(target.position);
+            var maxRange = missile.weapon.GetMaxRange();
+
+            if (maxRange >= totalRange)
+            {
+                return true;
+            }
+
+            reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
+                "Missiles from " + attacker.name + " are out of range"));
+            return false;
+        }
+
+//        private static bool CanTrackTarget()
+//        {
+//            var activeEcm = TargetData.Target.SSD.ECM;
+//            var activeEccm = TargetData.Attacker.SSD.ECCM;
+//
+//            if (TargetData.Attacker.AttemptCrewRateCheck())
+//            {
+//                activeEcm = Math.Max(0, activeEcm - activeEccm);
+//            }
+//
+//            var totalRange = Mathf.CeilToInt(TargetData.LaunchPoint.DistanceTo(TargetData.Target.transform.position));
+//            var rangeBand = TargetData.Weapon.GetRangeBand(totalRange);
+//
+//            if (!rangeBand.HasValue)
+//            {
+//                // Should not happen, but let's consider this case a miss
+//                MakeReportToTarget(ReportType.MissilesMissed,
+//                    "Missiles from " + TargetData.Attacker.Name + " are out of range");
+//                return false;
+//            }
+//
+//            var accuracy = rangeBand.Value.accuracy + activeEcm;
+//            var diceRolls = Dice.D10s(TargetData.Missiles);
+//            Debug.Log("Rolled against " + accuracy + "+ accuracy: " + string.Join(", ", diceRolls));
+//            var successes = diceRolls.Count(r => r >= accuracy);
+//            Debug.Log("Successes: " + successes);
+//            if (successes == 0)
+//            {
+//                MakeReportToTarget(ReportType.MissilesMissed,
+//                    "Missiles from " + TargetData.Attacker.Name + " lost their target");
+//                return false;
+//            }
+//
+//            TargetData.Missiles = successes;
+//
+//            return true;
+//        }
+//
+//        private static bool CanPassActiveDefenses()
+//        {
+//            var defenseBearing = Bearing.Compute(TargetData.Target.transform, TargetData.LaunchPoint);
+//
+//            var cm = defenseBearing.Wedge.HasValue ? 0 : TargetData.Target.SSD.CM(defenseBearing.Side);
+//            var pd = TargetData.Target.SSD.PD(defenseBearing.Side);
+//            var activeDefenses = cm + pd;
+//            Debug.Log("Active defenses: " + cm + " CM + " + pd + " PD = " + activeDefenses);
+//
+//            var remaining = Math.Min(TargetData.Missiles, activeDefenses);
+//            Debug.Log("Potential intercepts: " + remaining);
+//            var diceRolls = Dice.D10s(remaining);
+//            Debug.Log("Rolled against " + TargetData.Weapon.evasion + "+ evasion: " + string.Join(", ", diceRolls));
+//            var failures = diceRolls.Count(r => r < TargetData.Weapon.evasion);
+//            Debug.Log("Failures: " + failures);
+//            TargetData.Missiles = Math.Max(0, TargetData.Missiles - failures);
+//            Debug.Log("Remaining missiles: " + TargetData.Missiles);
+//            if (TargetData.Missiles == 0)
+//            {
+//                MakeReportToTarget(ReportType.MissilesStopped,
+//                    "Missiles from " + TargetData.Attacker.Name + " have been destroyed by active defenses");
+//                return false;
+//            }
+//
+//            return true;
+//        }
     }
 }
