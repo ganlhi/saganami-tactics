@@ -154,7 +154,6 @@ namespace ST.Play.UI
 #pragma warning disable 649
         [SerializeField] private GameObject hoverInfo;
         [SerializeField] private TextMeshProUGUI hoverInfoText;
-        // TODO handle missiles
 #pragma warning restore 649
 
         public void SetHoverInfo([CanBeNull] ShipView shipView, [CanBeNull] MissileView missileView)
@@ -190,6 +189,39 @@ namespace ST.Play.UI
 
         #endregion Hover info
 
+        #region Reports
+
+#pragma warning disable 649
+        [SerializeField] private ReportsPanel reportsPanel;
+        [SerializeField] private ReportsPanel fullReportsPanel;
+#pragma warning restore 649
+        
+        private void UpdateReportsPanelsOnChanges()
+        {
+            if (_gameManager.SelectedShip != null)
+            {
+                ListSelectedShipReports();
+            }
+            _gameManager.OnSelectShip += (sender, ship) => ListSelectedShipReports();
+        }
+
+        private void ListSelectedShipReports()
+        {
+            SetReports();
+            _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportLogged += (sender, args) => SetReports();
+        }
+
+        private void SetReports()
+        {
+            var ship = _gameManager.SelectedShip;
+            var log = ship.GetComponent<ShipLog>();
+            var reports = log.Reports.ToList();
+            reportsPanel.Reports = reports;
+            fullReportsPanel.Reports = reports;
+        }
+
+        #endregion Reports
+
         private void Awake()
         {
             loadingGroup.alpha = 1f;
@@ -211,6 +243,7 @@ namespace ST.Play.UI
             UpdateShipInfoOnChanges();
             UpdatePlottingPanelOnChanges();
             UpdateTargetingPanelOnChanges();
+            UpdateReportsPanelsOnChanges();
         }
 
         private void Update()

@@ -352,6 +352,7 @@ GameObject:
   - component: {fileID: 5707125248111211823}
   - component: {fileID: 4083142128612587972}
   - component: {fileID: 2465454328595327436}
+  - component: {fileID: 7188055280964369830}
   m_Layer: 8
   m_Name: ShipView
   m_TagString: Untagged
@@ -487,6 +488,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 44cdec7f7c0a4c67931e861ab5d4e6cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7188055280964369830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578224281213481538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63dcc0dfb7c94c9dbac9dcc8b1164a90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1578280227619222470

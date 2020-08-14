@@ -118,9 +118,11 @@ namespace ST.Play
 #pragma warning disable 0649
         [SerializeField] private GameStateHolder stateHolder;
 #pragma warning restore 0649
+
         private GameState _state;
         private int _clientsReadyToContinue;
-        
+        private Dictionary<ShipView, List<Report>> _pendingReports = new Dictionary<ShipView, List<Report>>();
+
         private void LoadStateFromHolder()
         {
             if (stateHolder != null)
@@ -245,23 +247,32 @@ namespace ST.Play
         private void UpdateMissiles()
         {
             var missileViews = GetAllMissiles();
-            
+            _pendingReports.Clear();
+
             missileViews.ForEach(missileView =>
             {
                 var attacker = GetShipById(missileView.missile.attackerId);
                 var target = GetShipById(missileView.missile.targetId);
                 if (attacker == null || target == null) return;
-                missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, attacker.ship, target.ship, Turn, out var reports));
-                
-                // TODO
-                reports.ForEach(r =>
+                missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, attacker.ship, target.ship, Turn,
+                    out var reports));
+
+                var pendingReports = new List<Report>();
+                if (_pendingReports.TryGetValue(target, out var previousReports))
                 {
-                    var (reportType, message) = r;
-                    Debug.Log($"   MISSILE REPORT [{reportType}] : {message}");
-                });
+                    pendingReports = previousReports;
+                }
+
+                pendingReports.AddRange(reports.Select(t => new Report()
+                {
+                    turn = Turn,
+                    type = t.Item1,
+                    message = t.Item2,
+                }));
                 
+                _pendingReports.Add(target, pendingReports);
             });
-            
+
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
         }
 
@@ -275,7 +286,8 @@ namespace ST.Play
             {
                 yield return null;
             } while (_clientsReadyToContinue < PhotonNetwork.CurrentRoom.PlayerCount);
-            
+
+            DispatchPendingReports();
             DestroyMissiles();
         }
 
@@ -290,6 +302,15 @@ namespace ST.Play
                     PhotonNetwork.Destroy(missileView.gameObject);
                 }
             });
+        }
+
+        private void DispatchPendingReports()
+        {
+            foreach (var kv in _pendingReports)
+            {
+                Debug.Log($"Dispatching {kv.Value.Count} reports to {kv.Key.ship.name}");
+                kv.Value.ForEach(report => kv.Key.GetComponent<ShipLog>().AddReport(report));
+            }
         }
 
         [PunRPC]
@@ -416,7 +437,7 @@ namespace ST.Play
                 nbUpdated = GetAllMissiles().Count(mv => mv.missile.updatedAtTurn == Turn);
                 Debug.Log($"Missiles updated: {nbUpdated} / {nbMissiles}");
             } while (nbUpdated < nbMissiles);
-            
+
             SetReady(true);
             Busy = false;
         }
@@ -434,7 +455,7 @@ namespace ST.Play
             } while (missiles.Any(s => s.Busy));
 
             Busy = false;
-            
+
             photonView.RPC("RPC_ReadyToContinue", RpcTarget.MasterClient);
         }
 
