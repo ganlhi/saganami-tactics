@@ -15,7 +15,6 @@ namespace ST.Play
 
         public void AddReport(Report report)
         {
-            Debug.Log($"Add Report {report.type}: {report.message}");
             photonView.RPC("RPC_AddReport", RpcTarget.All, report.type, report.turn, report.message);
         }
 

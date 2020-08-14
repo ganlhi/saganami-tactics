@@ -262,6 +262,10 @@ namespace ST.Play
                 {
                     pendingReports = previousReports;
                 }
+                else
+                {
+                    _pendingReports.Add(target, pendingReports);
+                }
 
                 pendingReports.AddRange(reports.Select(t => new Report()
                 {
@@ -270,7 +274,7 @@ namespace ST.Play
                     message = t.Item2,
                 }));
                 
-                _pendingReports.Add(target, pendingReports);
+                _pendingReports[target] = pendingReports;
             });
 
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
@@ -308,7 +312,6 @@ namespace ST.Play
         {
             foreach (var kv in _pendingReports)
             {
-                Debug.Log($"Dispatching {kv.Value.Count} reports to {kv.Key.ship.name}");
                 kv.Value.ForEach(report => kv.Key.GetComponent<ShipLog>().AddReport(report));
             }
         }
