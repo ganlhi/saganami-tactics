@@ -9,14 +9,14 @@ namespace ST.Play.UI
 {
     public class TargetMarkerWeaponSwitch : MonoBehaviour
     {
-        private TargettingContext _targettingContext;
+        private TargetingContext _targetingContext;
 
-        public TargettingContext TargetingContext
+        public TargetingContext TargetingContext
         {
-            get => _targettingContext;
+            get => _targetingContext;
             set
             {
-                _targettingContext = value;
+                _targetingContext = value;
                 UpdateUi();
             }
         }
@@ -79,7 +79,7 @@ namespace ST.Play.UI
 
         private void UpdateUi()
         {
-            switch (_targettingContext.Side)
+            switch (_targetingContext.Side)
             {
                 case Side.Forward:
                     iconTransform.localRotation = Quaternion.Euler(0, 0, 90);

@@ -125,7 +125,7 @@ namespace ST.Play.UI
 
                 if (targetMarkersByShip.ContainsKey(shipId))
                 {
-                    targetMarkersByShip[shipId].targettingContexts.Add(potentialTarget);
+                    targetMarkersByShip[shipId].targetingContexts.Add(potentialTarget);
                 }
                 else
                 {
@@ -134,7 +134,7 @@ namespace ST.Play.UI
 
                     targetMarker.fcon = fcon;
                     targetMarker.shipView = GameManager.GetShipById(shipId);
-                    targetMarker.targettingContexts = new List<TargettingContext>() {potentialTarget};
+                    targetMarker.targetingContexts = new List<TargetingContext>() {potentialTarget};
 
                     targetMarker.OnLockTarget += (sender, tuple) =>
                     {

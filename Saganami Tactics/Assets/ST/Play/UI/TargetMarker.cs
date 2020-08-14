@@ -11,9 +11,9 @@ namespace ST.Play.UI
     {
         public FireControl fcon;
         public ShipView shipView;
-        public List<TargettingContext> targettingContexts;
+        public List<TargetingContext> targetingContexts;
 
-        public event EventHandler<Tuple<TargettingContext, bool>> OnLockTarget;
+        public event EventHandler<Tuple<TargetingContext, bool>> OnLockTarget;
 
 #pragma warning disable 649
         [SerializeField] private Animator animator;
@@ -23,13 +23,13 @@ namespace ST.Play.UI
         [SerializeField] private CanvasGroup weaponsCanvasGroup;
 #pragma warning restore 649
 
-        private Dictionary<TargettingContext, TargetMarkerWeaponSwitch> _selectors =
-            new Dictionary<TargettingContext, TargetMarkerWeaponSwitch>();
+        private Dictionary<TargetingContext, TargetMarkerWeaponSwitch> _selectors =
+            new Dictionary<TargetingContext, TargetMarkerWeaponSwitch>();
 
         private Camera _camera;
 
-        private readonly Dictionary<TargettingContext, TargetMarkerWeaponSwitch> _switches =
-            new Dictionary<TargettingContext, TargetMarkerWeaponSwitch>();
+        private readonly Dictionary<TargetingContext, TargetMarkerWeaponSwitch> _switches =
+            new Dictionary<TargetingContext, TargetMarkerWeaponSwitch>();
 
         private void Start()
         {
@@ -42,14 +42,14 @@ namespace ST.Play.UI
                 Destroy(child.gameObject);
             }
 
-            foreach (var targettingContext in targettingContexts)
+            foreach (var targetingContext in targetingContexts)
             {
                 var sw = Instantiate(weaponSwitchPrefab).GetComponent<TargetMarkerWeaponSwitch>();
 
-                sw.TargetingContext = targettingContext;
-                if (fcon.Locks.TryGetValue(targettingContext.Mount, out var lockedTargettingContext))
+                sw.TargetingContext = targetingContext;
+                if (fcon.Locks.TryGetValue(targetingContext.Mount, out var lockedTargetingContext))
                 {
-                    if (lockedTargettingContext == targettingContext)
+                    if (lockedTargetingContext == targetingContext)
                     {
                         sw.IsLocked = true;
                     }
@@ -61,20 +61,20 @@ namespace ST.Play.UI
 
                 sw.transform.SetParent(weaponSwitchesContainer, false);
 
-                _switches.Add(targettingContext, sw);
+                _switches.Add(targetingContext, sw);
 
-                var side = targettingContext.Side;
+                var side = targetingContext.Side;
                 sw.OnToggle += (sender, isOn) =>
                 {
                     if (isOn)
                     {
-                        fcon.LockTarget(targettingContext.Mount, targettingContext);
+                        fcon.LockTarget(targetingContext.Mount, targetingContext);
                     }
-                    else if (fcon.Locks.TryGetValue(targettingContext.Mount, out var lockedTargetingContext))
+                    else if (fcon.Locks.TryGetValue(targetingContext.Mount, out var otherLockedTargetingContext))
                     {
-                        if (lockedTargetingContext == targettingContext)
+                        if (otherLockedTargetingContext == targetingContext)
                         {
-                            fcon.UnlockTarget(targettingContext.Mount);
+                            fcon.UnlockTarget(targetingContext.Mount);
                         }
                     }
 
@@ -88,7 +88,7 @@ namespace ST.Play.UI
                         animator.CrossFade("Potential", 0.1f);
                     }
 
-                    OnLockTarget?.Invoke(this, new Tuple<TargettingContext, bool>(targettingContext, isOn));
+                    OnLockTarget?.Invoke(this, new Tuple<TargetingContext, bool>(targetingContext, isOn));
                 };
             }
         }
@@ -97,17 +97,17 @@ namespace ST.Play.UI
         {
             foreach (var kv in _switches)
             {
-                var targettingContext = kv.Key;
+                var targetingContext = kv.Key;
                 var sw = kv.Value;
 
-                if (!fcon.Locks.TryGetValue(targettingContext.Mount, out var lockedTargettingContext))
+                if (!fcon.Locks.TryGetValue(targetingContext.Mount, out var lockedTargetingContext))
                 {
                     sw.IsLocked = false;
                     sw.IsDisabled = false;
                     continue;
                 }
 
-                if (lockedTargettingContext == targettingContext)
+                if (lockedTargetingContext == targetingContext)
                 {
                     sw.IsLocked = true;
                 }

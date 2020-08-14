@@ -9,17 +9,17 @@ namespace ST.Test
     {
 #pragma warning disable 649
         [SerializeField] private TargetMarker targetMarker;
-        [SerializeField] private List<TargettingContext> potentialTargets;
+        [SerializeField] private List<TargetingContext> potentialTargets;
 #pragma warning restore 649
 
         private void Start()
         {
             var mounts = targetMarker.shipView.ship.Ssd.weaponMounts.Where(m => m.side == Side.Port);
             
-            potentialTargets = new List<TargettingContext>();
+            potentialTargets = new List<TargetingContext>();
             foreach (var mount in mounts)
             {
-                potentialTargets.Add(new TargettingContext()
+                potentialTargets.Add(new TargetingContext()
                 {
                     Number = 5,
                     Side = Side.Port,
@@ -30,7 +30,7 @@ namespace ST.Test
                 });
             }
             
-            targetMarker.targettingContexts = potentialTargets;
+            targetMarker.targetingContexts = potentialTargets;
         }
     }
 }

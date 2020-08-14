@@ -12,12 +12,12 @@ namespace ST.Play
     {
         private ShipView _shipView;
 
-        private List<TargettingContext> _potentialTargets = new List<TargettingContext>();
+        private List<TargetingContext> _potentialTargets = new List<TargetingContext>();
 
-        private readonly Dictionary<WeaponMount, TargettingContext> _locks =
-            new Dictionary<WeaponMount, TargettingContext>();
+        private readonly Dictionary<WeaponMount, TargetingContext> _locks =
+            new Dictionary<WeaponMount, TargetingContext>();
 
-        public List<TargettingContext> PotentialTargets
+        public List<TargetingContext> PotentialTargets
         {
             get => _potentialTargets;
             set
@@ -27,8 +27,8 @@ namespace ST.Play
             }
         }
 
-        public ReadOnlyDictionary<WeaponMount, TargettingContext> Locks =>
-            new ReadOnlyDictionary<WeaponMount, TargettingContext>(_locks);
+        public ReadOnlyDictionary<WeaponMount, TargetingContext> Locks =>
+            new ReadOnlyDictionary<WeaponMount, TargetingContext>(_locks);
 
         private void Awake()
         {
@@ -40,16 +40,16 @@ namespace ST.Play
             photonView.RPC("RPC_Clear", RpcTarget.All);
         }
 
-        public void LockTarget(WeaponMount mount, TargettingContext targettingContext)
+        public void LockTarget(WeaponMount mount, TargetingContext targetingContext)
         {
             var mountIndex = Array.FindIndex(_shipView.ship.Ssd.weaponMounts, weaponMount => weaponMount.Equals(mount));
             photonView.RPC("RPC_LockTarget", RpcTarget.All,
-                targettingContext.Side,
+                targetingContext.Side,
                 mountIndex,
-                targettingContext.Number,
-                targettingContext.Target.uid,
-                targettingContext.LaunchPoint,
-                targettingContext.LaunchDistance
+                targetingContext.Number,
+                targetingContext.Target.uid,
+                targetingContext.LaunchPoint,
+                targetingContext.LaunchDistance
             );
         }
 
@@ -75,7 +75,7 @@ namespace ST.Play
 
             if (target == null) return;
 
-            var targettingContext = new TargettingContext()
+            var targetingContext = new TargetingContext()
             {
                 Mount = mount,
                 Number = number,
@@ -85,7 +85,7 @@ namespace ST.Play
                 LaunchDistance = launchDistance
             };
 
-            _locks.Add(mount, targettingContext);
+            _locks.Add(mount, targetingContext);
         }
 
         [PunRPC]

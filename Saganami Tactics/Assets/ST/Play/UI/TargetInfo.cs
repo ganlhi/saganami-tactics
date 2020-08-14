@@ -7,17 +7,17 @@ namespace ST.Play.UI
 {
     public class TargetInfo : MonoBehaviour
     {
-        public TargettingContext TargettingContext
+        public TargetingContext TargetingContext
         {
-            get => _targettingContext;
+            get => _targetingContext;
             set
             {
-                _targettingContext = value;
+                _targetingContext = value;
                 UpdateUi();
             }
         }
 
-        private TargettingContext _targettingContext;
+        private TargetingContext _targetingContext;
 
 #pragma warning disable 649
         [SerializeField] private Transform sideImage;
@@ -29,7 +29,7 @@ namespace ST.Play.UI
 
         private void UpdateUi()
         {
-            switch (TargettingContext.Side)
+            switch (TargetingContext.Side)
             {
                 case Side.Forward:
                     sideImage.localRotation = Quaternion.Euler(0, 0, 90);
@@ -42,10 +42,10 @@ namespace ST.Play.UI
                     break;
             }
 
-            weapon.text = TargettingContext.Mount.model.name;
-            target.text = TargettingContext.Target.name;
-            number.text = TargettingContext.Number.ToString();
-            distance.text = Mathf.CeilToInt(TargettingContext.LaunchDistance).ToString();
+            weapon.text = TargetingContext.Mount.model.name;
+            target.text = TargetingContext.Target.name;
+            number.text = TargetingContext.Number.ToString();
+            distance.text = Mathf.CeilToInt(TargetingContext.LaunchDistance).ToString();
         }
     }
 }

@@ -141,9 +141,9 @@ namespace ST
             return events;
         }
 
-        public static List<TargettingContext> IdentifyTargets(Ship attacker, List<Ship> allShips)
+        public static List<TargetingContext> IdentifyTargets(Ship attacker, List<Ship> allShips)
         {
-            var targets = new List<TargettingContext>();
+            var targets = new List<TargetingContext>();
 
             var ennemyShips = allShips.Where(s => s.team != attacker.team);
 
@@ -156,9 +156,9 @@ namespace ST
             return targets;
         }
 
-        private static List<TargettingContext> TryTargetWithWeaponType(Ship attacker, Ship target, WeaponType type)
+        private static List<TargetingContext> TryTargetWithWeaponType(Ship attacker, Ship target, WeaponType type)
         {
-            var targettingContexts = new List<TargettingContext>();
+            var targetingContexts = new List<TargetingContext>();
 
             Vector3 targetPos;
             HitLocationSlotType slotType;
@@ -177,7 +177,7 @@ namespace ST
             }
 
             var (mainBearing, _) = attacker.GetBearingTo(targetPos);
-            if (mainBearing == Side.Bottom || mainBearing == Side.Top) return targettingContexts;
+            if (mainBearing == Side.Bottom || mainBearing == Side.Top) return targetingContexts;
 
             var distance = attacker.position.DistanceTo(targetPos);
 
@@ -195,7 +195,7 @@ namespace ST
 
                 if (mount.model.GetMaxRange() < distance) continue;
 
-                targettingContexts.Add(new TargettingContext()
+                targetingContexts.Add(new TargetingContext()
                 {
                     Mount = mount,
                     Side = mainBearing,
@@ -208,7 +208,7 @@ namespace ST
                 });
             }
 
-            return targettingContexts;
+            return targetingContexts;
         }
 
         public static Missile UpdateMissile(

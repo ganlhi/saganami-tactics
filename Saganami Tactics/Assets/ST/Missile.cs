@@ -19,7 +19,7 @@ namespace ST
         public MissileStatus status;
         public int updatedAtTurn;
         
-        public Missile(Ship launchShip, TargettingContext context, int turn)
+        public Missile(Ship launchShip, TargetingContext context, int turn)
         {
             uid = Utils.GenerateId();
             attackerId = launchShip.uid;

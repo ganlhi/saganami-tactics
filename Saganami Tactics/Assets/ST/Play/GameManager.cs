@@ -229,9 +229,9 @@ namespace ST.Play
             {
                 var fcon = shipView.GetComponent<FireControl>();
 
-                foreach (var targettingContext in fcon.Locks.Values)
+                foreach (var targetingContext in fcon.Locks.Values)
                 {
-                    var missile = new Missile(shipView.ship, targettingContext, Turn);
+                    var missile = new Missile(shipView.ship, targetingContext, Turn);
 
                     var mv = PhotonNetwork
                         .InstantiateSceneObject("Prefabs/MissileView", missile.position, missile.rotation)

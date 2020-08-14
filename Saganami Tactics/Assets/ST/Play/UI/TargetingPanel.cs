@@ -40,7 +40,7 @@ namespace ST.Play.UI
             _animator = GetComponent<Animator>();
         }
 
-        public void UpdateContent(List<TargettingContext> locks)
+        public void UpdateContent(List<TargetingContext> locks)
         {
             foreach (Transform child in content)
             {
@@ -50,7 +50,7 @@ namespace ST.Play.UI
             foreach (var target in locks)
             {
                 var info = Instantiate(targetInfoPrefab, content).GetComponent<TargetInfo>();
-                info.TargettingContext = target;
+                info.TargetingContext = target;
             }
         }
     }

@@ -5,11 +5,11 @@ using UnityEngine;
 namespace ST
 {
     [Serializable]
-    public struct TargettingContext
+    public struct TargetingContext
     {
         public override bool Equals(object obj)
         {
-            return obj is TargettingContext other && Equals(other);
+            return obj is TargetingContext other && Equals(other);
         }
 
         public override int GetHashCode()
@@ -30,17 +30,17 @@ namespace ST
         public Vector3 LaunchPoint;
         public float LaunchDistance;
 
-        private bool Equals(TargettingContext other)
+        private bool Equals(TargetingContext other)
         {
             return Side == other.Side && Mount.Equals(other.Mount) && Target.Equals(other.Target);
         }
         
-        public static bool operator ==(TargettingContext first, TargettingContext second) 
+        public static bool operator ==(TargetingContext first, TargetingContext second) 
         {
             return Equals(first, second);
         }
         
-        public static bool operator !=(TargettingContext first, TargettingContext second) 
+        public static bool operator !=(TargetingContext first, TargetingContext second) 
         {
             return !(first == second);
         }
