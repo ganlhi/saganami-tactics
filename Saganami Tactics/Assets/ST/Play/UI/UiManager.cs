@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using TMPro;
@@ -203,10 +204,12 @@ namespace ST.Play.UI
                 ListSelectedShipReports();
             }
             _gameManager.OnSelectShip += (sender, ship) => ListSelectedShipReports();
+            _gameManager.OnTurnChange += (sender, turn) => ListSelectedShipReports();
         }
 
         private void ListSelectedShipReports()
         {
+            if (_gameManager.SelectedShip == null) return;
             SetReports();
             _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportLogged += (sender, args) => SetReports();
         }
@@ -214,9 +217,10 @@ namespace ST.Play.UI
         private void SetReports()
         {
             var ship = _gameManager.SelectedShip;
+            
             var log = ship.GetComponent<ShipLog>();
             var reports = log.Reports.ToList();
-            reportsPanel.Reports = reports;
+            reportsPanel.Reports = reports.Where(r => r.turn == _gameManager.Turn).ToList();
             fullReportsPanel.Reports = reports;
         }
 

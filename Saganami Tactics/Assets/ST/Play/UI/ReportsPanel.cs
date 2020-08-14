@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -15,56 +16,62 @@ namespace ST.Play.UI
         [SerializeField] private TextMeshProUGUI dangerReportLinePrefab;
         [SerializeField] private Transform content;
 #pragma warning restore 649
-        
+
         public List<Report> Reports
         {
             set => UpdateUi(value);
         }
 
-        private void UpdateUi(IEnumerable<Report> reports)
+        private void UpdateUi(IReadOnlyCollection<Report> reports)
         {
             foreach (Transform child in content)
             {
                 Destroy(child.gameObject);
             }
 
-            var turn = 0;
+            var lastTurnInReports = reports.Any() ? reports.Max(r => r.turn) : 0;
 
-            foreach (var report in reports)
+            for (var turn = 1; turn <= lastTurnInReports; turn++)
             {
-                if (fullLog && report.turn > turn)
-                {
-                    turn++;
+                var curTurn = turn;
+                var turnReports = reports.Where(r => r.turn == curTurn).ToList();
 
+                if (!turnReports.Any()) continue;
+
+                if (fullLog)
+                {
                     var header = Instantiate(turnHeaderPrefab, content).GetComponentInChildren<TextMeshProUGUI>();
-                    header.text = $"Turn " + turn;
-                }
-                
-                TextMeshProUGUI prefab;
-                switch (report.type)
-                {
-                    case ReportType.ShipDestroyed:
-                    case ReportType.DamageTaken:
-                        prefab = dangerReportLinePrefab;
-                        break;
-                    case ReportType.ShipSurrendered:
-                    case ReportType.MissilesHit:
-                    case ReportType.BeamsHit:
-                        prefab = warningReportLinePrefab;
-                        break;
-                    case ReportType.ShipDisengaged:
-                    case ReportType.MissilesMissed:
-                    case ReportType.MissilesStopped:
-                    case ReportType.BeamsMiss:
-                    case ReportType.Info:
-                        prefab = defaultReportLinePrefab;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    header.text = $"Turn " + curTurn;
                 }
 
-                var txt = Instantiate(prefab, content).GetComponent<TextMeshProUGUI>();
-                txt.text = report.message;
+                foreach (var report in turnReports)
+                {
+                    TextMeshProUGUI prefab;
+                    switch (report.type)
+                    {
+                        case ReportType.ShipDestroyed:
+                        case ReportType.DamageTaken:
+                            prefab = dangerReportLinePrefab;
+                            break;
+                        case ReportType.ShipSurrendered:
+                        case ReportType.MissilesHit:
+                        case ReportType.BeamsHit:
+                            prefab = warningReportLinePrefab;
+                            break;
+                        case ReportType.ShipDisengaged:
+                        case ReportType.MissilesMissed:
+                        case ReportType.MissilesStopped:
+                        case ReportType.BeamsMiss:
+                        case ReportType.Info:
+                            prefab = defaultReportLinePrefab;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    var txt = Instantiate(prefab, content).GetComponent<TextMeshProUGUI>();
+                    txt.text = report.message;
+                }
             }
         }
     }

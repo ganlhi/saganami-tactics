@@ -120,6 +120,17 @@ namespace ST.Play
             SyncShip(andThen: ShipPostSyncAction.PlaceMarkerIfOwned);
         }
 
+        public void AddAlteration(SsdAlteration alteration)
+        {
+            photonView.RPC("RPC_AddAlteration", RpcTarget.All,
+                alteration.destroyed,
+                (int)alteration.location,
+                alteration.side,
+                alteration.type,
+                alteration.slotType
+            );
+        }
+
         #endregion MasterClient
 
         #region AllClients
@@ -186,7 +197,7 @@ namespace ST.Play
         {
             // Make sure the marker view is updated
             UpdateMarkerTransform();
-            
+
             StartCoroutine(MakeMovement());
         }
 
@@ -241,6 +252,20 @@ namespace ST.Play
         public void Plot(PlottingAction action, int value)
         {
             photonView.RPC("RPC_Plot", RpcTarget.MasterClient, action, value);
+        }
+
+        [PunRPC]
+        private void RPC_AddAlteration(bool destroyed, int location, Side side, SsdAlterationType type,
+            HitLocationSlotType? slotType)
+        {
+            ship.alterations.Add(new SsdAlteration()
+            {
+                destroyed = destroyed,
+                location = (uint)location,
+                side = side,
+                type = type,
+                slotType = slotType
+            });
         }
 
         #endregion AllClients

@@ -49,6 +49,8 @@ namespace ST.Play
                 missile.position,
                 missile.rotation,
                 missile.status,
+                missile.hitSide,
+                missile.attackRange,
                 missile.updatedAtTurn,
                 andThen);
         }
@@ -68,6 +70,8 @@ namespace ST.Play
             Vector3 position,
             Quaternion rotation,
             MissileStatus status,
+            Side hitSide,
+            int attackRange,
             int updatedAtTurn,
             MissilePostSyncAction andThen)
         {
@@ -80,6 +84,8 @@ namespace ST.Play
             missile.position = position;
             missile.rotation = rotation;
             missile.status = status;
+            missile.hitSide = hitSide;
+            missile.attackRange = attackRange;
             missile.updatedAtTurn = updatedAtTurn;
 
             _attacker = GameManager.GetShipById(attackerId);

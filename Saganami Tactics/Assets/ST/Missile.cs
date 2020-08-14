@@ -17,6 +17,8 @@ namespace ST
         public Vector3 position;
         public Quaternion rotation;
         public MissileStatus status;
+        public Side hitSide;
+        public int attackRange;
         public int updatedAtTurn;
         
         public Missile(Ship launchShip, TargetingContext context, int turn)
@@ -30,6 +32,8 @@ namespace ST
             position = context.LaunchPoint;
             rotation = Quaternion.LookRotation(launchPoint.DirectionTo(context.Target.endMarkerPosition));
             status = MissileStatus.Launched;
+            hitSide = Side.Top;
+            attackRange = Mathf.CeilToInt(context.LaunchDistance);
             updatedAtTurn = turn;
         }
     }

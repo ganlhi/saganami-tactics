@@ -351,6 +351,8 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
     status: 0
+    hitSide: 0
+    attackRange: 0
     updatedAtTurn: 0
 --- !u!65 &4127260642639804238
 BoxCollider:

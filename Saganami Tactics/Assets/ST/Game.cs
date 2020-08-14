@@ -188,7 +188,7 @@ namespace ST
                 if (mount.model.type != type) continue;
 
                 var nbWeapons = SsdHelper.GetUndamagedValue(mount.weapons,
-                    attacker.alterations.Where(a =>
+                    attacker.alterations.Count(a =>
                         a.side == mainBearing && a.type == SsdAlterationType.Slot && a.slotType == slotType));
 
                 if (nbWeapons == 0 || (type == WeaponType.Missile && mount.ammo == 0)) continue;
@@ -216,10 +216,8 @@ namespace ST
             Ship attacker,
             Ship target,
             int turn,
-            out List<Tuple<ReportType, string>> reports)
+            ref List<Tuple<ReportType, string>> reports)
         {
-            reports = new List<Tuple<ReportType, string>>();
-
             switch (missile.status)
             {
                 case MissileStatus.Launched:
@@ -243,7 +241,7 @@ namespace ST
 
                         missile.position = target.position + Random.onUnitSphere;
                     }
-                    else if (!CanPassActiveDefenses(ref missile, attacker, target, ref reports))
+                    else if (!CanPassActiveDefenses(ref missile, attacker, target, ref reports, out var hitSide))
                     {
                         missile.status = MissileStatus.Destroyed;
 
@@ -253,6 +251,9 @@ namespace ST
                     {
                         missile.status = MissileStatus.Hitting;
                         missile.position = target.position;
+                        missile.hitSide = hitSide;
+                        missile.attackRange = Mathf.CeilToInt(missile.launchPoint.DistanceTo(target.position));
+
                         reports.Add(new Tuple<ReportType, string>(ReportType.MissilesHit,
                             "Missiles from " + attacker.name + ": " + missile.number + " hits"));
                     }
@@ -319,7 +320,7 @@ namespace ST
             var diceRolls = Dice.D10s(missile.number);
 
             var successes = diceRolls.Count(r => r >= accuracy);
-            
+
             if (successes == 0)
             {
                 reports.Add(new Tuple<ReportType, string>(ReportType.MissilesMissed,
@@ -333,7 +334,7 @@ namespace ST
         }
 
         private static bool CanPassActiveDefenses(ref Missile missile, Ship attacker, Ship target,
-            ref List<Tuple<ReportType, string>> reports)
+            ref List<Tuple<ReportType, string>> reports, out Side hitSide)
         {
             var (mainBearing, secondaryBearing) = target.GetBearingTo(missile.position);
 
@@ -342,30 +343,319 @@ namespace ST
             {
                 cm = 0;
                 pd = SsdHelper.GetPD(target.Ssd, secondaryBearing, target.alterations);
+                hitSide = secondaryBearing;
             }
             else
             {
                 cm = SsdHelper.GetCM(target.Ssd, mainBearing, target.alterations);
                 pd = SsdHelper.GetPD(target.Ssd, mainBearing, target.alterations);
+                hitSide = mainBearing;
             }
 
             var activeDefenses = (int) (cm + pd);
 
             var remaining = Math.Min(missile.number, activeDefenses);
-            
+
             var diceRolls = Dice.D10s(remaining);
             var evasion = missile.weapon.evasion;
-            
+
             var failures = diceRolls.Count(r => r < evasion);
-            
+
             missile.number = Math.Max(0, missile.number - failures);
 
             if (missile.number > 0) return true;
 
             reports.Add(new Tuple<ReportType, string>(ReportType.MissilesStopped,
                 "Missiles from " + attacker.name + " have been destroyed by active defenses"));
-            
+
             return false;
+        }
+
+        public static void HitTarget(Weapon weapon, Side targetSide, int hits, int range, Ship attacker, Ship target,
+            ref List<Tuple<ReportType, string>> reports,
+            ref List<SsdAlteration> alterations)
+        {
+            var weaponType = weapon.type == WeaponType.Missile ? "Missile" : "Laser";
+
+            var rangeBand = weapon.GetRangeBand(range);
+            var sidewallStrength = SsdHelper.GetSidewall(target.Ssd, targetSide, target.alterations);
+
+            var diceRolls = Dice.MultipleTwoD10Minus(hits);
+
+            var missileNum = 0;
+            foreach (var (result, doubleZero) in diceRolls)
+            {
+                missileNum += 1;
+                var penetrationResult = result - (int) sidewallStrength;
+
+                if (penetrationResult <= 0)
+                {
+                    reports.Add(new Tuple<ReportType, string>(ReportType.Info,
+                        $"#{missileNum} {weaponType} from {attacker.name} have been stopped by sidewall"));
+
+                    if (doubleZero)
+                    {
+                        reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                            $"#{missileNum} {weaponType} damaged: {targetSide.ToFriendlyString()} sidewall"));
+
+                        alterations.AddRange(MakeAlterationsForBoxes(
+                            new SsdAlteration() {type = SsdAlterationType.Sidewall, side = targetSide},
+                            1,
+                            target.Ssd.defenses.First(sd => sd.side == targetSide).sidewall,
+                            target.alterations,
+                            alterations
+                        ));
+                    }
+                }
+                else
+                {
+                    if (!rangeBand.HasValue) continue;
+
+                    var actualPenetration = Math.Min(penetrationResult, rangeBand.Value.penetration);
+                    var damages = rangeBand.Value.damage + actualPenetration;
+                    var location = (uint) Dice.D10();
+
+                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, missileNum, ref reports,
+                        ref alterations);
+                }
+            }
+        }
+
+        public static void ApplyDamagesToLocation(Side side, uint location, int damages, Ship target,
+            string weaponType,
+            int missileNum,
+            ref List<Tuple<ReportType, string>> reports,
+            ref List<SsdAlteration> alterations)
+        {
+            var remainingDamages = damages;
+            var currentLocation = location;
+            while (remainingDamages > 0)
+            {
+                var loc = target.Ssd.hitLocations[currentLocation - 1];
+                remainingDamages -= loc.coreArmor;
+
+                if (remainingDamages > 0)
+                {
+                    for (var i = 0; i < loc.slots.Length && remainingDamages > 0; i++)
+                    {
+                        var slot = loc.slots[i];
+                        switch (slot.type)
+                        {
+                            case HitLocationSlotType.None:
+                                break;
+                            case HitLocationSlotType.Missile:
+                                var missileAlterations = MakeAlterationsForBoxes(
+                                    new SsdAlteration()
+                                    {
+                                        side = side,
+                                        type = SsdAlterationType.Slot,
+                                        slotType = HitLocationSlotType.Missile,
+                                        location = currentLocation
+                                    },
+                                    1,
+                                    target.Ssd.weaponMounts.First(m =>
+                                        m.side == side && m.model.type == WeaponType.Missile).weapons,
+                                    target.alterations,
+                                    alterations
+                                );
+
+                                if (missileAlterations.Any())
+                                {
+                                    alterations.AddRange(missileAlterations);
+                                    remainingDamages -= missileAlterations.Count;
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{missileNum} {weaponType} damaged: {side.ToFriendlyString()} missiles"));
+                                }
+
+                                break;
+                            case HitLocationSlotType.Laser:
+                                var laserAlterations = MakeAlterationsForBoxes(
+                                    new SsdAlteration()
+                                    {
+                                        side = side,
+                                        type = SsdAlterationType.Slot,
+                                        slotType = HitLocationSlotType.Laser,
+                                        location = currentLocation
+                                    },
+                                    1,
+                                    target.Ssd.weaponMounts.First(m =>
+                                        m.side == side && m.model.type == WeaponType.Laser).weapons,
+                                    target.alterations,
+                                    alterations
+                                );
+
+                                if (laserAlterations.Any())
+                                {
+                                    alterations.AddRange(laserAlterations);
+                                    remainingDamages -= laserAlterations.Count;
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{missileNum} {weaponType} damaged: {side.ToFriendlyString()} lasers"));
+                                }
+
+                                break;
+                            case HitLocationSlotType.CounterMissile:
+                            case HitLocationSlotType.PointDefense:
+                                var sideDefenses = target.Ssd.defenses.First(sd => sd.side == side);
+                                var sideDefenseAlterations = MakeAlterationsForBoxes(
+                                    new SsdAlteration()
+                                    {
+                                        side = side,
+                                        type = SsdAlterationType.Slot,
+                                        slotType = slot.type,
+                                        location = currentLocation
+                                    },
+                                    1,
+                                    slot.type == HitLocationSlotType.CounterMissile
+                                        ? sideDefenses.counterMissiles
+                                        : sideDefenses.pointDefense,
+                                    target.alterations,
+                                    alterations
+                                );
+
+                                if (sideDefenseAlterations.Any())
+                                {
+                                    alterations.AddRange(sideDefenseAlterations);
+                                    remainingDamages -= sideDefenseAlterations.Count;
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{missileNum} {weaponType} damaged: {side.ToFriendlyString()} {(slot.type == HitLocationSlotType.CounterMissile ? "CM" : "PD")}"));
+                                }
+
+                                break;
+                            case HitLocationSlotType.Decoy:
+                                // TODO
+                                break;
+                            case HitLocationSlotType.ForwardImpeller:
+                            case HitLocationSlotType.AftImpeller:
+                                var impellerAlterations = MakeAlterationsForBoxes(
+                                    new SsdAlteration()
+                                    {
+                                        side = side,
+                                        type = SsdAlterationType.Slot,
+                                        slotType = slot.type,
+                                        location = currentLocation
+                                    },
+                                    1,
+                                    slot.boxes,
+                                    target.alterations,
+                                    alterations
+                                );
+
+                                if (impellerAlterations.Any())
+                                {
+                                    alterations.AddRange(impellerAlterations);
+                                    remainingDamages -= impellerAlterations.Count();
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{missileNum} {weaponType} damaged: {(slot.type == HitLocationSlotType.ForwardImpeller ? "forward" : "aft")} impeller"));
+
+                                    // damage movement boxes
+                                    alterations.AddRange(MakeAlterationsForBoxes(
+                                        new SsdAlteration() {type = SsdAlterationType.Movement},
+                                        impellerAlterations.Count,
+                                        target.Ssd.movement,
+                                        target.alterations,
+                                        alterations
+                                    ));
+                                }
+
+                                break;
+                            case HitLocationSlotType.Cargo:
+                            case HitLocationSlotType.Hull:
+                            case HitLocationSlotType.ECCM:
+                            case HitLocationSlotType.ECM:
+                            case HitLocationSlotType.Bridge:
+                            case HitLocationSlotType.Pivot:
+                            case HitLocationSlotType.Roll:
+                            case HitLocationSlotType.DamageControl:
+                                var slotAlterations = MakeAlterationsForBoxes(
+                                    new SsdAlteration()
+                                    {
+                                        side = side,
+                                        type = SsdAlterationType.Slot,
+                                        slotType = slot.type,
+                                        location = currentLocation
+                                    },
+                                    1,
+                                    slot.boxes,
+                                    target.alterations,
+                                    alterations
+                                );
+
+                                if (slotAlterations.Any())
+                                {
+                                    alterations.AddRange(slotAlterations);
+                                    remainingDamages -= slotAlterations.Count();
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{missileNum} {weaponType} damaged: {slot.type} (location {currentLocation})"));
+                                }
+
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+
+                if (loc.passThrough)
+                {
+                    currentLocation++;
+                    if (currentLocation > target.Ssd.hitLocations.Length) currentLocation = 1;
+                }
+                else if (loc.structural)
+                {
+                    var roll = Dice.TwoD10Minus().Item1;
+                    var structuralDamages = Math.Min(remainingDamages, roll);
+
+                    if (structuralDamages > 0)
+                    {
+                        reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                            $"#{missileNum} {weaponType} made structural damages: {structuralDamages}"));
+
+                        alterations.AddRange(MakeAlterationsForBoxes(
+                            new SsdAlteration()
+                            {
+                                destroyed = true,
+                                type = SsdAlterationType.Structural
+                            },
+                            structuralDamages,
+                            target.Ssd.structuralIntegrity,
+                            target.alterations,
+                            alterations
+                        ));
+                    }
+
+                    break; // remaining damages are lost;
+                }
+            }
+        }
+
+        private static List<SsdAlteration> MakeAlterationsForBoxes(SsdAlteration template, int damages,
+            IReadOnlyCollection<uint> boxes,
+            IEnumerable<SsdAlteration> existingAlterations, IEnumerable<SsdAlteration> pendingAlterations)
+        {
+            var alterations = new List<SsdAlteration>();
+
+            var nbDamaged =
+                existingAlterations.Count(a =>
+                    a.location == template.location &&
+                    a.side == template.side &&
+                    a.type == template.type &&
+                    a.slotType == template.slotType)
+                + pendingAlterations.Count(a =>
+                    a.location == template.location &&
+                    a.side == template.side &&
+                    a.type == template.type &&
+                    a.slotType == template.slotType);
+
+            if (nbDamaged >= boxes.Count) return alterations;
+
+            var todoDamages = Math.Min(damages, boxes.Count - nbDamaged);
+
+            for (var i = 0; i < todoDamages; i++)
+            {
+                alterations.Add(template);
+            }
+
+            return alterations;
         }
     }
 }

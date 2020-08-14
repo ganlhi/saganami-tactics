@@ -6,19 +6,11 @@ namespace ST
     [Serializable]
     public struct SsdAlteration
     {
-        public uint turn;
-        public SsdAlterationStatus status;
+        public bool destroyed;
         public Side side;
         public SsdAlterationType type;
         public HitLocationSlotType? slotType;
         public uint location;
-    }
-
-    public enum SsdAlterationStatus
-    {
-        Destroyed,
-        Damaged,
-        Fixed
     }
 
     public enum SsdAlterationType
@@ -26,5 +18,6 @@ namespace ST
         Slot,
         Structural,
         Movement,
+        Sidewall,
     }
 }

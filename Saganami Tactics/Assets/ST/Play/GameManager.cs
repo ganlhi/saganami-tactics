@@ -123,6 +123,9 @@ namespace ST.Play
         private int _clientsReadyToContinue;
         private Dictionary<ShipView, List<Report>> _pendingReports = new Dictionary<ShipView, List<Report>>();
 
+        private Dictionary<ShipView, List<SsdAlteration>> _pendingAlterations =
+            new Dictionary<ShipView, List<SsdAlteration>>();
+
         private void LoadStateFromHolder()
         {
             if (stateHolder != null)
@@ -248,33 +251,62 @@ namespace ST.Play
         {
             var missileViews = GetAllMissiles();
             _pendingReports.Clear();
+            _pendingAlterations.Clear();
 
             missileViews.ForEach(missileView =>
             {
+                var reports = new List<Tuple<ReportType, string>>();
+
                 var attacker = GetShipById(missileView.missile.attackerId);
                 var target = GetShipById(missileView.missile.targetId);
                 if (attacker == null || target == null) return;
-                missileView.UpdateMissile(Game.UpdateMissile(missileView.missile, attacker.ship, target.ship, Turn,
-                    out var reports));
 
-                var pendingReports = new List<Report>();
-                if (_pendingReports.TryGetValue(target, out var previousReports))
+                var missile = Game.UpdateMissile(missileView.missile, attacker.ship, target.ship, Turn,
+                    ref reports);
+                missileView.UpdateMissile(missile);
+
+                var pendingAlterations = new List<SsdAlteration>();
+                if (missile.status == MissileStatus.Hitting && missile.number > 0)
                 {
-                    pendingReports = previousReports;
-                }
-                else
-                {
-                    _pendingReports.Add(target, pendingReports);
+                    Game.HitTarget(missile.weapon, missile.hitSide, missile.number, missile.attackRange, attacker.ship,
+                        target.ship,
+                        ref reports, ref pendingAlterations);
                 }
 
-                pendingReports.AddRange(reports.Select(t => new Report()
+                var pendingReports = reports.Select(t => new Report()
                 {
                     turn = Turn,
                     type = t.Item1,
                     message = t.Item2,
-                }));
-                
-                _pendingReports[target] = pendingReports;
+                });
+                if (_pendingReports.ContainsKey(target))
+                    _pendingReports[target].AddRange(pendingReports);
+                else
+                    _pendingReports.Add(target, pendingReports.ToList());
+
+                if (_pendingAlterations.ContainsKey(target))
+                    _pendingAlterations[target].AddRange(pendingAlterations);
+                else
+                    _pendingAlterations.Add(target, pendingAlterations.ToList());
+
+//                var pendingReports = new List<Report>();
+//                if (_pendingReports.TryGetValue(target, out var previousReports))
+//                {
+//                    pendingReports = previousReports;
+//                }
+//                else
+//                {
+//                    _pendingReports.Add(target, pendingReports);
+//                }
+//
+//                pendingReports.AddRange(reports.Select(t => new Report()
+//                {
+//                    turn = Turn,
+//                    type = t.Item1,
+//                    message = t.Item2,
+//                }));
+//                
+//                _pendingReports[target] = pendingReports;
             });
 
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
@@ -292,6 +324,7 @@ namespace ST.Play
             } while (_clientsReadyToContinue < PhotonNetwork.CurrentRoom.PlayerCount);
 
             DispatchPendingReports();
+            DispatchPendingAlterations();
             DestroyMissiles();
         }
 
@@ -314,6 +347,18 @@ namespace ST.Play
             {
                 kv.Value.ForEach(report => kv.Key.GetComponent<ShipLog>().AddReport(report));
             }
+
+            _pendingReports.Clear();
+        }
+
+        private void DispatchPendingAlterations()
+        {
+            foreach (var kv in _pendingAlterations)
+            {
+                kv.Value.ForEach(alteration => kv.Key.AddAlteration(alteration));
+            }
+
+            _pendingAlterations.Clear();
         }
 
         [PunRPC]

@@ -114,11 +114,8 @@ namespace ST.Scriptable
             }
         }
 
-        public static uint GetUndamagedValue(IEnumerable<uint> boxes, IEnumerable<SsdAlteration> alterations)
+        public static uint GetUndamagedValue(IEnumerable<uint> boxes, int nbDamaged)
         {
-            var nbDamaged = alterations.Count(a =>
-                a.status == SsdAlterationStatus.Damaged || a.status == SsdAlterationStatus.Destroyed);
-
             var undamagedBoxes = boxes.Skip(nbDamaged).ToArray();
 
             if (undamagedBoxes.Length == 0) return 0;
@@ -130,7 +127,7 @@ namespace ST.Scriptable
 
         public static uint GetMaxPivot(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
-            var pivotAlterations = alterations.Where(a =>
+            var pivotAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Pivot);
 
             var boxes = Array.Empty<uint>();
@@ -148,7 +145,7 @@ namespace ST.Scriptable
 
         public static uint GetMaxRoll(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
-            var rollAlterations = alterations.Where(a =>
+            var rollAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Roll);
 
             var boxes = Array.Empty<uint>();
@@ -166,14 +163,14 @@ namespace ST.Scriptable
 
         public static uint GetMaxThrust(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
-            var mvtAlterations = alterations.Where(a => a.type == SsdAlterationType.Movement);
+            var mvtAlterations = alterations.Count(a => a.type == SsdAlterationType.Movement);
             var boxes = ssd.movement;
             return GetUndamagedValue(boxes, mvtAlterations);
         }
 
         public static uint GetECM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
-            var ecmAlterations = alterations.Where(a =>
+            var ecmAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.ECM);
 
             var boxes = Array.Empty<uint>();
@@ -191,7 +188,7 @@ namespace ST.Scriptable
 
         public static uint GetECCM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
-            var eccmAlterations = alterations.Where(a =>
+            var eccmAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.ECCM);
 
             var boxes = Array.Empty<uint>();
@@ -221,7 +218,7 @@ namespace ST.Scriptable
         public static uint GetCM(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
         {
             var defenses = ssd.defenses.First(d => d.side == side);
-            var cmAlterations = alterations.Where(a =>
+            var cmAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.CounterMissile && a.side == side);
             return GetUndamagedValue(defenses.counterMissiles, cmAlterations);
         }
@@ -229,9 +226,16 @@ namespace ST.Scriptable
         public static uint GetPD(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
         {
             var defenses = ssd.defenses.First(d => d.side == side);
-            var pdAlterations = alterations.Where(a =>
+            var pdAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.PointDefense && a.side == side);
             return GetUndamagedValue(defenses.pointDefense, pdAlterations);
+        }
+
+        public static uint GetSidewall(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
+        {
+            var sidewallAlterations = alterations.Count(a => a.type == SsdAlterationType.Sidewall && a.side == side);
+            var boxes = ssd.defenses.First(d => d.side == side).sidewall;
+            return GetUndamagedValue(boxes, sidewallAlterations);
         }
     }
 }
