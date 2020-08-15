@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ST.Scriptable;
 using UnityEngine;
 
@@ -47,7 +48,19 @@ namespace ST.Play.UI
                 Destroy(child.gameObject);
             }
 
-            foreach (var target in locks)
+            var orderedLocks = locks.ToList();
+            orderedLocks.Sort((a, b) =>
+            {
+                var sideCmp = a.Side.CompareTo(b.Side);
+                if (sideCmp != 0) return sideCmp;
+
+                var weaponCmp = string.Compare(a.Mount.model.name, b.Mount.model.name, StringComparison.Ordinal);
+                if (weaponCmp != 0) return weaponCmp;
+
+                return string.Compare(a.Target.name, b.Target.name, StringComparison.Ordinal);
+            });
+            
+            foreach (var target in orderedLocks)
             {
                 var info = Instantiate(targetInfoPrefab, content).GetComponent<TargetInfo>();
                 info.TargetingContext = target;
