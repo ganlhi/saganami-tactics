@@ -21,7 +21,7 @@ MonoBehaviour:
       ssdName: Havoc
       team: 0
       status: 0
-      position: {x: 48, y: 0, z: 0}
+      position: {x: 49, y: 0, z: 0}
       rotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
       velocity: {x: 4, y: 0, z: 0}
     - uid: _E4XYL6Qmkmbe7pySipRiw

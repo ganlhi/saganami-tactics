@@ -38,7 +38,16 @@ namespace ST.Play
                 return _endMarker;
             }
         }
+        
+#pragma warning disable 0649
+        [SerializeField] private GameObject shipObject;
+        [SerializeField] private GameObject[] wedges;
+        [SerializeField] private GameObject[] vectorsAndMarkers;
+        [SerializeField] private ParticleSystem explosion;
+#pragma warning restore 0649
 
+        private ShipStatus? _lastCheckedStatus = null;
+        
         private void Start()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -203,6 +212,61 @@ namespace ST.Play
                 default:
                     throw new ArgumentOutOfRangeException(nameof(andThen), andThen, null);
             }
+            
+            if (!_lastCheckedStatus.HasValue || _lastCheckedStatus.Value != ship.Status)
+            {
+                UpdateGraphicsBasedOnStatus();
+                _lastCheckedStatus = ship.Status;
+            }
+        }
+
+        private void UpdateGraphicsBasedOnStatus()
+        {
+            if (ship.Status != ShipStatus.Ok)
+            {
+                foreach (var go in vectorsAndMarkers)
+                {
+                    go.SetActive(false);
+                }
+                EndMarker.gameObject.SetActive(false);
+            }
+
+            switch (ship.Status)
+            {
+                case ShipStatus.Disengaged:
+                    GetComponent<BoxCollider>().enabled = false; // avoid hover detection
+                    StartCoroutine(EscapeFromView());
+                    break;
+                case ShipStatus.Surrendered:
+                    foreach (var go in wedges)
+                    {
+                        go.SetActive(false);
+                    }
+                    break;
+                case ShipStatus.Ok:
+                    break;
+                case ShipStatus.Destroyed:
+                    GetComponent<BoxCollider>().enabled = false; // avoid hover detection
+                    shipObject.SetActive(false);
+                    explosion.Play();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private IEnumerator EscapeFromView()
+        {
+            var escapeVelocity = transform.forward * 100f;
+            var cam = Camera.main;
+            var rend = shipObject.GetComponentInChildren<Renderer>();
+            do
+            {
+                transform.position += escapeVelocity * Time.deltaTime;
+                yield return null;
+            } while (rend.isVisible && cam != null && cam.transform.position.DistanceTo(transform.position) < 300);
+            
+            shipObject.SetActive(false);
         }
 
         private void UpdateMarkerTransform()
@@ -210,7 +274,7 @@ namespace ST.Play
             var emTransform = EndMarker.transform;
             emTransform.position = ship.endMarkerPosition;
             emTransform.rotation = ship.endMarkerRotation;
-            EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition);
+            EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition && ship.Status == ShipStatus.Ok);
         }
 
         public void AutoMove()

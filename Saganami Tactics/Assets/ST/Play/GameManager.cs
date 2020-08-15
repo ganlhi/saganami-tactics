@@ -83,6 +83,17 @@ namespace ST.Play
             InitWhenReady();
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Delete) && SelectedShip != null)
+            {
+                for (var i = 0; i < SelectedShip.ship.Ssd.structuralIntegrity.Length; i++)
+                    SelectedShip.AddAlteration(new SsdAlteration()
+                        {destroyed = true, type = SsdAlterationType.Structural});
+                CheckShipsForDestruction();
+            }
+        }
+
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
@@ -405,7 +416,7 @@ namespace ST.Play
             }
 
             _pendingAlterations.Clear();
-            
+
             CheckShipsForDestruction();
         }
 
@@ -413,12 +424,34 @@ namespace ST.Play
         {
             GetAllShips().ForEach(shipView =>
             {
+                if (shipView.ship.Status == ShipStatus.Destroyed) return;
+
                 var remainingStructuralPoints =
                     SsdHelper.GetRemainingStructuralPoints(shipView.ship.Ssd, shipView.ship.alterations);
 
                 if (remainingStructuralPoints == 0)
                 {
                     shipView.DestroyShip();
+                    shipView.GetComponent<ShipLog>().AddReport(new Report()
+                    {
+                        turn = Turn,
+                        type = ReportType.ShipDestroyed,
+                        message = $"{shipView.ship.name} has been destroyed!"
+                    });
+
+//                    if (shipView == SelectedShip)
+//                    {
+//                        // Select next ship from player
+//                        var nextPlayerShip = GetPlayerShips().FirstOrDefault(s => s.ship.Status == ShipStatus.Ok);
+//                        if (nextPlayerShip != null)
+//                        {
+//                            SelectedShip = nextPlayerShip;
+//                        }
+//                        else
+//                        {
+//                            SelectedShip = GetAllShips().FirstOrDefault(s => s.ship.Status == ShipStatus.Ok);
+//                        }
+//                    }
                 }
             });
         }
@@ -540,10 +573,12 @@ namespace ST.Play
 
         private IEnumerator AnimateMoveShipsToMarkers()
         {
-            var ships = GetAllShips();
+            var ships = GetAllShips()
+                .Where(s => s.ship.Status == ShipStatus.Ok || s.ship.Status == ShipStatus.Surrendered)
+                .ToList();
 
             Busy = true;
-            
+
             if (ships.Any(s => s.ship.endMarkerPosition != s.ship.position))
             {
                 ships.ForEach(shipView => shipView.AutoMove());
@@ -557,7 +592,7 @@ namespace ST.Play
             {
                 yield return new WaitForSeconds(.5f);
             }
-            
+
             Busy = false;
             SetReady(true);
         }
@@ -625,6 +660,19 @@ namespace ST.Play
         {
             if (SelectedShip != null && SelectedShip.OwnedByClient && SelectedShip.ship.Status == ShipStatus.Ok)
             {
+                SelectedShip.GetComponent<ShipLog>().AddReport(new Report()
+                {
+                    turn = Turn,
+                    type = ReportType.ShipDisengaged,
+                    message = $"{SelectedShip.ship.name} has disengaged"
+                });
+
+                if (camera.settings.lockTargetTransform == SelectedShip.transform)
+                {
+                    camera.settings.cameraLocked = false;
+                    camera.settings.lockTargetTransform = null;
+                }
+
                 SelectedShip.Disengage();
                 OnShipStatusChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -634,6 +682,13 @@ namespace ST.Play
         {
             if (SelectedShip != null && SelectedShip.OwnedByClient && SelectedShip.ship.Status == ShipStatus.Ok)
             {
+                SelectedShip.GetComponent<ShipLog>().AddReport(new Report()
+                {
+                    turn = Turn,
+                    type = ReportType.ShipSurrendered,
+                    message = $"{SelectedShip.ship.name} surrendered"
+                });
+
                 SelectedShip.Surrender();
                 OnShipStatusChanged?.Invoke(this, EventArgs.Empty);
             }

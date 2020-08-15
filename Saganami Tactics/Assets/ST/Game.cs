@@ -526,6 +526,8 @@ namespace ST
                                     remainingDamages -= missileAlterations.Count;
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
                                         $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} missiles"));
+                                    
+                                    // TODO lose 2D10- ammo
                                 }
 
                                 break;

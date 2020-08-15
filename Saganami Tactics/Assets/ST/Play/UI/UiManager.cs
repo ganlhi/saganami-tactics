@@ -3,6 +3,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using Michsky.UI.Shift;
 using ST.Common;
+using ST.Scriptable;
 using TMPro;
 using UnityEngine;
 
@@ -190,11 +191,15 @@ namespace ST.Play.UI
                 // can repair if has alterations
                 crewActionsPanel.CanRepair = ship.alterations.Any();
 
-                // can disengage if at least 50 away from all operating enemy ships
-                crewActionsPanel.CanDisengage = !GameManager.GetAllShips().Any(s =>
+                // can disengage if at least 50 away from all operating enemy ships and able to move
+                var isFarEnough = !GameManager.GetAllShips().Any(s =>
                     s.ship.team != ship.team &&
                     s.ship.Status == ShipStatus.Ok &&
                     s.ship.position.DistanceTo(ship.position) < 50);
+
+                var canMove = SsdHelper.GetMaxThrust(ship.Ssd, ship.alterations) > 0;
+
+                crewActionsPanel.CanDisengage = isFarEnough && canMove;
 
                 // can surrender if is OK
                 crewActionsPanel.CanSurrender = true;

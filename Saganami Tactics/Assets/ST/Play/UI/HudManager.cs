@@ -50,7 +50,8 @@ namespace ST.Play.UI
 
         private void UpdateSelectionMarkerPosition()
         {
-            if (_gameManager.SelectedShip != null)
+            if (_gameManager.SelectedShip != null && (_gameManager.SelectedShip.ship.Status == ShipStatus.Ok ||
+                                                      _gameManager.SelectedShip.ship.Status == ShipStatus.Surrendered))
             {
                 var position = _gameManager.SelectedShip.transform.position;
                 var shipDir = _camera.transform.position.DirectionTo(position);
@@ -101,7 +102,7 @@ namespace ST.Play.UI
         {
             // When in targeting mode, no selection via the HUD
 //            if (_gameManager.Step == TurnStep.Targeting) return;
-            
+
             if (Input.GetMouseButtonUp(0) && _hoverShip != null)
             {
                 _gameManager.SelectedShip = _hoverShip;
