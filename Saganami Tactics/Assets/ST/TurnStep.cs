@@ -11,7 +11,7 @@ namespace ST
         MissilesUpdates,
         Missiles,
         Beams,
-//        CrewActions,
+        CrewActions,
         End
     }
     
@@ -37,6 +37,8 @@ namespace ST
                     return "Missiles";
                 case TurnStep.Beams:
                     return "Beams";
+                case TurnStep.CrewActions:
+                    return "Crew actions";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(me), me, null);
             }

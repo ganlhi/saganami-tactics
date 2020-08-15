@@ -131,6 +131,20 @@ namespace ST.Play
             );
         }
 
+        [PunRPC]
+        private void RPC_Disengage()
+        {
+            ship.Status = ShipStatus.Disengaged;
+            SyncShip(andThen: ShipPostSyncAction.None);
+        }
+
+        [PunRPC]
+        private void RPC_Surrender()
+        {
+            ship.Status = ShipStatus.Surrendered;
+            SyncShip(andThen: ShipPostSyncAction.None);
+        }
+
         #endregion MasterClient
 
         #region AllClients
@@ -266,6 +280,16 @@ namespace ST.Play
                 type = type,
                 slotType = slotType
             });
+        }
+
+        public void Disengage()
+        {
+            photonView.RPC("RPC_Disengage", RpcTarget.MasterClient);   
+        }
+
+        public void Surrender()
+        {
+            photonView.RPC("RPC_Surrender", RpcTarget.MasterClient);   
         }
 
         #endregion AllClients

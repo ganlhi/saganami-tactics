@@ -75,6 +75,7 @@ namespace ST.Play
         public event EventHandler OnShipsInit;
         public event EventHandler<ShipView> OnSelectShip;
         public event EventHandler OnTargetsIdentified;
+        public event EventHandler OnShipStatusChanged;
 
 
         private void Start()
@@ -307,8 +308,6 @@ namespace ST.Play
         private void UpdateMissiles()
         {
             var missileViews = GetAllMissiles();
-//            _pendingReports.Clear();
-//            _pendingAlterations.Clear();
 
             missileViews.ForEach(missileView =>
             {
@@ -356,7 +355,7 @@ namespace ST.Play
         {
             _clientsReadyToContinue = 0;
 
-            var beamAnimsAsObjects = new object[beamAnims.Count * 2];
+            var beamAnimsAsObjects = new Vector3[beamAnims.Count * 2];
             var i = 0;
             foreach (var (from, to) in beamAnims)
             {
@@ -471,15 +470,14 @@ namespace ST.Play
         }
 
         [PunRPC]
-        private void RPC_WaitForBeamsAnimation(object[] animPositionsTuples)
+        private void RPC_WaitForBeamsAnimation(Vector3[] animPositionsTuples)
         {
             var animPositions = new List<Tuple<Vector3, Vector3>>();
 
             for (var i = 0; i < animPositionsTuples.Length; i += 2)
             {
-                var from = (Vector3) animPositionsTuples[i];
-                var to = (Vector3) animPositionsTuples[i + 1];
-                Debug.Log($"ANIMATE BEAM {from} -> {to}");
+                var from = animPositionsTuples[i];
+                var to = animPositionsTuples[i + 1];
                 animPositions.Add(new Tuple<Vector3, Vector3>(from, to));
             }
 
@@ -527,40 +525,43 @@ namespace ST.Play
 
         private IEnumerator AnimateMoveShipsToMarkers()
         {
-            Busy = true;
             var ships = GetAllShips();
 
-            ships.ForEach(shipView => shipView.AutoMove());
-
-            do
+            Busy = true;
+            
+            if (ships.Any(s => s.ship.endMarkerPosition != s.ship.position))
             {
-                yield return null;
-            } while (ships.Any(s => s.Busy));
+                ships.ForEach(shipView => shipView.AutoMove());
 
-            SetReady(true);
+                do
+                {
+                    yield return null;
+                } while (ships.Any(s => s.Busy));
+            }
+            else
+            {
+                yield return new WaitForSeconds(.5f);
+            }
+            
             Busy = false;
+            SetReady(true);
         }
 
         private IEnumerator WaitForMissilesUpdates(int nbMissiles)
         {
-            Busy = true;
-            Debug.Log("WaitForMissilesUpdates " + nbMissiles);
-
             int nbUpdated;
             do
             {
                 yield return null;
                 nbUpdated = GetAllMissiles().Count(mv => mv.missile.updatedAtTurn == Turn);
-                Debug.Log($"Missiles updated: {nbUpdated} / {nbMissiles}");
             } while (nbUpdated < nbMissiles);
 
             SetReady(true);
-            Busy = false;
         }
 
         private IEnumerator WaitForBeamsAnimation(List<Tuple<Vector3, Vector3>> animPositions)
         {
-            Busy = true;
+            Busy = animPositions.Any();
 
             animPositions.ForEach(t =>
             {
@@ -568,7 +569,7 @@ namespace ST.Play
                 beamsLines.AddLine(from, to);
             });
 
-            var duration = GameSettings.Default.BeamDuration;
+            var duration = animPositions.Any() ? GameSettings.Default.BeamDuration : 0;
             var elapsedTime = 0f;
 
             while (elapsedTime < duration)
@@ -586,19 +587,41 @@ namespace ST.Play
 
         private IEnumerator AnimateMoveMissilesToNextPosition()
         {
-            Busy = true;
             var missiles = GetAllMissiles();
 
-            missiles.ForEach(missileView => missileView.AutoMove());
-
-            do
+            if (missiles.Any())
             {
-                yield return null;
-            } while (missiles.Any(s => s.Busy));
+                Busy = true;
 
-            Busy = false;
+                missiles.ForEach(missileView => missileView.AutoMove());
+
+                do
+                {
+                    yield return null;
+                } while (missiles.Any(s => s.Busy));
+
+                Busy = false;
+            }
 
             photonView.RPC("RPC_ReadyToContinue", RpcTarget.MasterClient);
+        }
+
+        public void DisengageSelectedShip()
+        {
+            if (SelectedShip != null && SelectedShip.OwnedByClient && SelectedShip.ship.Status == ShipStatus.Ok)
+            {
+                SelectedShip.Disengage();
+                OnShipStatusChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void SurrenderSelectedShip()
+        {
+            if (SelectedShip != null && SelectedShip.OwnedByClient && SelectedShip.ship.Status == ShipStatus.Ok)
+            {
+                SelectedShip.Surrender();
+                OnShipStatusChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public static List<ShipView> GetAllShips()

@@ -49,6 +49,9 @@ namespace ST
                     nextStep = TurnStep.Beams;
                     break;
                 case TurnStep.Beams:
+                    nextStep = TurnStep.CrewActions;
+                    break;
+                case TurnStep.CrewActions:
                     nextStep = TurnStep.End;
                     break;
                 case TurnStep.End:
@@ -93,10 +96,14 @@ namespace ST
                 case TurnStep.Beams:
                     events.Add(GameEvent.FireBeams);
                     break;
+                
+                case TurnStep.CrewActions:
+                    break;
 
                 case TurnStep.End:
                     events.Add(GameEvent.ClearTargets);
                     break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -133,9 +140,12 @@ namespace ST
                 case TurnStep.Beams:
                     break;
 
-                case TurnStep.End:
+                case TurnStep.CrewActions:
                     break;
 
+                case TurnStep.End:
+                    break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }

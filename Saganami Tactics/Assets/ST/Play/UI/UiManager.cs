@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using Michsky.UI.Shift;
+using ST.Common;
 using TMPro;
 using UnityEngine;
 
@@ -12,6 +14,7 @@ namespace ST.Play.UI
         private GameManager _gameManager;
 #pragma warning disable 649
         [SerializeField] private CanvasGroup loadingGroup;
+        [SerializeField] private FullscreenPanels fullscreenPanels;
 #pragma warning restore 649
 
         #region Turn
@@ -120,7 +123,9 @@ namespace ST.Play.UI
 
         private void SetPlottingPanelVisibility()
         {
-            plottingPanel.Active = _gameManager.Step == TurnStep.Plotting && _gameManager.SelectedShip.OwnedByClient;
+            plottingPanel.Active = _gameManager.Step == TurnStep.Plotting &&
+                                   _gameManager.SelectedShip.OwnedByClient &&
+                                   _gameManager.SelectedShip.ship.Status == ShipStatus.Ok;
         }
 
         #endregion Plotting panel
@@ -145,10 +150,58 @@ namespace ST.Play.UI
 
         private void SetTargetingPanelVisibility()
         {
-            targetingPanel.Active = _gameManager.Step == TurnStep.Targeting && _gameManager.SelectedShip.OwnedByClient;
+            targetingPanel.Active = _gameManager.Step == TurnStep.Targeting &&
+                                    _gameManager.SelectedShip.OwnedByClient &&
+                                    _gameManager.SelectedShip.ship.Status == ShipStatus.Ok;
         }
 
         #endregion Targeting panel
+
+        #region Crew actions panel
+
+#pragma warning disable 649
+        [SerializeField] private CrewActionsPanel crewActionsPanel;
+        [SerializeField] private ModalWindowManager modalDisengage;
+        [SerializeField] private ModalWindowManager modalSurrender;
+#pragma warning restore 649
+
+        private void UpdateCrewActionsPanelOnChanges()
+        {
+            _gameManager.OnTurnStepChange += (sender, step) => SetCrewActionsPanelVisibility();
+            _gameManager.OnSelectShip += (sender, ship) => SetCrewActionsPanelVisibility();
+            _gameManager.OnShipStatusChanged += (sender, ship) => SetCrewActionsPanelVisibility();
+
+            // TODO add repair mode
+            crewActionsPanel.OnRepair += (sender, args) => fullscreenPanels.ShowEngineeringPanel();
+            crewActionsPanel.OnDisengage += (sender, args) => modalDisengage.ModalWindowIn();
+            crewActionsPanel.OnSurrender += (sender, args) => modalSurrender.ModalWindowIn();
+        }
+
+        private void SetCrewActionsPanelVisibility()
+        {
+            crewActionsPanel.Active = _gameManager.Step == TurnStep.CrewActions &&
+                                      _gameManager.SelectedShip.OwnedByClient &&
+                                      _gameManager.SelectedShip.ship.Status == ShipStatus.Ok;
+
+            if (crewActionsPanel.Active)
+            {
+                var ship = _gameManager.SelectedShip.ship;
+
+                // can repair if has alterations
+                crewActionsPanel.CanRepair = ship.alterations.Any();
+
+                // can disengage if at least 50 away from all operating enemy ships
+                crewActionsPanel.CanDisengage = !GameManager.GetAllShips().Any(s =>
+                    s.ship.team != ship.team &&
+                    s.ship.Status == ShipStatus.Ok &&
+                    s.ship.position.DistanceTo(ship.position) < 50);
+
+                // can surrender if is OK
+                crewActionsPanel.CanSurrender = true;
+            }
+        }
+
+        #endregion Crew actions panel
 
         #region Hover info
 
@@ -196,13 +249,14 @@ namespace ST.Play.UI
         [SerializeField] private ReportsPanel reportsPanel;
         [SerializeField] private ReportsPanel fullReportsPanel;
 #pragma warning restore 649
-        
+
         private void UpdateReportsPanelsOnChanges()
         {
             if (_gameManager.SelectedShip != null)
             {
                 ListSelectedShipReports();
             }
+
             _gameManager.OnSelectShip += (sender, ship) => ListSelectedShipReports();
             _gameManager.OnTurnChange += (sender, turn) => ListSelectedShipReports();
         }
@@ -217,7 +271,7 @@ namespace ST.Play.UI
         private void SetReports()
         {
             var ship = _gameManager.SelectedShip;
-            
+
             var log = ship.GetComponent<ShipLog>();
             var reports = log.Reports.ToList();
             reportsPanel.Reports = reports.Where(r => r.turn == _gameManager.Turn).ToList();
@@ -247,6 +301,7 @@ namespace ST.Play.UI
             UpdateShipInfoOnChanges();
             UpdatePlottingPanelOnChanges();
             UpdateTargetingPanelOnChanges();
+            UpdateCrewActionsPanelOnChanges();
             UpdateReportsPanelsOnChanges();
         }
 
