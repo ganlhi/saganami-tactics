@@ -278,7 +278,6 @@ namespace ST.Play
         {
             var beamAnims = new List<Tuple<Vector3, Vector3>>();
 
-            // Compute shoot result, store reports and alterations, then make clients play shoot anim
             GetAllShips().ForEach(shipView =>
             {
                 var fcon = shipView.GetComponent<FireControl>();
@@ -406,6 +405,22 @@ namespace ST.Play
             }
 
             _pendingAlterations.Clear();
+            
+            CheckShipsForDestruction();
+        }
+
+        private void CheckShipsForDestruction()
+        {
+            GetAllShips().ForEach(shipView =>
+            {
+                var remainingStructuralPoints =
+                    SsdHelper.GetRemainingStructuralPoints(shipView.ship.Ssd, shipView.ship.alterations);
+
+                if (remainingStructuralPoints == 0)
+                {
+                    shipView.DestroyShip();
+                }
+            });
         }
 
         [PunRPC]

@@ -145,6 +145,12 @@ namespace ST.Play
             SyncShip(andThen: ShipPostSyncAction.None);
         }
 
+        public void DestroyShip()
+        {
+            ship.Status = ShipStatus.Destroyed;
+            SyncShip(andThen: ShipPostSyncAction.None);
+        }
+
         #endregion MasterClient
 
         #region AllClients

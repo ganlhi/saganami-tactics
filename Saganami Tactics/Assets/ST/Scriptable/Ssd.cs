@@ -237,5 +237,11 @@ namespace ST.Scriptable
             var boxes = ssd.defenses.First(d => d.side == side).sidewall;
             return GetUndamagedValue(boxes, sidewallAlterations);
         }
+
+        public static uint GetRemainingStructuralPoints(Ssd ssd, List<SsdAlteration> alterations)
+        {
+            var structuralAlterations = alterations.Count(a => a.type == SsdAlterationType.Structural);
+            return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations); 
+        }
     }
 }

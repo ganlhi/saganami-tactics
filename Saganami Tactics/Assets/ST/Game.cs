@@ -157,7 +157,7 @@ namespace ST
         {
             var targets = new List<TargetingContext>();
 
-            var ennemyShips = allShips.Where(s => s.team != attacker.team);
+            var ennemyShips = allShips.Where(s => s.team != attacker.team && s.Status == ShipStatus.Ok);
 
             foreach (var ennemyShip in ennemyShips)
             {
