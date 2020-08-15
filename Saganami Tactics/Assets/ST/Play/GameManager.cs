@@ -220,10 +220,34 @@ namespace ST.Play
                     case GameEvent.MoveMissiles:
                         StartCoroutine(MoveAndDestroyMissiles());
                         break;
+                    case GameEvent.FireBeams:
+                        FireBeams();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
+        }
+
+        private void PopulatePendingReportsAndAlterations(ShipView target,
+            IEnumerable<Tuple<ReportType, string>> reports,
+            IEnumerable<SsdAlteration> pendingAlterations)
+        {
+            var pendingReports = reports.Select(t => new Report()
+            {
+                turn = Turn,
+                type = t.Item1,
+                message = t.Item2,
+            });
+            if (_pendingReports.ContainsKey(target))
+                _pendingReports[target].AddRange(pendingReports);
+            else
+                _pendingReports.Add(target, pendingReports.ToList());
+
+            if (_pendingAlterations.ContainsKey(target))
+                _pendingAlterations[target].AddRange(pendingAlterations);
+            else
+                _pendingAlterations.Add(target, pendingAlterations.ToList());
         }
 
         private void FireMissiles()
@@ -234,6 +258,8 @@ namespace ST.Play
 
                 foreach (var targetingContext in fcon.Locks.Values)
                 {
+                    if (targetingContext.Mount.model.type != WeaponType.Missile) continue;
+
                     var missile = new Missile(shipView.ship, targetingContext, Turn);
 
                     var mv = PhotonNetwork
@@ -247,11 +273,42 @@ namespace ST.Play
             });
         }
 
+        private void FireBeams()
+        {
+            var beamAnims = new List<Tuple<Vector3, Vector3>>();
+
+            // Compute shoot result, store reports and alterations, then make clients play shoot anim
+            GetAllShips().ForEach(shipView =>
+            {
+                var fcon = shipView.GetComponent<FireControl>();
+
+                foreach (var targetingContext in fcon.Locks.Values)
+                {
+                    if (targetingContext.Mount.model.type != WeaponType.Laser) continue;
+                    var target = GetShipById(targetingContext.Target.uid);
+
+                    if (target == null || target.ship.Status != ShipStatus.Ok) continue;
+
+                    var reports = new List<Tuple<ReportType, string>>();
+                    var pendingAlterations = new List<SsdAlteration>();
+                    var animTargetPos = Game.FireBeam(targetingContext, shipView.ship, target.ship,
+                        ref reports,
+                        ref pendingAlterations);
+
+                    beamAnims.Add(new Tuple<Vector3, Vector3>(shipView.ship.position, animTargetPos));
+
+                    PopulatePendingReportsAndAlterations(target, reports, pendingAlterations);
+                }
+            });
+
+            StartCoroutine(AnimateBeams(beamAnims));
+        }
+
         private void UpdateMissiles()
         {
             var missileViews = GetAllMissiles();
-            _pendingReports.Clear();
-            _pendingAlterations.Clear();
+//            _pendingReports.Clear();
+//            _pendingAlterations.Clear();
 
             missileViews.ForEach(missileView =>
             {
@@ -273,40 +330,7 @@ namespace ST.Play
                         ref reports, ref pendingAlterations);
                 }
 
-                var pendingReports = reports.Select(t => new Report()
-                {
-                    turn = Turn,
-                    type = t.Item1,
-                    message = t.Item2,
-                });
-                if (_pendingReports.ContainsKey(target))
-                    _pendingReports[target].AddRange(pendingReports);
-                else
-                    _pendingReports.Add(target, pendingReports.ToList());
-
-                if (_pendingAlterations.ContainsKey(target))
-                    _pendingAlterations[target].AddRange(pendingAlterations);
-                else
-                    _pendingAlterations.Add(target, pendingAlterations.ToList());
-
-//                var pendingReports = new List<Report>();
-//                if (_pendingReports.TryGetValue(target, out var previousReports))
-//                {
-//                    pendingReports = previousReports;
-//                }
-//                else
-//                {
-//                    _pendingReports.Add(target, pendingReports);
-//                }
-//
-//                pendingReports.AddRange(reports.Select(t => new Report()
-//                {
-//                    turn = Turn,
-//                    type = t.Item1,
-//                    message = t.Item2,
-//                }));
-//                
-//                _pendingReports[target] = pendingReports;
+                PopulatePendingReportsAndAlterations(target, reports, pendingAlterations);
             });
 
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
@@ -326,6 +350,30 @@ namespace ST.Play
             DispatchPendingReports();
             DispatchPendingAlterations();
             DestroyMissiles();
+        }
+
+        private IEnumerator AnimateBeams(List<Tuple<Vector3, Vector3>> beamAnims)
+        {
+            _clientsReadyToContinue = 0;
+
+            var beamAnimsAsObjects = new object[beamAnims.Count * 2];
+            var i = 0;
+            foreach (var (from, to) in beamAnims)
+            {
+                beamAnimsAsObjects[i] = from;
+                beamAnimsAsObjects[i + 1] = to;
+                i += 2;
+            }
+
+            photonView.RPC("RPC_WaitForBeamsAnimation", RpcTarget.All, beamAnimsAsObjects);
+
+            do
+            {
+                yield return null;
+            } while (_clientsReadyToContinue < PhotonNetwork.CurrentRoom.PlayerCount);
+
+            DispatchPendingReports();
+            DispatchPendingAlterations();
         }
 
         private void DestroyMissiles()
@@ -370,6 +418,10 @@ namespace ST.Play
         #endregion MasterClient
 
         #region AllClients
+
+#pragma warning disable 0649
+        [SerializeField] private BeamsLines beamsLines;
+#pragma warning restore 0649
 
         [PunRPC]
         private void RPC_ExpectShips(int nbShips)
@@ -416,6 +468,22 @@ namespace ST.Play
         private void RPC_WaitForMissilesUpdates(int nbMissiles)
         {
             StartCoroutine(WaitForMissilesUpdates(nbMissiles));
+        }
+
+        [PunRPC]
+        private void RPC_WaitForBeamsAnimation(object[] animPositionsTuples)
+        {
+            var animPositions = new List<Tuple<Vector3, Vector3>>();
+
+            for (var i = 0; i < animPositionsTuples.Length; i += 2)
+            {
+                var from = (Vector3) animPositionsTuples[i];
+                var to = (Vector3) animPositionsTuples[i + 1];
+                Debug.Log($"ANIMATE BEAM {from} -> {to}");
+                animPositions.Add(new Tuple<Vector3, Vector3>(from, to));
+            }
+
+            StartCoroutine(WaitForBeamsAnimation(animPositions));
         }
 
         [PunRPC]
@@ -488,6 +556,32 @@ namespace ST.Play
 
             SetReady(true);
             Busy = false;
+        }
+
+        private IEnumerator WaitForBeamsAnimation(List<Tuple<Vector3, Vector3>> animPositions)
+        {
+            Busy = true;
+
+            animPositions.ForEach(t =>
+            {
+                var (from, to) = t;
+                beamsLines.AddLine(from, to);
+            });
+
+            var duration = GameSettings.Default.BeamDuration;
+            var elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            beamsLines.RemoveLines();
+
+            Busy = false;
+
+            photonView.RPC("RPC_ReadyToContinue", RpcTarget.MasterClient);
         }
 
         private IEnumerator AnimateMoveMissilesToNextPosition()

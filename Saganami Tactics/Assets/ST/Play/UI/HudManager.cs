@@ -100,7 +100,7 @@ namespace ST.Play.UI
         private void HandleClick()
         {
             // When in targeting mode, no selection via the HUD
-            if (_gameManager.Step == TurnStep.Targeting) return;
+//            if (_gameManager.Step == TurnStep.Targeting) return;
             
             if (Input.GetMouseButtonUp(0) && _hoverShip != null)
             {

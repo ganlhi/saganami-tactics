@@ -19,6 +19,7 @@ namespace ST
         FireMissiles,
         UpdateMissiles,
         MoveMissiles,
+        FireBeams
     }
 
     public static class Game
@@ -90,6 +91,7 @@ namespace ST
                     break;
 
                 case TurnStep.Beams:
+                    events.Add(GameEvent.FireBeams);
                     break;
 
                 case TurnStep.End:
@@ -371,6 +373,55 @@ namespace ST
             return false;
         }
 
+        public static Vector3 FireBeam(TargetingContext context, Ship attacker, Ship target,
+            ref List<Tuple<ReportType, string>> reports,
+            ref List<SsdAlteration> alterations)
+        {
+            var weaponMount = context.Mount;
+
+            var totalRange = Mathf.CeilToInt(attacker.position.DistanceTo(target.position));
+            var rangeBand = weaponMount.model.GetRangeBand(totalRange);
+
+            if (!rangeBand.HasValue)
+            {
+                // Should not happen, but let's consider this case a miss
+                reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
+                    $"Lasers from {attacker.name} are out of range"));
+                return attacker.position;
+            }
+
+            var (mainBearing, _) = target.GetBearingTo(attacker.position);
+            if (SsdHelper.HasWedge(target.Ssd, mainBearing))
+            {
+                // Beams cannot shoot through wedges
+                reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
+                    $"Lasers from {attacker.position} have been stopped by wedge"));
+
+                return target.position; // TODO offset to hit wedge
+            }
+
+            var accuracy = rangeBand.Value.accuracy;
+            var diceRolls = Dice.D10s(context.Number);
+
+            var successes = diceRolls.Count(r => r >= accuracy);
+
+            if (successes == 0)
+            {
+                reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
+                    $"Lasers from {attacker.name} missed"));
+                return target.position + Random.insideUnitSphere; // TODO do not shoot through the target ship
+            }
+
+            reports.Add(new Tuple<ReportType, string>(ReportType.MissilesHit,
+                $"Lasers from {attacker.name}: {successes} hits"));
+
+            HitTarget(weaponMount.model, mainBearing, successes, totalRange, attacker, target, 
+                ref reports,
+                ref alterations);
+
+            return target.position;
+        }
+
         public static void HitTarget(Weapon weapon, Side targetSide, int hits, int range, Ship attacker, Ship target,
             ref List<Tuple<ReportType, string>> reports,
             ref List<SsdAlteration> alterations)
@@ -382,21 +433,21 @@ namespace ST
 
             var diceRolls = Dice.MultipleTwoD10Minus(hits);
 
-            var missileNum = 0;
+            var hitNum = 0;
             foreach (var (result, doubleZero) in diceRolls)
             {
-                missileNum += 1;
+                hitNum += 1;
                 var penetrationResult = result - (int) sidewallStrength;
 
                 if (penetrationResult <= 0)
                 {
                     reports.Add(new Tuple<ReportType, string>(ReportType.Info,
-                        $"#{missileNum} {weaponType} from {attacker.name} have been stopped by sidewall"));
+                        $"#{hitNum} {weaponType} from {attacker.name} have been stopped by sidewall"));
 
                     if (doubleZero)
                     {
                         reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                            $"#{missileNum} {weaponType} damaged: {targetSide.ToFriendlyString()} sidewall"));
+                            $"#{hitNum} {weaponType} damaged: {targetSide.ToFriendlyString()} sidewall"));
 
                         alterations.AddRange(MakeAlterationsForBoxes(
                             new SsdAlteration() {type = SsdAlterationType.Sidewall, side = targetSide},
@@ -415,15 +466,15 @@ namespace ST
                     var damages = rangeBand.Value.damage + actualPenetration;
                     var location = (uint) Dice.D10();
 
-                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, missileNum, ref reports,
+                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, hitNum, ref reports,
                         ref alterations);
                 }
             }
         }
 
-        public static void ApplyDamagesToLocation(Side side, uint location, int damages, Ship target,
+        private static void ApplyDamagesToLocation(Side side, uint location, int damages, Ship target,
             string weaponType,
-            int missileNum,
+            int hitNum,
             ref List<Tuple<ReportType, string>> reports,
             ref List<SsdAlteration> alterations)
         {
@@ -464,7 +515,7 @@ namespace ST
                                     alterations.AddRange(missileAlterations);
                                     remainingDamages -= missileAlterations.Count;
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{missileNum} {weaponType} damaged: {side.ToFriendlyString()} missiles"));
+                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} missiles"));
                                 }
 
                                 break;
@@ -489,7 +540,7 @@ namespace ST
                                     alterations.AddRange(laserAlterations);
                                     remainingDamages -= laserAlterations.Count;
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{missileNum} {weaponType} damaged: {side.ToFriendlyString()} lasers"));
+                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} lasers"));
                                 }
 
                                 break;
@@ -517,7 +568,7 @@ namespace ST
                                     alterations.AddRange(sideDefenseAlterations);
                                     remainingDamages -= sideDefenseAlterations.Count;
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{missileNum} {weaponType} damaged: {side.ToFriendlyString()} {(slot.type == HitLocationSlotType.CounterMissile ? "CM" : "PD")}"));
+                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} {(slot.type == HitLocationSlotType.CounterMissile ? "CM" : "PD")}"));
                                 }
 
                                 break;
@@ -545,7 +596,7 @@ namespace ST
                                     alterations.AddRange(impellerAlterations);
                                     remainingDamages -= impellerAlterations.Count();
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{missileNum} {weaponType} damaged: {(slot.type == HitLocationSlotType.ForwardImpeller ? "forward" : "aft")} impeller"));
+                                        $"#{hitNum} {weaponType} damaged: {(slot.type == HitLocationSlotType.ForwardImpeller ? "forward" : "aft")} impeller"));
 
                                     // damage movement boxes
                                     alterations.AddRange(MakeAlterationsForBoxes(
@@ -585,7 +636,7 @@ namespace ST
                                     alterations.AddRange(slotAlterations);
                                     remainingDamages -= slotAlterations.Count();
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{missileNum} {weaponType} damaged: {slot.type} (location {currentLocation})"));
+                                        $"#{hitNum} {weaponType} damaged: {slot.type} (location {currentLocation})"));
                                 }
 
                                 break;
@@ -608,7 +659,7 @@ namespace ST
                     if (structuralDamages > 0)
                     {
                         reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                            $"#{missileNum} {weaponType} made structural damages: {structuralDamages}"));
+                            $"#{hitNum} {weaponType} made structural damages: {structuralDamages}"));
 
                         alterations.AddRange(MakeAlterationsForBoxes(
                             new SsdAlteration()
