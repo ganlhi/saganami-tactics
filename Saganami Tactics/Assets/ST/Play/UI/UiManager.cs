@@ -3,6 +3,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using Michsky.UI.Shift;
 using ST.Common;
+using ST.Common.UI;
 using ST.Scriptable;
 using TMPro;
 using UnityEngine;
@@ -285,6 +286,45 @@ namespace ST.Play.UI
 
         #endregion Reports
 
+        #region Engineering
+
+#pragma warning disable 649
+        [SerializeField] private SsdPanel ssdPanel;
+#pragma warning restore 649
+        
+        private void UpdateEngineeringPanelOnChanges()
+        {
+            if (_gameManager.SelectedShip != null)
+            {
+                SetSelectedShipEngineeringPanel();
+            }
+            
+            _gameManager.OnSelectShip += (sender, ship) => SetSelectedShipEngineeringPanel();
+        }
+
+        private void SetSelectedShipEngineeringPanel()
+        {
+            if (_gameManager.SelectedShip == null) return;
+            SetEngineeringPanel();
+            _gameManager.SelectedShip.OnAlterationsChange += (sender, args) => UpdateEngineeringPanel();
+        }
+        
+        private void SetEngineeringPanel()
+        {
+            var ship = _gameManager.SelectedShip.ship;
+            ssdPanel.ShipName = ship.name;
+            ssdPanel.Ssd = ship.Ssd;
+            ssdPanel.Alterations = ship.alterations;
+        }
+
+        private void UpdateEngineeringPanel()
+        {
+            var ship = _gameManager.SelectedShip.ship;
+            ssdPanel.Alterations = ship.alterations;
+        }
+
+        #endregion Engineering
+
         private void Awake()
         {
             loadingGroup.alpha = 1f;
@@ -308,6 +348,7 @@ namespace ST.Play.UI
             UpdateTargetingPanelOnChanges();
             UpdateCrewActionsPanelOnChanges();
             UpdateReportsPanelsOnChanges();
+            UpdateEngineeringPanelOnChanges();
         }
 
         private void Update()

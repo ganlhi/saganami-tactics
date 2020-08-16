@@ -9,7 +9,7 @@ namespace ST
         public bool destroyed;
         public Side side;
         public SsdAlterationType type;
-        public HitLocationSlotType? slotType;
+        public HitLocationSlotType slotType;
         public uint location;
     }
 

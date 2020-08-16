@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
 using ST.Common;
 using ST.Scriptable;
@@ -22,6 +23,8 @@ namespace ST.Play
         public bool OwnedByClient => PhotonNetwork.LocalPlayer.GetTeam() == ship.team;
 
         public bool Busy { get; private set; }
+        
+        public event EventHandler OnAlterationsChange;
 
         private ShipMarker _endMarker;
 
@@ -138,6 +141,26 @@ namespace ST.Play
                 alteration.type,
                 alteration.slotType
             );
+        }
+
+        public void AddAlterations(List<SsdAlteration> alterations)
+        {
+            var nb = alterations.Count;
+            var data = new object[nb * 5];
+
+            var i = 0;
+            foreach (var alteration in alterations)
+            {
+                data[i] = alteration.destroyed;
+                data[i + 1] = (int) alteration.location;
+                data[i + 2] = alteration.side;
+                data[i + 3] = alteration.type;
+                data[i + 4] = alteration.slotType;
+                
+                i += 5;
+            }
+
+            photonView.RPC("RPC_AddAlterations", RpcTarget.All, nb, data);
         }
 
         [PunRPC]
@@ -338,9 +361,37 @@ namespace ST.Play
             photonView.RPC("RPC_Plot", RpcTarget.MasterClient, action, value);
         }
 
+
+        [PunRPC]
+        private void RPC_AddAlterations(int nb, object[] data)
+        {
+            for (var i = 0; i < nb * 5; i += 5)
+            {
+                // Check if current chunk fits into data
+                if (data.Length <= i + 4) continue;
+                
+                var destroyed = (bool) data[i];
+                var location = (int) data[i+1];
+                var side = (Side) data[i+2];
+                var type = (SsdAlterationType) data[i+3];
+                var slotType = (HitLocationSlotType) data[i+4];
+                
+                ship.alterations.Add(new SsdAlteration()
+                {
+                    destroyed = destroyed,
+                    location = (uint)location,
+                    side = side,
+                    type = type,
+                    slotType = slotType
+                });
+            }
+            
+            OnAlterationsChange?.Invoke(this, EventArgs.Empty);
+        }
+        
         [PunRPC]
         private void RPC_AddAlteration(bool destroyed, int location, Side side, SsdAlterationType type,
-            HitLocationSlotType? slotType)
+            HitLocationSlotType slotType)
         {
             ship.alterations.Add(new SsdAlteration()
             {
@@ -350,6 +401,8 @@ namespace ST.Play
                 type = type,
                 slotType = slotType
             });
+            
+            OnAlterationsChange?.Invoke(this, EventArgs.Empty);
         }
 
         public void Disengage()

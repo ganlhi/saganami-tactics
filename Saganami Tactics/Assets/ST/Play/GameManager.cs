@@ -83,17 +83,6 @@ namespace ST.Play
             InitWhenReady();
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Delete) && SelectedShip != null)
-            {
-                for (var i = 0; i < SelectedShip.ship.Ssd.structuralIntegrity.Length; i++)
-                    SelectedShip.AddAlteration(new SsdAlteration()
-                        {destroyed = true, type = SsdAlterationType.Structural});
-                CheckShipsForDestruction();
-            }
-        }
-
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
@@ -412,7 +401,8 @@ namespace ST.Play
         {
             foreach (var kv in _pendingAlterations)
             {
-                kv.Value.ForEach(alteration => kv.Key.AddAlteration(alteration));
+                kv.Key.AddAlterations(kv.Value);
+//                kv.Value.ForEach(alteration => kv.Key.AddAlteration(alteration));
             }
 
             _pendingAlterations.Clear();

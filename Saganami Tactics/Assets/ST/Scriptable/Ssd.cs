@@ -13,6 +13,7 @@ namespace ST.Scriptable
         public Faction faction;
         public int baseCost;
         public int crewRate;
+        public int crew;
 
         public uint[] movement;
         public uint[] structuralIntegrity;
@@ -242,6 +243,38 @@ namespace ST.Scriptable
         {
             var structuralAlterations = alterations.Count(a => a.type == SsdAlterationType.Structural);
             return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations); 
+        }
+
+        public static string SlotTypeToString(HitLocationSlotType slotType)
+        {
+            switch (slotType)
+            {
+                case HitLocationSlotType.None:
+                case HitLocationSlotType.Missile:
+                case HitLocationSlotType.Laser:
+                case HitLocationSlotType.Cargo:
+                case HitLocationSlotType.Hull:
+                case HitLocationSlotType.Decoy:
+                case HitLocationSlotType.ECCM:
+                case HitLocationSlotType.ECM:
+                case HitLocationSlotType.Bridge:
+                case HitLocationSlotType.Pivot:
+                case HitLocationSlotType.Roll:
+                    return slotType.ToString();
+                    
+                case HitLocationSlotType.CounterMissile:
+                    return "Counter missile";
+                case HitLocationSlotType.PointDefense:
+                    return "Point defense";
+                case HitLocationSlotType.ForwardImpeller:
+                    return "Forward impeller";
+                case HitLocationSlotType.AftImpeller:
+                    return "Aft impeller";
+                case HitLocationSlotType.DamageControl:
+                    return "Damage control";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(slotType), slotType, null);
+            }
         }
     }
 }
