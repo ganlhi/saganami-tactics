@@ -34,7 +34,7 @@ namespace ST.Play.UI
         private void Start()
         {
             weaponsCanvasGroup.alpha = 0;
-            
+
             _camera = Camera.main;
 
             foreach (Transform child in weaponSwitchesContainer)
@@ -64,6 +64,8 @@ namespace ST.Play.UI
                 _switches.Add(targetingContext, sw);
 
                 var side = targetingContext.Side;
+                AnimateMarker(side);
+
                 sw.OnToggle += (sender, isOn) =>
                 {
                     if (isOn)
@@ -78,18 +80,23 @@ namespace ST.Play.UI
                         }
                     }
 
-                    var nbLocks = fcon.Locks.Keys.Count(m => m.side == side);
-                    if (nbLocks > 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Potential"))
-                    {
-                        animator.CrossFade("Actual", 0.1f);
-                    }
-                    else if (nbLocks == 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Actual"))
-                    {
-                        animator.CrossFade("Potential", 0.1f);
-                    }
+                    AnimateMarker(side);
 
                     OnLockTarget?.Invoke(this, new Tuple<TargetingContext, bool>(targetingContext, isOn));
                 };
+            }
+        }
+
+        private void AnimateMarker(Side side)
+        {
+            var nbLocks = fcon.Locks.Keys.Count(m => m.side == side);
+            if (nbLocks > 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Potential"))
+            {
+                animator.CrossFade("Actual", 0.1f);
+            }
+            else if (nbLocks == 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Actual"))
+            {
+                animator.CrossFade("Potential", 0.1f);
             }
         }
 
