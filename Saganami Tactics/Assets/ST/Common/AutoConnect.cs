@@ -32,6 +32,8 @@ namespace ST.Common
                 IsOpen = true,
                 IsVisible = false,
                 MaxPlayers = (byte)expectedPlayers,
+//                EmptyRoomTtl = 120000,
+//                PlayerTtl = 120000,
             }, TypedLobby.Default);
         }
 

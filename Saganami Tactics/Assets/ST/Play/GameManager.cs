@@ -114,6 +114,24 @@ namespace ST.Play
             }
         }
 
+/*
+        // FOR TESTING PURPOSES         
+        private void Update()
+        {
+            if (!PhotonNetwork.IsMasterClient) return;
+            if (Input.GetKeyDown(KeyCode.End) && SelectedShip != null)
+            {
+                _pendingDestroyedAmmo.Add(SelectedShip, new List<Tuple<int, int>>()
+                {
+                    new Tuple<int, int>(0, 3),
+                    new Tuple<int, int>(0, 2),
+                });
+                
+                DispatchPendingDestroyedAmmo();
+            }
+        }
+*/
+
         #region MasterClient
 
 #pragma warning disable 0649
@@ -122,10 +140,13 @@ namespace ST.Play
 
         private GameState _state;
         private int _clientsReadyToContinue;
-        private Dictionary<ShipView, List<Report>> _pendingReports = new Dictionary<ShipView, List<Report>>();
+        private readonly Dictionary<ShipView, List<Report>> _pendingReports = new Dictionary<ShipView, List<Report>>();
 
-        private Dictionary<ShipView, List<SsdAlteration>> _pendingAlterations =
+        private readonly Dictionary<ShipView, List<SsdAlteration>> _pendingAlterations =
             new Dictionary<ShipView, List<SsdAlteration>>();
+
+        private readonly Dictionary<ShipView, List<Tuple<int, int>>> _pendingDestroyedAmmo =
+            new Dictionary<ShipView, List<Tuple<int, int>>>();
 
         private void LoadStateFromHolder()
         {
@@ -230,25 +251,43 @@ namespace ST.Play
             }
         }
 
-        private void PopulatePendingReportsAndAlterations(ShipView target,
-            IEnumerable<Tuple<ReportType, string>> reports,
-            IEnumerable<SsdAlteration> pendingAlterations)
+        private void PopulateAttackPendingData(ShipView target,
+            List<Tuple<ReportType, string>> reports,
+            List<SsdAlteration> pendingAlterations,
+            List<Tuple<int, int>> pendingDestroyedAmmo)
         {
-            var pendingReports = reports.Select(t => new Report()
+            // Reports
+            if (reports.Any())
             {
-                turn = Turn,
-                type = t.Item1,
-                message = t.Item2,
-            });
-            if (_pendingReports.ContainsKey(target))
-                _pendingReports[target].AddRange(pendingReports);
-            else
-                _pendingReports.Add(target, pendingReports.ToList());
+                var pendingReports = reports.Select(t => new Report()
+                {
+                    turn = Turn,
+                    type = t.Item1,
+                    message = t.Item2,
+                });
+                if (_pendingReports.ContainsKey(target))
+                    _pendingReports[target].AddRange(pendingReports);
+                else
+                    _pendingReports.Add(target, pendingReports.ToList());
+            }
 
-            if (_pendingAlterations.ContainsKey(target))
-                _pendingAlterations[target].AddRange(pendingAlterations);
-            else
-                _pendingAlterations.Add(target, pendingAlterations.ToList());
+            //Alterations
+            if (pendingAlterations.Any())
+            {
+                if (_pendingAlterations.ContainsKey(target))
+                    _pendingAlterations[target].AddRange(pendingAlterations);
+                else
+                    _pendingAlterations.Add(target, pendingAlterations.ToList());
+            }
+
+            // Destroyed ammo
+            if (pendingDestroyedAmmo.Any())
+            {
+                if (_pendingDestroyedAmmo.ContainsKey(target))
+                    _pendingDestroyedAmmo[target].AddRange(pendingDestroyedAmmo);
+                else
+                    _pendingDestroyedAmmo.Add(target, pendingDestroyedAmmo.ToList());
+            }
         }
 
         private void FireMissiles()
@@ -269,7 +308,7 @@ namespace ST.Play
 
                     mv.missile = missile;
 
-                    shipView.ConsumeAmmo(targetingContext.Mount, targetingContext.Number); 
+                    shipView.ConsumeAmmo(targetingContext.Mount, targetingContext.Number);
                 }
             });
         }
@@ -291,13 +330,16 @@ namespace ST.Play
 
                     var reports = new List<Tuple<ReportType, string>>();
                     var pendingAlterations = new List<SsdAlteration>();
+                    var pendingDestroyedAmmo = new List<Tuple<int, int>>();
+
                     var animTargetPos = Game.FireBeam(targetingContext, shipView.ship, target.ship,
                         ref reports,
-                        ref pendingAlterations);
+                        ref pendingAlterations,
+                        ref pendingDestroyedAmmo);
 
                     beamAnims.Add(new Tuple<Vector3, Vector3>(shipView.ship.position, animTargetPos));
 
-                    PopulatePendingReportsAndAlterations(target, reports, pendingAlterations);
+                    PopulateAttackPendingData(target, reports, pendingAlterations, pendingDestroyedAmmo);
                 }
             });
 
@@ -321,14 +363,18 @@ namespace ST.Play
                 missileView.UpdateMissile(missile);
 
                 var pendingAlterations = new List<SsdAlteration>();
+                var pendingDestroyedAmmo = new List<Tuple<int, int>>();
+
                 if (missile.status == MissileStatus.Hitting && missile.number > 0)
                 {
                     Game.HitTarget(missile.weapon, missile.hitSide, missile.number, missile.attackRange, attacker.ship,
                         target.ship,
-                        ref reports, ref pendingAlterations);
+                        ref reports,
+                        ref pendingAlterations,
+                        ref pendingDestroyedAmmo);
                 }
 
-                PopulatePendingReportsAndAlterations(target, reports, pendingAlterations);
+                PopulateAttackPendingData(target, reports, pendingAlterations, pendingDestroyedAmmo);
             });
 
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
@@ -347,6 +393,7 @@ namespace ST.Play
 
             DispatchPendingReports();
             DispatchPendingAlterations();
+            DispatchPendingDestroyedAmmo();
             DestroyMissiles();
         }
 
@@ -372,6 +419,7 @@ namespace ST.Play
 
             DispatchPendingReports();
             DispatchPendingAlterations();
+            DispatchPendingDestroyedAmmo();
         }
 
         private void DestroyMissiles()
@@ -402,12 +450,38 @@ namespace ST.Play
             foreach (var kv in _pendingAlterations)
             {
                 kv.Key.AddAlterations(kv.Value);
-//                kv.Value.ForEach(alteration => kv.Key.AddAlteration(alteration));
             }
 
             _pendingAlterations.Clear();
 
             CheckShipsForDestruction();
+        }
+
+        private void DispatchPendingDestroyedAmmo()
+        {
+            foreach (var kv in _pendingDestroyedAmmo)
+            {
+                var shipView = kv.Key;
+                var accumulator = new Dictionary<WeaponMount, int>();
+
+                foreach (var (mountIndex, amount) in kv.Value)
+                {
+                    var weaponMount = shipView.ship.Ssd.weaponMounts[mountIndex];
+
+                    if (accumulator.ContainsKey(weaponMount))
+                    {
+                        accumulator[weaponMount] += amount;
+                    }
+                    else
+                    {
+                        accumulator.Add(weaponMount, amount);
+                    }
+                }
+
+                shipView.ConsumeAmmos(accumulator);
+            }
+
+            _pendingDestroyedAmmo.Clear();
         }
 
         private void CheckShipsForDestruction()

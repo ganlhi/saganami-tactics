@@ -96,14 +96,14 @@ namespace ST
                 case TurnStep.Beams:
                     events.Add(GameEvent.FireBeams);
                     break;
-                
+
                 case TurnStep.CrewActions:
                     break;
 
                 case TurnStep.End:
                     events.Add(GameEvent.ClearTargets);
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -145,7 +145,7 @@ namespace ST
 
                 case TurnStep.End:
                     break;
-                
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -387,7 +387,8 @@ namespace ST
 
         public static Vector3 FireBeam(TargetingContext context, Ship attacker, Ship target,
             ref List<Tuple<ReportType, string>> reports,
-            ref List<SsdAlteration> alterations)
+            ref List<SsdAlteration> alterations,
+            ref List<Tuple<int, int>> destroyedAmmo)
         {
             var weaponMount = context.Mount;
 
@@ -427,16 +428,18 @@ namespace ST
             reports.Add(new Tuple<ReportType, string>(ReportType.MissilesHit,
                 $"Lasers from {attacker.name}: {successes} hits"));
 
-            HitTarget(weaponMount.model, mainBearing, successes, totalRange, attacker, target, 
+            HitTarget(weaponMount.model, mainBearing, successes, totalRange, attacker, target,
                 ref reports,
-                ref alterations);
+                ref alterations,
+                ref destroyedAmmo);
 
             return target.position;
         }
 
         public static void HitTarget(Weapon weapon, Side targetSide, int hits, int range, Ship attacker, Ship target,
             ref List<Tuple<ReportType, string>> reports,
-            ref List<SsdAlteration> alterations)
+            ref List<SsdAlteration> alterations,
+            ref List<Tuple<int, int>> destroyedAmmo)
         {
             var weaponType = weapon.type == WeaponType.Missile ? "Missile" : "Laser";
 
@@ -478,8 +481,10 @@ namespace ST
                     var damages = rangeBand.Value.damage + actualPenetration;
                     var location = (uint) Dice.D10();
 
-                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, hitNum, ref reports,
-                        ref alterations);
+                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, hitNum, 
+                        ref reports,
+                        ref alterations, 
+                        ref destroyedAmmo);
                 }
             }
         }
@@ -488,7 +493,8 @@ namespace ST
             string weaponType,
             int hitNum,
             ref List<Tuple<ReportType, string>> reports,
-            ref List<SsdAlteration> alterations)
+            ref List<SsdAlteration> alterations,
+            ref List<Tuple<int, int>> destroyedAmmo)
         {
             var remainingDamages = damages;
             var currentLocation = location;
@@ -507,6 +513,9 @@ namespace ST
                             case HitLocationSlotType.None:
                                 break;
                             case HitLocationSlotType.Missile:
+                                var weaponMount = target.Ssd.weaponMounts.First(m =>
+                                    m.side == side && m.model.type == WeaponType.Missile);
+
                                 var missileAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
                                     {
@@ -516,8 +525,7 @@ namespace ST
                                         location = currentLocation
                                     },
                                     1,
-                                    target.Ssd.weaponMounts.First(m =>
-                                        m.side == side && m.model.type == WeaponType.Missile).weapons,
+                                    weaponMount.weapons,
                                     target.alterations,
                                     alterations
                                 );
@@ -527,9 +535,19 @@ namespace ST
                                     alterations.AddRange(missileAlterations);
                                     remainingDamages -= missileAlterations.Count;
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} missiles"));
-                                    
-                                    // TODO lose 2D10- ammo
+                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} missile launchers"));
+
+                                    // Lose ammo
+                                    var amount = Dice.TwoD10Minus().Item1;
+                                    if (amount > 0)
+                                    {
+                                        var mountIndex = Array.FindIndex(target.Ssd.weaponMounts,
+                                            m => m.Equals(weaponMount));
+                                        destroyedAmmo.Add(new Tuple<int, int>(mountIndex, amount));
+                                        reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                            $"#{hitNum} {weaponType} destroyed ammo: {amount} {side.ToFriendlyString()}'s missiles"
+                                        ));
+                                    }
                                 }
 
                                 break;

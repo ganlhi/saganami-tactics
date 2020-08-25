@@ -23,7 +23,7 @@ namespace ST.Play
         public bool OwnedByClient => PhotonNetwork.LocalPlayer.GetTeam() == ship.team;
 
         public bool Busy { get; private set; }
-        
+
         public event EventHandler OnAlterationsChange;
         public event EventHandler OnConsumedAmmo;
 
@@ -42,7 +42,7 @@ namespace ST.Play
                 return _endMarker;
             }
         }
-        
+
 #pragma warning disable 0649
         [SerializeField] private GameObject shipObject;
         [SerializeField] private GameObject[] wedges;
@@ -51,7 +51,7 @@ namespace ST.Play
 #pragma warning restore 0649
 
         private ShipStatus? _lastCheckedStatus = null;
-        
+
         private void Start()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -137,7 +137,7 @@ namespace ST.Play
         {
             photonView.RPC("RPC_AddAlteration", RpcTarget.All,
                 alteration.destroyed,
-                (int)alteration.location,
+                (int) alteration.location,
                 alteration.side,
                 alteration.type,
                 alteration.slotType
@@ -157,17 +157,34 @@ namespace ST.Play
                 data[i + 2] = alteration.side;
                 data[i + 3] = alteration.type;
                 data[i + 4] = alteration.slotType;
-                
+
                 i += 5;
             }
 
             photonView.RPC("RPC_AddAlterations", RpcTarget.All, nb, data);
         }
-        
+
         public void ConsumeAmmo(WeaponMount weaponMount, int number)
         {
             var wmIndex = Array.FindIndex(ship.Ssd.weaponMounts, m => m.Equals(weaponMount));
             photonView.RPC("RPC_ConsumeAmmo", RpcTarget.All, wmIndex, number);
+        }
+
+        public void ConsumeAmmos(Dictionary<WeaponMount, int> consumedAmmosByWeapon)
+        {
+            var nb = consumedAmmosByWeapon.Count;
+            var data = new int[nb * 2];
+
+            var i = 0;
+            foreach (var kv in consumedAmmosByWeapon)
+            {
+                data[i] = Array.FindIndex(ship.Ssd.weaponMounts, m => m.Equals(kv.Key));
+                data[i + 1] = kv.Value;
+
+                i += 2;
+            }
+
+            photonView.RPC("RPC_ConsumeAmmos", RpcTarget.All, nb, data);
         }
 
         [PunRPC]
@@ -242,7 +259,7 @@ namespace ST.Play
                 default:
                     throw new ArgumentOutOfRangeException(nameof(andThen), andThen, null);
             }
-            
+
             if (!_lastCheckedStatus.HasValue || _lastCheckedStatus.Value != ship.Status)
             {
                 UpdateGraphicsBasedOnStatus();
@@ -258,6 +275,7 @@ namespace ST.Play
                 {
                     go.SetActive(false);
                 }
+
                 EndMarker.gameObject.SetActive(false);
             }
 
@@ -272,6 +290,7 @@ namespace ST.Play
                     {
                         go.SetActive(false);
                     }
+
                     break;
                 case ShipStatus.Ok:
                     break;
@@ -295,7 +314,7 @@ namespace ST.Play
                 transform.position += escapeVelocity * Time.deltaTime;
                 yield return null;
             } while (rend.isVisible && cam != null && cam.transform.position.DistanceTo(transform.position) < 300);
-            
+
             shipObject.SetActive(false);
         }
 
@@ -304,7 +323,8 @@ namespace ST.Play
             var emTransform = EndMarker.transform;
             emTransform.position = ship.endMarkerPosition;
             emTransform.rotation = ship.endMarkerRotation;
-            EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition && ship.Status == ShipStatus.Ok);
+            EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition &&
+                                           ship.Status == ShipStatus.Ok);
         }
 
         public void AutoMove()
@@ -376,26 +396,26 @@ namespace ST.Play
             {
                 // Check if current chunk fits into data
                 if (data.Length <= i + 4) continue;
-                
+
                 var destroyed = (bool) data[i];
-                var location = (int) data[i+1];
-                var side = (Side) data[i+2];
-                var type = (SsdAlterationType) data[i+3];
-                var slotType = (HitLocationSlotType) data[i+4];
-                
+                var location = (int) data[i + 1];
+                var side = (Side) data[i + 2];
+                var type = (SsdAlterationType) data[i + 3];
+                var slotType = (HitLocationSlotType) data[i + 4];
+
                 ship.alterations.Add(new SsdAlteration()
                 {
                     destroyed = destroyed,
-                    location = (uint)location,
+                    location = (uint) location,
                     side = side,
                     type = type,
                     slotType = slotType
                 });
             }
-            
+
             OnAlterationsChange?.Invoke(this, EventArgs.Empty);
         }
-        
+
         [PunRPC]
         private void RPC_AddAlteration(bool destroyed, int location, Side side, SsdAlterationType type,
             HitLocationSlotType slotType)
@@ -403,38 +423,60 @@ namespace ST.Play
             ship.alterations.Add(new SsdAlteration()
             {
                 destroyed = destroyed,
-                location = (uint)location,
+                location = (uint) location,
                 side = side,
                 type = type,
                 slotType = slotType
             });
-            
+
             OnAlterationsChange?.Invoke(this, EventArgs.Empty);
         }
 
         [PunRPC]
         private void RPC_ConsumeAmmo(int weaponMountIndex, int number)
         {
-            if (ship.consumedAmmo.ContainsKey(weaponMountIndex))
+            UpdateConsumedAmmo(weaponMountIndex, number);
+            OnConsumedAmmo?.Invoke(this, EventArgs.Empty);
+        }
+
+        [PunRPC]
+        private void RPC_ConsumeAmmos(int nb, int[] data)
+        {
+            for (var i = 0; i < nb * 2; i += 2)
             {
-                ship.consumedAmmo[weaponMountIndex] += number;
-            }
-            else
-            {
-                ship.consumedAmmo.Add(weaponMountIndex, number);
+                if (data.Length <= i + 1) continue;
+                var weaponMountIndex = data[i];
+                var number = data[i + 1];
+
+                UpdateConsumedAmmo(weaponMountIndex, number);
             }
 
             OnConsumedAmmo?.Invoke(this, EventArgs.Empty);
         }
 
+        private void UpdateConsumedAmmo(int weaponMountIndex, int number)
+        {
+            var mount = ship.Ssd.weaponMounts[weaponMountIndex];
+
+            if (ship.consumedAmmo.ContainsKey(weaponMountIndex))
+            {
+                ship.consumedAmmo[weaponMountIndex] =
+                    Math.Min(ship.consumedAmmo[weaponMountIndex] + number, mount.ammo);
+            }
+            else
+            {
+                ship.consumedAmmo.Add(weaponMountIndex, Math.Min(number, mount.ammo));
+            }
+        }
+
         public void Disengage()
         {
-            photonView.RPC("RPC_Disengage", RpcTarget.MasterClient);   
+            photonView.RPC("RPC_Disengage", RpcTarget.MasterClient);
         }
 
         public void Surrender()
         {
-            photonView.RPC("RPC_Surrender", RpcTarget.MasterClient);   
+            photonView.RPC("RPC_Surrender", RpcTarget.MasterClient);
         }
 
         #endregion AllClients
