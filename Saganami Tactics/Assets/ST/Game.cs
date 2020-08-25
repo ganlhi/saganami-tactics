@@ -678,12 +678,12 @@ namespace ST
                     }
                 }
 
-                if (loc.passThrough)
+                if (loc.passThrough && remainingDamages > 0)
                 {
                     currentLocation++;
                     if (currentLocation > target.Ssd.hitLocations.Length) currentLocation = 1;
                 }
-                else if (loc.structural)
+                else if (loc.structural && remainingDamages > 0)
                 {
                     var roll = Dice.TwoD10Minus().Item1;
                     var structuralDamages = Math.Min(remainingDamages, roll);
@@ -706,6 +706,10 @@ namespace ST
                         ));
                     }
 
+                    break; // remaining damages are lost;
+                }
+                else
+                {
                     break; // remaining damages are lost;
                 }
             }
