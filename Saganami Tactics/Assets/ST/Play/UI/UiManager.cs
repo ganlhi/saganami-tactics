@@ -221,38 +221,23 @@ namespace ST.Play.UI
 
         [Header("Hover info")]
 #pragma warning disable 649
-        [SerializeField] private GameObject hoverInfo;
-        [SerializeField] private TextMeshProUGUI hoverInfoText;
+        [SerializeField] private HoverPanel hoverPanel;
 #pragma warning restore 649
 
         public void SetHoverInfo([CanBeNull] ShipView shipView, [CanBeNull] MissileView missileView)
         {
+            hoverPanel.SelectedShip = _gameManager.SelectedShip;
             if (shipView != null)
             {
-                hoverInfo.SetActive(true);
-                hoverInfoText.text = shipView.ship.name;
-                hoverInfoText.color = shipView.ship.team.ToColor();
+                hoverPanel.Ship = shipView;
             }
             else if (missileView != null)
             {
-                var missile = missileView.missile;
-                var attacker = GameManager.GetShipById(missile.attackerId);
-                var target = GameManager.GetShipById(missile.targetId);
-
-                if (attacker != null && target != null)
-                {
-                    hoverInfo.SetActive(true);
-                    hoverInfoText.text = $"{missile.number} missiles from {attacker.ship.name} to {target.ship.name}";
-                    hoverInfoText.color = attacker.ship.team.ToColor();
-                }
-                else
-                {
-                    hoverInfo.SetActive(false);
-                }
+                hoverPanel.Missile = missileView;
             }
             else
             {
-                hoverInfo.SetActive(false);
+                hoverPanel.SetVisible(false);
             }
         }
 
