@@ -14,6 +14,8 @@ namespace ST.Play.UI
     public class UiManager : MonoBehaviour
     {
         private GameManager _gameManager;
+        
+        [Header("Main")]
 #pragma warning disable 649
         [SerializeField] private CanvasGroup loadingGroup;
         [SerializeField] private FullscreenPanels fullscreenPanels;
@@ -21,6 +23,7 @@ namespace ST.Play.UI
 
         #region Turn
 
+        [Header("Turn")]
 #pragma warning disable 649
         [SerializeField] private TurnPanel turnPanel;
 #pragma warning restore 649
@@ -49,6 +52,7 @@ namespace ST.Play.UI
 
         #region Ships
 
+        [Header("Ships")]
 #pragma warning disable 649
         [SerializeField] private ShipsList shipsList;
 #pragma warning restore 649
@@ -66,6 +70,7 @@ namespace ST.Play.UI
 
         #region Ship info
 
+        [Header("Ship info")]
 #pragma warning disable 649
         [SerializeField] private ShipInfo shipInfo;
 #pragma warning restore 649
@@ -83,6 +88,7 @@ namespace ST.Play.UI
 
         #region Plotting panel
 
+        [Header("Plotting")]
 #pragma warning disable 649
         [SerializeField] private PlottingPanel plottingPanel;
 #pragma warning restore 649
@@ -134,6 +140,7 @@ namespace ST.Play.UI
 
         #region Targeting panel
 
+        [Header("Targeting")]
 #pragma warning disable 649
         [SerializeField] private TargetingPanel targetingPanel;
 #pragma warning restore 649
@@ -161,6 +168,7 @@ namespace ST.Play.UI
 
         #region Crew actions panel
 
+        [Header("Crew actions")]
 #pragma warning disable 649
         [SerializeField] private CrewActionsPanel crewActionsPanel;
         [SerializeField] private ModalWindowManager modalDisengage;
@@ -211,6 +219,7 @@ namespace ST.Play.UI
 
         #region Hover info
 
+        [Header("Hover info")]
 #pragma warning disable 649
         [SerializeField] private GameObject hoverInfo;
         [SerializeField] private TextMeshProUGUI hoverInfoText;
@@ -251,6 +260,7 @@ namespace ST.Play.UI
 
         #region Reports
 
+        [Header("Reports")]
 #pragma warning disable 649
         [SerializeField] private ReportsPanel reportsPanel;
         [SerializeField] private ReportsPanel fullReportsPanel;
@@ -288,6 +298,7 @@ namespace ST.Play.UI
 
         #region Engineering
 
+        [Header("Engineering")]
 #pragma warning disable 649
         [SerializeField] private SsdPanel ssdPanel;
 #pragma warning restore 649
@@ -306,7 +317,8 @@ namespace ST.Play.UI
         {
             if (_gameManager.SelectedShip == null) return;
             SetEngineeringPanel();
-            _gameManager.SelectedShip.OnAlterationsChange += (sender, args) => UpdateEngineeringPanel();
+            _gameManager.SelectedShip.OnAlterationsChange += (sender, args) => UpdateEngineeringPanelAlterations();
+            _gameManager.SelectedShip.OnConsumedAmmo += (sender, args) => UpdateEngineeringPanelConsumedAmmo();
         }
         
         private void SetEngineeringPanel()
@@ -315,12 +327,19 @@ namespace ST.Play.UI
             ssdPanel.ShipName = ship.name;
             ssdPanel.Ssd = ship.Ssd;
             ssdPanel.Alterations = ship.alterations;
+            ssdPanel.ConsumedAmmo = ship.consumedAmmo;
         }
 
-        private void UpdateEngineeringPanel()
+        private void UpdateEngineeringPanelAlterations()
         {
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.Alterations = ship.alterations;
+        }
+        
+        private void UpdateEngineeringPanelConsumedAmmo()
+        {
+            var ship = _gameManager.SelectedShip.ship;
+            ssdPanel.ConsumedAmmo = ship.consumedAmmo;
         }
 
         #endregion Engineering

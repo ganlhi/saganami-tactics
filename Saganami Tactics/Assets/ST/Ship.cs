@@ -37,6 +37,7 @@ namespace ST
         }
 
         public List<SsdAlteration> alterations;
+        public Dictionary<int, int> consumedAmmo;
         
         private ShipStatus _status;
 
@@ -135,6 +136,7 @@ namespace ST
             _roll = 0;
             _thrust = 0;
             alterations = new List<SsdAlteration>();
+            consumedAmmo = new Dictionary<int, int>();
         }
 
         public void UpdateFutureMovement()

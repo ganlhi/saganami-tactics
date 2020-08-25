@@ -203,7 +203,9 @@ namespace ST
                     attacker.alterations.Count(a =>
                         a.side == mainBearing && a.type == SsdAlterationType.Slot && a.slotType == slotType));
 
-                if (nbWeapons == 0 || (type == WeaponType.Missile && mount.ammo == 0)) continue;
+                var remainingAmmo = SsdHelper.GetRemainingAmmo(attacker.Ssd, mount, attacker.consumedAmmo);
+
+                if (nbWeapons == 0 || (type == WeaponType.Missile && remainingAmmo <= 0)) continue;
 
                 if (mount.model.GetMaxRange() < distance) continue;
 

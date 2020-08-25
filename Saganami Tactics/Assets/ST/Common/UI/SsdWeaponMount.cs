@@ -19,6 +19,17 @@ namespace ST.Common.UI
             }
         }
 
+        private int _ammo;
+
+        public int Ammo
+        {
+            set
+            {
+                _ammo = value;
+                UpdateUi();
+            }
+        }
+
         private List<SsdAlteration> _alterations = new List<SsdAlteration>();
 
         public List<SsdAlteration> Alterations
@@ -39,7 +50,7 @@ namespace ST.Common.UI
         private void UpdateUi()
         {
             ammoText.gameObject.SetActive(_weaponMount.model.type == WeaponType.Missile);
-            ammoText.text = _weaponMount.ammo.ToString();
+            ammoText.text = _ammo.ToString();
             nameText.text = _weaponMount.model.name;
 
             ssdBoxes.CurrentValue = (int) SsdHelper.GetUndamagedValue(_weaponMount.weapons, _alterations.Count);

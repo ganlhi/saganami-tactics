@@ -245,6 +245,20 @@ namespace ST.Scriptable
             return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations); 
         }
 
+        public static int GetRemainingAmmo(Ssd ssd, WeaponMount mount, Dictionary<int, int> consumedAmmo)
+        {
+            var remainingAmmo = mount.ammo;
+            
+            var mountIndex = Array.FindIndex(ssd.weaponMounts, m => m.Equals(mount));
+            
+            if (consumedAmmo.ContainsKey(mountIndex))
+            {
+                remainingAmmo -= consumedAmmo[mountIndex];
+            }
+
+            return remainingAmmo;
+        }
+
         public static string SlotTypeToString(HitLocationSlotType slotType)
         {
             switch (slotType)

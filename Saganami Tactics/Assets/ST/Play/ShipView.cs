@@ -25,6 +25,7 @@ namespace ST.Play
         public bool Busy { get; private set; }
         
         public event EventHandler OnAlterationsChange;
+        public event EventHandler OnConsumedAmmo;
 
         private ShipMarker _endMarker;
 
@@ -161,6 +162,12 @@ namespace ST.Play
             }
 
             photonView.RPC("RPC_AddAlterations", RpcTarget.All, nb, data);
+        }
+        
+        public void ConsumeAmmo(WeaponMount weaponMount, int number)
+        {
+            var wmIndex = Array.FindIndex(ship.Ssd.weaponMounts, m => m.Equals(weaponMount));
+            photonView.RPC("RPC_ConsumeAmmo", RpcTarget.All, wmIndex, number);
         }
 
         [PunRPC]
@@ -403,6 +410,21 @@ namespace ST.Play
             });
             
             OnAlterationsChange?.Invoke(this, EventArgs.Empty);
+        }
+
+        [PunRPC]
+        private void RPC_ConsumeAmmo(int weaponMountIndex, int number)
+        {
+            if (ship.consumedAmmo.ContainsKey(weaponMountIndex))
+            {
+                ship.consumedAmmo[weaponMountIndex] += number;
+            }
+            else
+            {
+                ship.consumedAmmo.Add(weaponMountIndex, number);
+            }
+
+            OnConsumedAmmo?.Invoke(this, EventArgs.Empty);
         }
 
         public void Disengage()

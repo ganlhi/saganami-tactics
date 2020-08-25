@@ -269,7 +269,7 @@ namespace ST.Play
 
                     mv.missile = missile;
 
-                    // TODO consume ammo from weapon mount
+                    shipView.ConsumeAmmo(targetingContext.Mount, targetingContext.Number); 
                 }
             });
         }

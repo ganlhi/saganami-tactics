@@ -46,6 +46,18 @@ namespace ST.Common.UI
                 PropagateAlterations();
             }
         }
+        
+        private Dictionary<int, int> _consumedAmmo = new Dictionary<int, int>();
+
+        public Dictionary<int, int> ConsumedAmmo
+        {
+            get => _consumedAmmo;
+            set
+            {
+                _consumedAmmo = value;
+                PropagateConsumedAmmo();
+            }
+        }
 
 #pragma warning disable 649
         [SerializeField] private SsdHeader ssdHeader;
@@ -109,6 +121,27 @@ namespace ST.Common.UI
                             a.side == side &&
                             (a.type == SsdAlterationType.Slot || a.type == SsdAlterationType.Sidewall))
                         .ToList();
+                }
+            }
+        }
+
+        private void PropagateConsumedAmmo()
+        {
+            foreach (var side in _sides)
+            {
+                if (_ssdSides.TryGetValue(side, out var ssdSide))
+                {
+                    var weaponMounts = ssdSide.WeaponMountsAndDefenses.Item1;
+
+                    var remainingAmmos = new List<int>();
+                    
+                    foreach (var weaponMount in weaponMounts)
+                    {
+                        var remainingAmmo = SsdHelper.GetRemainingAmmo(_ssd, weaponMount, _consumedAmmo);
+                        remainingAmmos.Add(remainingAmmo);
+                    }
+                    
+                    ssdSide.RemainingAmmos = remainingAmmos;
                 }
             }
         }

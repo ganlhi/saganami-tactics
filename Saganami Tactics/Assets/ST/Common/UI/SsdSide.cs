@@ -15,11 +15,12 @@ namespace ST.Common.UI
             set => sideText.text = value.ToFriendlyString();
         }
 
-        private List<WeaponMount> _weaponMounts;
+        private List<WeaponMount> _weaponMounts = new List<WeaponMount>();
         private SideDefenses _sideDefenses;
 
         public Tuple<List<WeaponMount>, SideDefenses> WeaponMountsAndDefenses
         {
+            get => new Tuple<List<WeaponMount>, SideDefenses>(_weaponMounts, _sideDefenses);
             set
             {
                 _weaponMounts = value.Item1;
@@ -36,6 +37,17 @@ namespace ST.Common.UI
             {
                 _alterations = value;
                 UpdateUi();
+            }
+        }
+        
+        private List<int> _remainingAmmos = new List<int>();
+
+        public List<int> RemainingAmmos
+        {
+            set
+            {
+                _remainingAmmos = value;
+                UpdateAmmo();
             }
         }
 
@@ -148,6 +160,18 @@ namespace ST.Common.UI
             {
                 ssdPointDefense.Alterations = _alterations.Where(a =>
                     a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.PointDefense).ToList();
+            }
+        }
+
+        private void UpdateAmmo()
+        {
+            for (var i = 0; i < _weaponMounts.Count; i++)
+            {
+                var remainingAmmo = _remainingAmmos.Count > i ? _remainingAmmos[i] : _weaponMounts[i].ammo;
+
+                var ssdWeaponMount = _ssdWeaponMounts[i];
+
+                ssdWeaponMount.Ammo = remainingAmmo;
             }
         }
     }
