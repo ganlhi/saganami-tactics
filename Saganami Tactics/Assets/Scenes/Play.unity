@@ -4256,7 +4256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1bd18e3bfab4d8a9113d3d7c4b83de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expectedPlayers: 1
+  expectedPlayers: 2
   manager: {fileID: 592222519}
 --- !u!4 &412064287
 Transform:
@@ -6132,7 +6132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 1648275788}
-  stateHolder: {fileID: 11400000, guid: d63f8ab08237fbf4cbd39c7922f40eb8, type: 2}
+  stateHolder: {fileID: 11400000, guid: 8a847470696e10c4497fce1ced7258c5, type: 2}
   beamsLines: {fileID: 1797007797}
 --- !u!114 &592222521
 MonoBehaviour:

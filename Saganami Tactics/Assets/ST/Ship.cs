@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Photon.Realtime;
 using ST.Common;
 using ST.Scriptable;
@@ -119,9 +120,9 @@ namespace ST
 
         #endregion Plotting
 
-        public Ship(string name, Team team, string ssdName)
+        public Ship(string name, Team team, string ssdName, [CanBeNull] string uid = null)
         {
-            uid = Utils.GenerateId();
+            this.uid = uid ?? Utils.GenerateId();
             this.name = name;
             this.team = team;
             this.ssdName = ssdName;

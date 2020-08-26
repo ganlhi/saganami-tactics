@@ -579,10 +579,8 @@ namespace ST.Play
                         default:
                             return $"{SsdHelper.SlotTypeToString(slotType)} (location {location})";
                     }
-                    break;
                 case SsdAlterationType.Movement:
                     return "movement";
-                    break;
                 case SsdAlterationType.Sidewall:
                     return $"{side.ToFriendlyString()} sidewall";
                 case SsdAlterationType.Structural:

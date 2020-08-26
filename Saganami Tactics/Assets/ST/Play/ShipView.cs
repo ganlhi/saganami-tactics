@@ -262,10 +262,15 @@ namespace ST.Play
             int thrust,
             ShipPostSyncAction andThen)
         {
-            ship.uid = uid;
-            ship.name = shipName;
-            ship.team = team;
-            ship.ssdName = ssdName;
+            if (ship.uid == string.Empty)
+            {
+                ship = new Ship(shipName, team, ssdName, uid);
+            }
+            
+//            ship.uid = uid;
+//            ship.name = shipName;
+//            ship.team = team;
+//            ship.ssdName = ssdName;
             ship.position = position;
             ship.rotation = rotation;
             ship.velocity = velocity;

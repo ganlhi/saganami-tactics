@@ -310,10 +310,7 @@ namespace ST.Play.UI
 
             _gameManager.OnSelectShip += (sender, ship) => SetSelectedShipEngineeringPanel();
 
-            _gameManager.OnTurnStepChange += (sender, step) =>
-            {
-                ssdPanel.Mode = step == TurnStep.CrewActions ? SsdPanelMode.Repair : SsdPanelMode.View;
-            };
+            _gameManager.OnTurnStepChange += (sender, step) => UpdateEngineeringPanelMode();
 
             ssdPanel.OnRepair += (sender, alteration) => _gameManager.AttemptRepair(alteration);
         }
@@ -325,7 +322,6 @@ namespace ST.Play.UI
             _gameManager.SelectedShip.OnAlterationsChange += (sender, args) => UpdateEngineeringPanelAlterations();
             _gameManager.SelectedShip.OnConsumedAmmo += (sender, args) => UpdateEngineeringPanelConsumedAmmo();
             _gameManager.SelectedShip.OnAttemptedRepair += (sender, args) => UpdateEngineeringPanelRepairAttempts();
-            
         }
 
         private void SetEngineeringPanel()
@@ -336,6 +332,14 @@ namespace ST.Play.UI
             ssdPanel.Alterations = ship.alterations;
             ssdPanel.ConsumedAmmo = ship.consumedAmmo;
             ssdPanel.RepairAttempts = ship.repairAttempts;
+            UpdateEngineeringPanelMode();
+        }
+
+        private void UpdateEngineeringPanelMode()
+        {
+            ssdPanel.Mode = _gameManager.Step == TurnStep.CrewActions && _gameManager.SelectedShip.OwnedByClient
+                ? SsdPanelMode.Repair
+                : SsdPanelMode.View;
         }
 
         private void UpdateEngineeringPanelAlterations()
@@ -349,7 +353,7 @@ namespace ST.Play.UI
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.ConsumedAmmo = ship.consumedAmmo;
         }
-        
+
         private void UpdateEngineeringPanelRepairAttempts()
         {
             var ship = _gameManager.SelectedShip.ship;
