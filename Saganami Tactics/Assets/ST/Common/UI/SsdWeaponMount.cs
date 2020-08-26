@@ -41,12 +41,31 @@ namespace ST.Common.UI
             }
         }
 
+        private bool _canRepair;
+
+        public bool CanRepair
+        {
+            get => _canRepair;
+            set
+            {
+                _canRepair = value;
+                UpdateUi();
+            }
+        }
+
+        public event EventHandler OnRepair;
+
         #pragma warning disable 649
                 [SerializeField] private TextMeshProUGUI ammoText;
                 [SerializeField] private TextMeshProUGUI nameText;
                 [SerializeField] private SsdBoxes ssdBoxes;
         #pragma warning restore 649
 
+        private void Start()
+        {
+            ssdBoxes.OnRepair += (sender, args) => OnRepair?.Invoke(this, EventArgs.Empty);
+        }
+        
         private void UpdateUi()
         {
             ammoText.gameObject.SetActive(_weaponMount.model.type == WeaponType.Missile);
@@ -58,7 +77,7 @@ namespace ST.Common.UI
             var nbDestroyed = _alterations.Count(a => a.destroyed);
             var nbDamaged = _alterations.Count(a => !a.destroyed);
             
-            ssdBoxes.CanRepair = nbDamaged > 0; 
+            ssdBoxes.CanRepair = _canRepair && nbDamaged > 0; 
             ssdBoxes.Damages = new Tuple<int, int>(nbDestroyed, nbDamaged);
         }
     }

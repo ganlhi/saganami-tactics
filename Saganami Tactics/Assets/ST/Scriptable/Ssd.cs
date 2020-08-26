@@ -239,10 +239,27 @@ namespace ST.Scriptable
             return GetUndamagedValue(boxes, sidewallAlterations);
         }
 
-        public static uint GetRemainingStructuralPoints(Ssd ssd, List<SsdAlteration> alterations)
+        public static uint GetRemainingStructuralPoints(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var structuralAlterations = alterations.Count(a => a.type == SsdAlterationType.Structural);
             return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations); 
+        }
+
+        public static uint GetDamageControl(Ssd ssd, IEnumerable<SsdAlteration> alterations, IEnumerable<bool> repairAttempts)
+        {
+            var dcAlterations = alterations.Count(a => a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.DamageControl);
+            
+            var boxes = Array.Empty<uint>();
+            foreach (var hitLocation in ssd.hitLocations)
+            {
+                var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.DamageControl).ToList();
+                if (slots.Any())
+                {
+                    boxes = slots.First().boxes;
+                }
+            }
+
+            return Math.Max(0 , GetUndamagedValue(boxes, dcAlterations) - (uint) repairAttempts.Count());
         }
 
         public static int GetRemainingAmmo(Ssd ssd, WeaponMount mount, Dictionary<int, int> consumedAmmo)

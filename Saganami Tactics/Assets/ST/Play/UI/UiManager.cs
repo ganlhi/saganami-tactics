@@ -14,10 +14,12 @@ namespace ST.Play.UI
     public class UiManager : MonoBehaviour
     {
         private GameManager _gameManager;
-        
+
         [Header("Main")]
 #pragma warning disable 649
-        [SerializeField] private CanvasGroup loadingGroup;
+        [SerializeField]
+        private CanvasGroup loadingGroup;
+
         [SerializeField] private FullscreenPanels fullscreenPanels;
 #pragma warning restore 649
 
@@ -25,7 +27,8 @@ namespace ST.Play.UI
 
         [Header("Turn")]
 #pragma warning disable 649
-        [SerializeField] private TurnPanel turnPanel;
+        [SerializeField]
+        private TurnPanel turnPanel;
 #pragma warning restore 649
 
         private void UpdateTurnPanelOnChanges()
@@ -54,7 +57,8 @@ namespace ST.Play.UI
 
         [Header("Ships")]
 #pragma warning disable 649
-        [SerializeField] private ShipsList shipsList;
+        [SerializeField]
+        private ShipsList shipsList;
 #pragma warning restore 649
 
         private void UpdateShipsListOnChanges()
@@ -72,7 +76,8 @@ namespace ST.Play.UI
 
         [Header("Ship info")]
 #pragma warning disable 649
-        [SerializeField] private ShipInfo shipInfo;
+        [SerializeField]
+        private ShipInfo shipInfo;
 #pragma warning restore 649
 
         private void UpdateShipInfoOnChanges()
@@ -90,7 +95,8 @@ namespace ST.Play.UI
 
         [Header("Plotting")]
 #pragma warning disable 649
-        [SerializeField] private PlottingPanel plottingPanel;
+        [SerializeField]
+        private PlottingPanel plottingPanel;
 #pragma warning restore 649
 
         private void UpdatePlottingPanelOnChanges()
@@ -142,7 +148,8 @@ namespace ST.Play.UI
 
         [Header("Targeting")]
 #pragma warning disable 649
-        [SerializeField] private TargetingPanel targetingPanel;
+        [SerializeField]
+        private TargetingPanel targetingPanel;
 #pragma warning restore 649
 
         private void UpdateTargetingPanelOnChanges()
@@ -170,7 +177,9 @@ namespace ST.Play.UI
 
         [Header("Crew actions")]
 #pragma warning disable 649
-        [SerializeField] private CrewActionsPanel crewActionsPanel;
+        [SerializeField]
+        private CrewActionsPanel crewActionsPanel;
+
         [SerializeField] private ModalWindowManager modalDisengage;
         [SerializeField] private ModalWindowManager modalSurrender;
 #pragma warning restore 649
@@ -221,7 +230,8 @@ namespace ST.Play.UI
 
         [Header("Hover info")]
 #pragma warning disable 649
-        [SerializeField] private HoverPanel hoverPanel;
+        [SerializeField]
+        private HoverPanel hoverPanel;
 #pragma warning restore 649
 
         public void SetHoverInfo([CanBeNull] ShipView shipView, [CanBeNull] MissileView missileView)
@@ -247,7 +257,9 @@ namespace ST.Play.UI
 
         [Header("Reports")]
 #pragma warning disable 649
-        [SerializeField] private ReportsPanel reportsPanel;
+        [SerializeField]
+        private ReportsPanel reportsPanel;
+
         [SerializeField] private ReportsPanel fullReportsPanel;
 #pragma warning restore 649
 
@@ -285,17 +297,25 @@ namespace ST.Play.UI
 
         [Header("Engineering")]
 #pragma warning disable 649
-        [SerializeField] private SsdPanel ssdPanel;
+        [SerializeField]
+        private SsdPanel ssdPanel;
 #pragma warning restore 649
-        
+
         private void UpdateEngineeringPanelOnChanges()
         {
             if (_gameManager.SelectedShip != null)
             {
                 SetSelectedShipEngineeringPanel();
             }
-            
+
             _gameManager.OnSelectShip += (sender, ship) => SetSelectedShipEngineeringPanel();
+
+            _gameManager.OnTurnStepChange += (sender, step) =>
+            {
+                ssdPanel.Mode = step == TurnStep.CrewActions ? SsdPanelMode.Repair : SsdPanelMode.View;
+            };
+
+            ssdPanel.OnRepair += (sender, alteration) => _gameManager.AttemptRepair(alteration);
         }
 
         private void SetSelectedShipEngineeringPanel()
@@ -304,8 +324,10 @@ namespace ST.Play.UI
             SetEngineeringPanel();
             _gameManager.SelectedShip.OnAlterationsChange += (sender, args) => UpdateEngineeringPanelAlterations();
             _gameManager.SelectedShip.OnConsumedAmmo += (sender, args) => UpdateEngineeringPanelConsumedAmmo();
+            _gameManager.SelectedShip.OnAttemptedRepair += (sender, args) => UpdateEngineeringPanelRepairAttempts();
+            
         }
-        
+
         private void SetEngineeringPanel()
         {
             var ship = _gameManager.SelectedShip.ship;
@@ -313,6 +335,7 @@ namespace ST.Play.UI
             ssdPanel.Ssd = ship.Ssd;
             ssdPanel.Alterations = ship.alterations;
             ssdPanel.ConsumedAmmo = ship.consumedAmmo;
+            ssdPanel.RepairAttempts = ship.repairAttempts;
         }
 
         private void UpdateEngineeringPanelAlterations()
@@ -320,11 +343,17 @@ namespace ST.Play.UI
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.Alterations = ship.alterations;
         }
-        
+
         private void UpdateEngineeringPanelConsumedAmmo()
         {
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.ConsumedAmmo = ship.consumedAmmo;
+        }
+        
+        private void UpdateEngineeringPanelRepairAttempts()
+        {
+            var ship = _gameManager.SelectedShip.ship;
+            ssdPanel.RepairAttempts = ship.repairAttempts;
         }
 
         #endregion Engineering

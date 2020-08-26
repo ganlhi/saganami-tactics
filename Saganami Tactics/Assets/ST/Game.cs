@@ -19,7 +19,8 @@ namespace ST
         FireMissiles,
         UpdateMissiles,
         MoveMissiles,
-        FireBeams
+        FireBeams,
+        ResetRepairAttempts
     }
 
     public static class Game
@@ -144,6 +145,7 @@ namespace ST
                     break;
 
                 case TurnStep.End:
+                    events.Add(GameEvent.ResetRepairAttempts);
                     break;
 
                 default:
@@ -743,6 +745,13 @@ namespace ST
             }
 
             return alterations;
+        }
+
+        public static bool AttemptCrewRateCheck(Ship ship)
+        {
+            var crewRate = ship.Ssd.crewRate;
+            var diceRoll = Dice.D10();
+            return diceRoll >= crewRate;
         }
     }
 }

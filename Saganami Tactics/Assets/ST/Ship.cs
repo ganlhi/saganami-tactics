@@ -38,6 +38,7 @@ namespace ST
 
         public List<SsdAlteration> alterations;
         public Dictionary<int, int> consumedAmmo;
+        public List<bool> repairAttempts;
         
         private ShipStatus _status;
 
@@ -137,6 +138,7 @@ namespace ST
             _thrust = 0;
             alterations = new List<SsdAlteration>();
             consumedAmmo = new Dictionary<int, int>();
+            repairAttempts = new List<bool>();
         }
 
         public void UpdateFutureMovement()
@@ -203,6 +205,11 @@ namespace ST
             Roll = 0;
             Thrust = 0;
             PlaceMarker();
+        }
+
+        public void ResetRepairAttempts()
+        {
+            repairAttempts.Clear();
         }
 
         public Tuple<Side, Side> GetBearingTo(Vector3 targetPosition)

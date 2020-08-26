@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ST.Scriptable;
@@ -35,6 +36,20 @@ namespace ST.Common.UI
                 UpdateUi();
             }
         }
+
+        private bool _canRepair;
+
+        public bool CanRepair
+        {
+            get => _canRepair;
+            set
+            {
+                _canRepair = value;
+                UpdateCanRepair();
+            }
+        }
+
+        public event EventHandler<HitLocationSlot> OnRepair; 
 
 #pragma warning disable 649
         [SerializeField] private TextMeshProUGUI numberText;
@@ -77,6 +92,8 @@ namespace ST.Common.UI
                 var ssdSlot = Instantiate(ssdSlotPrefab, slotsContent).GetComponent<SsdSlot>();
                 ssdSlot.Slot = slot;
 
+                ssdSlot.OnRepair += (sender, args) => OnRepair.Invoke(this, slot);
+
                 _ssdSlots[i] = ssdSlot;
                 i++;
             }
@@ -84,11 +101,21 @@ namespace ST.Common.UI
 
         private void UpdateUi()
         {
-            for (var i = 0; i < _hitLocation.slots.Length; i ++)
+            for (var i = 0; i < _hitLocation.slots.Length; i++)
             {
                 var ssdSlot = _ssdSlots[i];
                 var slot = _hitLocation.slots[i];
                 ssdSlot.Alterations = _alterations.Where(a => a.slotType == slot.type).ToList();
+            }
+        }
+
+        private void UpdateCanRepair()
+        {
+            for (var i = 0; i < _hitLocation.slots.Length; i++)
+            {
+                var ssdSlot = _ssdSlots[i];
+                var slot = _hitLocation.slots[i];
+                ssdSlot.CanRepair = _canRepair;
             }
         }
     }

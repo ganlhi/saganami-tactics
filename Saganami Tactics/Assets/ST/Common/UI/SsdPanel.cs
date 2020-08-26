@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using ST.Scriptable;
+using TMPro;
 using UnityEngine;
 
 namespace ST.Common.UI
 {
+    public enum SsdPanelMode
+    {
+        View,
+        Repair,
+    }
+
     public class SsdPanel : MonoBehaviour
     {
         private Ssd _ssd;
@@ -46,7 +53,19 @@ namespace ST.Common.UI
                 PropagateAlterations();
             }
         }
-        
+
+        private List<bool> _repairAttempts = new List<bool>();
+
+        public List<bool> RepairAttempts
+        {
+            get => _repairAttempts;
+            set
+            {
+                _repairAttempts = value;
+                PropagateMode();
+            }
+        }
+
         private Dictionary<int, int> _consumedAmmo = new Dictionary<int, int>();
 
         public Dictionary<int, int> ConsumedAmmo
@@ -58,6 +77,20 @@ namespace ST.Common.UI
                 PropagateConsumedAmmo();
             }
         }
+        
+        private SsdPanelMode _mode = SsdPanelMode.View;
+
+        public SsdPanelMode Mode
+        {
+            get => _mode;
+            set
+            {
+                _mode = value;
+                PropagateMode();
+            }
+        }
+
+        public event EventHandler<SsdAlteration> OnRepair; 
 
 #pragma warning disable 649
         [SerializeField] private SsdHeader ssdHeader;
@@ -68,6 +101,8 @@ namespace ST.Common.UI
         [SerializeField] private SsdHitLocation ssdHitLocationPrefab;
         [SerializeField] private Transform ssdSidesContent;
         [SerializeField] private SsdSide ssdSidePrefab;
+        [SerializeField] private GameObject damageControlPartiesObject;
+        [SerializeField] private TextMeshProUGUI damageControlPartiesText;
 #pragma warning restore 649
 
         private Dictionary<int, SsdHitLocation> _ssdHitLocations;
@@ -91,6 +126,38 @@ namespace ST.Common.UI
             SetSides();
             SetWeapons();
             PropagateAlterations();
+            PropagateMode();
+        }
+
+        private void PropagateMode()
+        {
+            if (_ssd == null) return;
+            
+            var damageControl = SsdHelper.GetDamageControl(Ssd, _alterations, _repairAttempts);
+            var canRepair = _mode == SsdPanelMode.Repair && damageControl > 0;
+            
+            damageControlPartiesObject.SetActive(_mode == SsdPanelMode.Repair);
+            damageControlPartiesText.text = damageControl.ToString();
+            
+            // Hit locations
+            for (var i = 0; i < _ssd.hitLocations.Length; i++)
+            {
+                var locNumber = i + 1;
+
+                if (_ssdHitLocations.TryGetValue(locNumber, out var ssdHitLocation))
+                {
+                    ssdHitLocation.CanRepair = canRepair;
+                }
+            }
+
+            // Sides 
+            foreach (var side in _sides)
+            {
+                if (_ssdSides.TryGetValue(side, out var ssdSide))
+                {
+                    ssdSide.CanRepair = canRepair;
+                }
+            }
         }
 
         private void PropagateAlterations()
@@ -134,13 +201,13 @@ namespace ST.Common.UI
                     var weaponMounts = ssdSide.WeaponMountsAndDefenses.Item1;
 
                     var remainingAmmos = new List<int>();
-                    
+
                     foreach (var weaponMount in weaponMounts)
                     {
                         var remainingAmmo = SsdHelper.GetRemainingAmmo(_ssd, weaponMount, _consumedAmmo);
                         remainingAmmos.Add(remainingAmmo);
                     }
-                    
+
                     ssdSide.RemainingAmmos = remainingAmmos;
                 }
             }
@@ -198,6 +265,19 @@ namespace ST.Common.UI
                 ssdHitLocation.HitLocation = hitLocation;
                 ssdHitLocation.Number = locNumber;
 
+                ssdHitLocation.OnRepair += (sender, slot) =>
+                {
+                    // Find alteration for this slot
+                    var alterations = _alterations.Where(a =>
+                        a.type == SsdAlterationType.Slot && a.slotType == slot.type && a.location == locNumber &&
+                        !a.destroyed).ToList();
+
+                    if (alterations.Count > 0)
+                    {
+                        OnRepair?.Invoke(this, alterations.First());
+                    }
+                };
+
                 _ssdHitLocations.Add(locNumber, ssdHitLocation);
             }
         }
@@ -219,6 +299,9 @@ namespace ST.Common.UI
                     _ssd.weaponMounts.Where(wm => wm.side == side).ToList(),
                     _ssd.defenses.First(sd => sd.side == side)
                 );
+
+                ssdSide.OnRepair += (sender, alteration) => OnRepair?.Invoke(this, alteration);
+                
                 _ssdSides.Add(side, ssdSide);
             }
         }

@@ -114,23 +114,31 @@ namespace ST.Play
             }
         }
 
-/*
+
         // FOR TESTING PURPOSES         
         private void Update()
         {
             if (!PhotonNetwork.IsMasterClient) return;
             if (Input.GetKeyDown(KeyCode.End) && SelectedShip != null)
             {
-                _pendingDestroyedAmmo.Add(SelectedShip, new List<Tuple<int, int>>()
+//                _pendingDestroyedAmmo.Add(SelectedShip, new List<Tuple<int, int>>()
+//                {
+//                    new Tuple<int, int>(0, 3),
+//                    new Tuple<int, int>(0, 2),
+//                });
+//                
+//                DispatchPendingDestroyedAmmo();
+
+                _pendingAlterations.Add(SelectedShip, new List<SsdAlteration>()
                 {
-                    new Tuple<int, int>(0, 3),
-                    new Tuple<int, int>(0, 2),
+                    new SsdAlteration() { type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile },
+                    new SsdAlteration() { type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull, location = 2 },
                 });
                 
-                DispatchPendingDestroyedAmmo();
+                DispatchPendingAlterations();
             }
         }
-*/
+
 
         #region MasterClient
 
@@ -244,6 +252,9 @@ namespace ST.Play
                         break;
                     case GameEvent.FireBeams:
                         FireBeams();
+                        break;
+                    case GameEvent.ResetRepairAttempts:
+                        GetAllShips().ForEach(shipView => shipView.ResetRepairAttempts());
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -526,6 +537,61 @@ namespace ST.Play
             _clientsReadyToContinue += 1;
         }
 
+        [PunRPC]
+        private void RPC_AttemptRepair(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        {
+            if (Game.AttemptCrewRateCheck(SelectedShip.ship))
+            {
+                SelectedShip.AddRepairAttempt(true);
+                SelectedShip.RemoveAlteration(location, side, type, slotType);
+                SelectedShip.GetComponent<ShipLog>().AddReport(new Report()
+                {
+                    turn = Turn,
+                    type = ReportType.Info,
+                    message = $"Successful repair: {DescribeAlteration(location, side, type, slotType)}"
+                });
+            }
+            else
+            {
+                SelectedShip.AddRepairAttempt(false);
+                SelectedShip.SetAlterationDestroyed(location, side, type, slotType);
+                SelectedShip.GetComponent<ShipLog>().AddReport(new Report()
+                {
+                    turn = Turn,
+                    type = ReportType.DamageTaken,
+                    message = $"Failed repair: {DescribeAlteration(location, side, type, slotType)}"
+                });
+            }
+        }
+
+        private string DescribeAlteration(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        {
+            switch (type)
+            {
+                case SsdAlterationType.Slot:
+                    switch (slotType)
+                    {
+                        case HitLocationSlotType.Missile:
+                        case HitLocationSlotType.Laser:
+                        case HitLocationSlotType.CounterMissile:
+                        case HitLocationSlotType.PointDefense:
+                            return $"{side.ToFriendlyString()} {SsdHelper.SlotTypeToString(slotType)}";
+                        default:
+                            return $"{SsdHelper.SlotTypeToString(slotType)} (location {location})";
+                    }
+                    break;
+                case SsdAlterationType.Movement:
+                    return "movement";
+                    break;
+                case SsdAlterationType.Sidewall:
+                    return $"{side.ToFriendlyString()} sidewall";
+                case SsdAlterationType.Structural:
+                    return "structural integrity";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
         #endregion MasterClient
 
         #region AllClients
@@ -758,6 +824,11 @@ namespace ST.Play
             }
         }
 
+        public void AttemptRepair(SsdAlteration alteration)
+        {
+            photonView.RPC("RPC_AttemptRepair", RpcTarget.MasterClient, (int) alteration.location, alteration.side, alteration.type, alteration.slotType);
+        } 
+        
         public static List<ShipView> GetAllShips()
         {
             return PhotonNetwork
@@ -789,7 +860,6 @@ namespace ST.Play
         {
             PhotonNetwork.LocalPlayer.SetReady(ready);
         }
-
         #endregion AllClients
     }
 }

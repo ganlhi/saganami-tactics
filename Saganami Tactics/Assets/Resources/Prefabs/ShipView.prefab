@@ -439,6 +439,7 @@ MonoBehaviour:
     endMarkerRotation: {x: 0, y: 0, z: 0, w: 0}
     halfRotation: {x: 0, y: 0, z: 0, w: 0}
     alterations: []
+    repairAttempts: 
   shipObject: {fileID: 5619036698429839622}
   wedges:
   - {fileID: 1578280227619222470}

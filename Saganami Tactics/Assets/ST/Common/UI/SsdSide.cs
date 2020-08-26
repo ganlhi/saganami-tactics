@@ -10,9 +10,16 @@ namespace ST.Common.UI
 {
     public class SsdSide : MonoBehaviour
     {
+        private Side _side;
+
         public Side Side
         {
-            set => sideText.text = value.ToFriendlyString();
+            get => _side;
+            set
+            {
+                _side = value;
+                sideText.text = value.ToFriendlyString();
+            }
         }
 
         private List<WeaponMount> _weaponMounts = new List<WeaponMount>();
@@ -39,7 +46,7 @@ namespace ST.Common.UI
                 UpdateUi();
             }
         }
-        
+
         private List<int> _remainingAmmos = new List<int>();
 
         public List<int> RemainingAmmos
@@ -50,6 +57,20 @@ namespace ST.Common.UI
                 UpdateAmmo();
             }
         }
+
+        private bool _canRepair;
+
+        public bool CanRepair
+        {
+            get => _canRepair;
+            set
+            {
+                _canRepair = value;
+                UpdateCanRepair();
+            }
+        }
+
+        public event EventHandler<SsdAlteration> OnRepair;
 
 #pragma warning disable 649
         [SerializeField] private float minHeight = 95f;
@@ -86,6 +107,15 @@ namespace ST.Common.UI
                 var ssdWeaponMount = Instantiate(ssdWeaponMountPrefab, slotsContent).GetComponent<SsdWeaponMount>();
                 ssdWeaponMount.WeaponMount = weaponMount;
 
+                ssdWeaponMount.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
+                {
+                    side = _side,
+                    type = SsdAlterationType.Slot,
+                    slotType = weaponMount.model.type == WeaponType.Missile
+                        ? HitLocationSlotType.Missile
+                        : HitLocationSlotType.Laser
+                });
+
                 _ssdWeaponMounts[i] = ssdWeaponMount;
                 i++;
             }
@@ -99,6 +129,12 @@ namespace ST.Common.UI
                 ssdSideDefense.Name = "Sidewall";
                 ssdSideDefense.Boxes = _sideDefenses.sidewall;
 
+                ssdSideDefense.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
+                {
+                    side = _side,
+                    type = SsdAlterationType.Sidewall,
+                });
+
                 _ssdSideDefenses.Add("sidewall", ssdSideDefense);
             }
 
@@ -108,6 +144,13 @@ namespace ST.Common.UI
                 var ssdSideDefense = Instantiate(ssdSideDefensePrefab, slotsContent).GetComponent<SsdSideDefense>();
                 ssdSideDefense.Name = "Counter Missiles";
                 ssdSideDefense.Boxes = _sideDefenses.counterMissiles;
+                
+                ssdSideDefense.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
+                {
+                    side = _side,
+                    type = SsdAlterationType.Slot,
+                    slotType = HitLocationSlotType.CounterMissile,
+                });
 
                 _ssdSideDefenses.Add("counterMissiles", ssdSideDefense);
             }
@@ -118,6 +161,13 @@ namespace ST.Common.UI
                 var ssdSideDefense = Instantiate(ssdSideDefensePrefab, slotsContent).GetComponent<SsdSideDefense>();
                 ssdSideDefense.Name = "Point Defenses";
                 ssdSideDefense.Boxes = _sideDefenses.pointDefense;
+                
+                ssdSideDefense.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
+                {
+                    side = _side,
+                    type = SsdAlterationType.Slot,
+                    slotType = HitLocationSlotType.PointDefense,
+                });
 
                 _ssdSideDefenses.Add("pointDefense", ssdSideDefense);
             }
@@ -172,6 +222,30 @@ namespace ST.Common.UI
                 var ssdWeaponMount = _ssdWeaponMounts[i];
 
                 ssdWeaponMount.Ammo = remainingAmmo;
+            }
+        }
+
+        private void UpdateCanRepair()
+        {
+            for (var i = 0; i < _weaponMounts.Count; i++)
+            {
+                var ssdWeaponMount = _ssdWeaponMounts[i];
+                ssdWeaponMount.CanRepair = _canRepair;
+            }
+
+            if (_ssdSideDefenses.TryGetValue("sidewall", out var ssdSidewall))
+            {
+                ssdSidewall.CanRepair = _canRepair;
+            }
+
+            if (_ssdSideDefenses.TryGetValue("counterMissiles", out var ssdCounterMissiles))
+            {
+                ssdCounterMissiles.CanRepair = _canRepair;
+            }
+
+            if (_ssdSideDefenses.TryGetValue("pointDefense", out var ssdPointDefense))
+            {
+                ssdPointDefense.CanRepair = _canRepair;
             }
         }
     }

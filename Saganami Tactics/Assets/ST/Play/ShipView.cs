@@ -26,6 +26,7 @@ namespace ST.Play
 
         public event EventHandler OnAlterationsChange;
         public event EventHandler OnConsumedAmmo;
+        public event EventHandler OnAttemptedRepair;
 
         private ShipMarker _endMarker;
 
@@ -101,6 +102,12 @@ namespace ST.Play
             SyncShip(andThen: ShipPostSyncAction.PlaceMarker);
         }
 
+        public void ResetRepairAttempts()
+        {
+            ship.ResetRepairAttempts();
+            SyncShip(andThen:ShipPostSyncAction.None);
+        }
+
         [PunRPC]
         public void RPC_Plot(PlottingAction action, int value)
         {
@@ -164,6 +171,26 @@ namespace ST.Play
             photonView.RPC("RPC_AddAlterations", RpcTarget.All, nb, data);
         }
 
+        public void RemoveAlteration(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        {
+            photonView.RPC("RPC_RemoveAlteration", RpcTarget.All,
+                location,
+                side,
+                type,
+                slotType
+            );
+        }
+
+        public void SetAlterationDestroyed(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        {
+            photonView.RPC("RPC_SetAlterationDestroyed", RpcTarget.All,
+                location,
+                side,
+                type,
+                slotType
+            );
+        }
+
         public void ConsumeAmmo(WeaponMount weaponMount, int number)
         {
             var wmIndex = Array.FindIndex(ship.Ssd.weaponMounts, m => m.Equals(weaponMount));
@@ -205,6 +232,11 @@ namespace ST.Play
         {
             ship.Status = ShipStatus.Destroyed;
             SyncShip(andThen: ShipPostSyncAction.None);
+        }
+
+        public void AddRepairAttempt(bool successful)
+        {
+            photonView.RPC("RPC_AddRepairAttempt", RpcTarget.All, successful);
         }
 
         #endregion MasterClient
@@ -433,6 +465,27 @@ namespace ST.Play
         }
 
         [PunRPC]
+        private void RPC_RemoveAlteration(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        {
+            var index = ship.alterations.FindIndex(a =>
+                a.location == location && a.side == side && a.type == type && a.slotType == slotType && !a.destroyed);
+            ship.alterations.RemoveAt(index);
+            OnAlterationsChange?.Invoke(this, EventArgs.Empty);
+        }
+
+        [PunRPC]
+        private void RPC_SetAlterationDestroyed(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        {
+            var index = ship.alterations.FindIndex(a =>
+                a.location == location && a.side == side && a.type == type && a.slotType == slotType && !a.destroyed);
+            var alteration = ship.alterations[index];
+            alteration.destroyed = true;
+            ship.alterations.RemoveAt(index);
+            ship.alterations.Add(alteration);
+            OnAlterationsChange?.Invoke(this, EventArgs.Empty);
+        }
+
+        [PunRPC]
         private void RPC_ConsumeAmmo(int weaponMountIndex, int number)
         {
             UpdateConsumedAmmo(weaponMountIndex, number);
@@ -477,6 +530,13 @@ namespace ST.Play
         public void Surrender()
         {
             photonView.RPC("RPC_Surrender", RpcTarget.MasterClient);
+        }
+        
+        [PunRPC]
+        private void RPC_AddRepairAttempt(bool successful)
+        {
+            ship.repairAttempts.Add(successful);
+            OnAttemptedRepair?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion AllClients
