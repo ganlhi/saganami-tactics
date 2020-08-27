@@ -4,7 +4,6 @@ namespace ST
 {
     public enum TurnStep
     {
-        Start,
         Plotting,
         Movement,
         Targeting,
@@ -12,7 +11,6 @@ namespace ST
         Missiles,
         Beams,
         CrewActions,
-        End
     }
     
     public static class TurnStepExtensions
@@ -21,16 +19,12 @@ namespace ST
         {
             switch(me)
             {
-                case TurnStep.Start:
-                    return "Start";
                 case TurnStep.Plotting:
                     return "Plotting";
                 case TurnStep.Movement:
                     return "Movement";
                 case TurnStep.Targeting:
                     return "Targeting";
-                case TurnStep.End:
-                    return "End";
                 case TurnStep.MissilesUpdates:
                     return "Missiles";
                 case TurnStep.Missiles:

@@ -31,9 +31,6 @@ namespace ST
 
             switch (step)
             {
-                case TurnStep.Start:
-                    nextStep = TurnStep.Plotting;
-                    break;
                 case TurnStep.Plotting:
                     nextStep = TurnStep.Movement;
                     break;
@@ -53,10 +50,7 @@ namespace ST
                     nextStep = TurnStep.CrewActions;
                     break;
                 case TurnStep.CrewActions:
-                    nextStep = TurnStep.End;
-                    break;
-                case TurnStep.End:
-                    nextStep = TurnStep.Start;
+                    nextStep = TurnStep.Plotting;
                     nextTurn += 1;
                     break;
                 default:
@@ -70,10 +64,6 @@ namespace ST
 
             switch (step)
             {
-                case TurnStep.Start:
-                    if (turn == 1) events.Add(GameEvent.PlaceShipsMarkers);
-                    break;
-
                 case TurnStep.Plotting:
                     break;
 
@@ -101,10 +91,6 @@ namespace ST
                 case TurnStep.CrewActions:
                     break;
 
-                case TurnStep.End:
-                    events.Add(GameEvent.ClearTargets);
-                    break;
-
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -118,9 +104,6 @@ namespace ST
 
             switch (step)
             {
-                case TurnStep.Start:
-                    break;
-
                 case TurnStep.Plotting:
                     break;
 
@@ -142,9 +125,7 @@ namespace ST
                     break;
 
                 case TurnStep.CrewActions:
-                    break;
-
-                case TurnStep.End:
+                    events.Add(GameEvent.ClearTargets);
                     events.Add(GameEvent.ResetRepairAttempts);
                     break;
 

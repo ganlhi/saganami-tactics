@@ -4256,7 +4256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1bd18e3bfab4d8a9113d3d7c4b83de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expectedPlayers: 2
+  expectedPlayers: 1
   manager: {fileID: 592222519}
 --- !u!4 &412064287
 Transform:

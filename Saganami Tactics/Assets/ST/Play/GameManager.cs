@@ -99,22 +99,30 @@ namespace ST.Play
         {
             if (!PhotonNetwork.IsConnected || !PhotonNetwork.InRoom) return;
             if (PhotonNetwork.CurrentRoom.MaxPlayers > PhotonNetwork.CurrentRoom.PlayerCount) return;
-            Init();
-        }
-
-        private void Init()
-        {
             if (PhotonNetwork.IsMasterClient)
             {
-                LoadStateFromHolder();
-                InitShips();
-
-                photonView.RPC("RPC_SetStep", RpcTarget.All, _state.turn, _state.step);
-                OnStepStart(_state.turn, _state.step);
+                StartCoroutine(Init());
             }
         }
 
+        private IEnumerator Init()
+        {
+            LoadStateFromHolder();
+         
+            _clientsReadyToContinue = 0;
+            
+            InitShips();
+            
+            do
+            {
+                yield return null;
+            } while (_clientsReadyToContinue < PhotonNetwork.CurrentRoom.PlayerCount);
+            
+            photonView.RPC("RPC_SetStep", RpcTarget.All, _state.turn, _state.step);
+            OnStepStart(_state.turn, _state.step);
+        }
 
+/*
         // FOR TESTING PURPOSES         
         private void Update()
         {
@@ -138,7 +146,7 @@ namespace ST.Play
                 DispatchPendingAlterations();
             }
         }
-
+*/
 
         #region MasterClient
 
@@ -193,7 +201,7 @@ namespace ST.Play
             PhotonNetwork.CurrentRoom.ResetPlayersReadiness();
             Game.NextStep(Turn, Step, out var nextTurn, out var nextStep);
 
-            if (nextTurn > 1 || nextStep != TurnStep.Start)
+            if (nextTurn > 1 || nextStep != TurnStep.Plotting)
             {
                 OnStepEnd(Turn, Step);
             }
@@ -693,10 +701,12 @@ namespace ST.Play
                 yield return null;
             } while (GetAllShips().Count < _expectedShips);
 
+            GetAllShips().ForEach(sv => sv.PlaceMarker());
             FocusPlayerShip();
             OnShipsInit?.Invoke(this, EventArgs.Empty);
 
             Busy = false;
+            photonView.RPC("RPC_ReadyToContinue", RpcTarget.MasterClient);
         }
 
         private IEnumerator AnimateMoveShipsToMarkers()
