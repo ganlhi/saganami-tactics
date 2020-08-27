@@ -276,6 +276,24 @@ namespace ST.Scriptable
             return remainingAmmo;
         }
 
+        public static uint GetRemainingDecoys(Ssd ssd, List<SsdAlteration> alterations)
+        {
+            var decoysAlterations = alterations.Count(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Decoy);
+
+            var boxes = Array.Empty<uint>();
+            foreach (var hitLocation in ssd.hitLocations)
+            {
+                var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.Decoy).ToList();
+                if (slots.Any())
+                {
+                    boxes = slots.First().boxes;
+                }
+            }
+
+            return GetUndamagedValue(boxes, decoysAlterations);
+        }
+
         public static string SlotTypeToString(HitLocationSlotType slotType)
         {
             switch (slotType)

@@ -158,12 +158,18 @@ namespace ST.Play.UI
         {
             _gameManager.OnTurnStepChange += (sender, step) => SetTargetingPanelVisibility();
             _gameManager.OnSelectShip += (sender, ship) => SetTargetingPanelVisibility();
+            targetingPanel.OnDeployDecoy += (sender, args) => _gameManager.SelectedShip.DeployDecoy();
         }
 
         private void UpdateTargetingPanelEachFrame()
         {
             if (!targetingPanel.Active) return;
-            targetingPanel.UpdateContent(_gameManager.SelectedShip.GetComponent<FireControl>().Locks.Values.ToList());
+            var shipView = _gameManager.SelectedShip;
+            targetingPanel.UpdateContent(shipView.GetComponent<FireControl>().Locks.Values.ToList());
+            targetingPanel.UpdateDecoys(
+                (int) SsdHelper.GetRemainingDecoys(shipView.ship.Ssd, shipView.ship.alterations),
+                shipView.ship.deployedDecoy
+            );
         }
 
         private void SetTargetingPanelVisibility()
@@ -192,7 +198,6 @@ namespace ST.Play.UI
             _gameManager.OnSelectShip += (sender, ship) => SetCrewActionsPanelVisibility();
             _gameManager.OnShipStatusChanged += (sender, ship) => SetCrewActionsPanelVisibility();
 
-            // TODO add repair mode
             crewActionsPanel.OnRepair += (sender, args) => fullscreenPanels.ShowEngineeringPanel();
             crewActionsPanel.OnDisengage += (sender, args) => modalDisengage.ModalWindowIn();
             crewActionsPanel.OnSurrender += (sender, args) => modalSurrender.ModalWindowIn();
@@ -286,7 +291,7 @@ namespace ST.Play.UI
                 selection.Item2.GetComponent<ShipLog>().OnReportLogged -= AddReport;
                 selection.Item2.GetComponent<ShipLog>().OnReportsLogged -= SetReports;
             }
-            
+
             _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportLogged += AddReport;
             _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportsLogged += SetReports;
         }
@@ -347,7 +352,7 @@ namespace ST.Play.UI
                 selection.Item2.OnConsumedAmmo -= UpdateEngineeringPanelConsumedAmmo;
                 selection.Item2.OnAttemptedRepair -= UpdateEngineeringPanelRepairAttempts;
             }
-            
+
             _gameManager.SelectedShip.OnAlterationsChange += UpdateEngineeringPanelAlterations;
             _gameManager.SelectedShip.OnConsumedAmmo += UpdateEngineeringPanelConsumedAmmo;
             _gameManager.SelectedShip.OnAttemptedRepair += UpdateEngineeringPanelRepairAttempts;

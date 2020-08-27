@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using ST.Common;
 using ST.Scriptable;
@@ -81,6 +82,7 @@ namespace ST.Play
                 ship.Pitch,
                 ship.Roll,
                 ship.Thrust,
+                ship.deployedDecoy,
                 andThen);
         }
 
@@ -105,6 +107,12 @@ namespace ST.Play
         public void ResetRepairAttempts()
         {
             ship.ResetRepairAttempts();
+            SyncShip(andThen: ShipPostSyncAction.None);
+        }
+
+        public void ResetDeployedDecoys()
+        {
+            ship.deployedDecoy = false;
             SyncShip(andThen: ShipPostSyncAction.None);
         }
 
@@ -240,6 +248,25 @@ namespace ST.Play
             photonView.RPC("RPC_AddRepairAttempt", RpcTarget.All, successful);
         }
 
+        [PunRPC]
+        private void RPC_DeployDecoy()
+        {
+            var remaining = SsdHelper.GetRemainingDecoys(ship.Ssd, ship.alterations);
+            if (remaining <= 0 || ship.deployedDecoy) return;
+
+            ship.deployedDecoy = true;
+            SyncShip(andThen: ShipPostSyncAction.None);
+            
+            AddAlteration(new SsdAlteration()
+            {
+                destroyed = true,
+                type = SsdAlterationType.Slot,
+                slotType = HitLocationSlotType.Decoy,
+                location = 1 + (uint) Array.FindIndex(ship.Ssd.hitLocations,
+                               loc => loc.slots.Any(slot => slot.type == HitLocationSlotType.Decoy))
+            });
+        }
+
         #endregion MasterClient
 
         #region AllClients
@@ -261,6 +288,7 @@ namespace ST.Play
             int pitch,
             int roll,
             int thrust,
+            bool deployedDecoy,
             ShipPostSyncAction andThen)
         {
             if (ship.uid == string.Empty)
@@ -279,6 +307,7 @@ namespace ST.Play
             ship.Pitch = pitch;
             ship.Roll = roll;
             ship.Thrust = thrust;
+            ship.deployedDecoy = deployedDecoy;
 
             switch (andThen)
             {
@@ -472,9 +501,11 @@ namespace ST.Play
             var index = FindRelevantAlterationIndex(location, side, type, slotType, false);
             if (index == -1)
             {
-                Debug.LogError($"Cannot find alteration in {ship.name}: location {location}, side {side}, type {type}, slotType {slotType}");
+                Debug.LogError(
+                    $"Cannot find alteration in {ship.name}: location {location}, side {side}, type {type}, slotType {slotType}");
                 return;
             }
+
             ship.alterations.RemoveAt(index);
             OnAlterationsChange?.Invoke(this, EventArgs.Empty);
         }
@@ -486,9 +517,11 @@ namespace ST.Play
             var index = FindRelevantAlterationIndex(location, side, type, slotType, false);
             if (index == -1)
             {
-                Debug.LogError($"Cannot find alteration in {ship.name}: location {location}, side {side}, type {type}, slotType {slotType}");
+                Debug.LogError(
+                    $"Cannot find alteration in {ship.name}: location {location}, side {side}, type {type}, slotType {slotType}");
                 return;
             }
+
             var alteration = ship.alterations[index];
             alteration.destroyed = true;
             ship.alterations.RemoveAt(index);
@@ -511,16 +544,12 @@ namespace ST.Play
                             return ship.alterations.FindIndex(a =>
                                 a.type == SsdAlterationType.Slot && a.slotType == slotType && a.side == side &&
                                 a.destroyed == destroyed);
-                        case HitLocationSlotType.Decoy:
-                            // TODO side specific?
-                            return ship.alterations.FindIndex(a =>
-                                a.type == type && a.location == location && a.slotType == slotType &&
-                                a.destroyed == destroyed);
                         default:
                             return ship.alterations.FindIndex(a =>
                                 a.type == type && a.location == location && a.slotType == slotType &&
                                 a.destroyed == destroyed);
                     }
+
                 case SsdAlterationType.Structural:
                     return ship.alterations.FindIndex(a =>
                         a.type == SsdAlterationType.Structural && a.destroyed == destroyed);
@@ -587,6 +616,11 @@ namespace ST.Play
         {
             ship.repairAttempts.Add(successful);
             OnAttemptedRepair?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void DeployDecoy()
+        {
+            photonView.RPC("RPC_DeployDecoy", RpcTarget.MasterClient);
         }
 
         #endregion AllClients

@@ -100,7 +100,7 @@ MonoBehaviour:
     - type: 5
       boxes: 0000000000000000
     - type: 7
-      boxes: 0000000000000000
+      boxes: 00000000000000000000000000000000
   - coreArmor: 0
     passThrough: 1
     structural: 0

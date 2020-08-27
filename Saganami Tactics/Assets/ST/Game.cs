@@ -20,7 +20,8 @@ namespace ST
         UpdateMissiles,
         MoveMissiles,
         FireBeams,
-        ResetRepairAttempts
+        ResetRepairAttempts,
+        ResetDeployedDecoys
     }
 
     public static class Game
@@ -127,6 +128,7 @@ namespace ST
                 case TurnStep.CrewActions:
                     events.Add(GameEvent.ClearTargets);
                     events.Add(GameEvent.ResetRepairAttempts);
+                    events.Add(GameEvent.ResetDeployedDecoys);
                     break;
 
                 default:
@@ -312,8 +314,9 @@ namespace ST
 
             var (mainBearing, _) = target.GetBearingTo(missile.position);
             var wedgeMalus = SsdHelper.HasWedge(target.Ssd, mainBearing) ? 4 : 0;
-
-            var accuracy = rangeBand.Value.accuracy + activeEcm + wedgeMalus;
+            var decoyMalus = target.deployedDecoy ? 2 : 0;
+            
+            var accuracy = rangeBand.Value.accuracy + activeEcm + wedgeMalus + decoyMalus;
             var diceRolls = Dice.D10s(missile.number);
 
             var successes = diceRolls.Count(r => r >= accuracy);
@@ -587,9 +590,6 @@ namespace ST
                                 }
 
                                 break;
-                            case HitLocationSlotType.Decoy:
-                                // TODO
-                                break;
                             case HitLocationSlotType.ForwardImpeller:
                             case HitLocationSlotType.AftImpeller:
                                 var impellerAlterations = MakeAlterationsForBoxes(
@@ -632,6 +632,7 @@ namespace ST
                             case HitLocationSlotType.Pivot:
                             case HitLocationSlotType.Roll:
                             case HitLocationSlotType.DamageControl:
+                            case HitLocationSlotType.Decoy:
                                 var slotAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
                                     {

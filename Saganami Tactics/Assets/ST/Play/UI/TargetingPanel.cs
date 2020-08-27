@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ST.Scriptable;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ST.Play.UI
 {
@@ -12,9 +13,14 @@ namespace ST.Play.UI
 #pragma warning disable 649
         [SerializeField] private TargetInfo targetInfoPrefab;
         [SerializeField] private Transform content;
+        [SerializeField] private GameObject deployedLabel;
+        [SerializeField] private Button deployButton;
+        [SerializeField] private TextMeshProUGUI decoysNumberText;
 #pragma warning restore 649
 
         private Animator _animator;
+
+        public event EventHandler OnDeployDecoy;
 
         private bool _active;
 
@@ -39,6 +45,19 @@ namespace ST.Play.UI
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+        }
+
+        private void Start()
+        {
+            deployButton.onClick.AddListener(() => OnDeployDecoy?.Invoke(this, EventArgs.Empty));
+        }
+
+        public void UpdateDecoys(int remaining, bool deployed)
+        {
+            deployedLabel.SetActive(deployed);
+            deployButton.gameObject.SetActive(!deployed);
+            deployButton.interactable = remaining > 0;
+            decoysNumberText.text = remaining.ToString();
         }
 
         public void UpdateContent(List<TargetingContext> locks)

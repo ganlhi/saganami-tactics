@@ -40,6 +40,7 @@ namespace ST
         public List<SsdAlteration> alterations;
         public Dictionary<int, int> consumedAmmo;
         public List<bool> repairAttempts;
+        public bool deployedDecoy;
         
         private ShipStatus _status;
 
@@ -140,6 +141,7 @@ namespace ST
             alterations = new List<SsdAlteration>();
             consumedAmmo = new Dictionary<int, int>();
             repairAttempts = new List<bool>();
+            deployedDecoy = false;
         }
 
         public void UpdateFutureMovement()

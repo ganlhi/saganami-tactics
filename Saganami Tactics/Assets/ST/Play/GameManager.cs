@@ -276,6 +276,9 @@ namespace ST.Play
                     case GameEvent.ResetRepairAttempts:
                         GetAllShips().ForEach(shipView => shipView.ResetRepairAttempts());
                         break;
+                    case GameEvent.ResetDeployedDecoys:
+                        GetAllShips().ForEach(shipView => shipView.ResetDeployedDecoys());
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

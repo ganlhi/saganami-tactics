@@ -15,7 +15,6 @@ namespace ST.Play.UI
         [CanBeNull] private ShipView _hoverShip;
         [CanBeNull] private MissileView _hoverMissile;
 
-        // TODO handle missiles
 #pragma warning disable 649
         [SerializeField] private LayerMask hoverMask;
         [SerializeField] private Transform selectionMarker;
