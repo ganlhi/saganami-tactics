@@ -30,7 +30,7 @@ namespace ST.Play
             };
             
             _reports.Add(report);   
-            
+
             OnReportLogged?.Invoke(this, report);
         }
         public void AddReports(List<Report> reports)

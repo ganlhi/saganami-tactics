@@ -273,7 +273,7 @@ namespace ST.Play.UI
             }
 
             _gameManager.OnSelectShip += (sender, selection) => ListSelectedShipReports(selection);
-            _gameManager.OnTurnChange += (sender, turn) => ListSelectedShipReports();
+            _gameManager.OnTurnChange += (sender, turn) => SetReports();
         }
 
         private void ListSelectedShipReports(Tuple<ShipView, ShipView> selection = null)

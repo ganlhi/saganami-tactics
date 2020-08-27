@@ -143,10 +143,18 @@ namespace ST.Play
 
                 _pendingAlterations.Add(SelectedShip, new List<SsdAlteration>()
                 {
-                    new SsdAlteration() { type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile },
-                    new SsdAlteration() { type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull, location = 2 },
+                    new SsdAlteration() {type = SsdAlterationType.Movement, slotType = HitLocationSlotType.None},
+                    new SsdAlteration()
+                    {
+                        type = SsdAlterationType.Slot, slotType = HitLocationSlotType.ForwardImpeller,
+                        location = 1 + (uint) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
+                                       loc => loc.slots.Any(s => s.type == HitLocationSlotType.ForwardImpeller))
+                    },
+                    new SsdAlteration() {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile},
+                    new SsdAlteration()
+                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull, location = 2},
                 });
-                
+
                 DispatchPendingAlterations();
             }
         }
@@ -565,6 +573,13 @@ namespace ST.Play
             {
                 shipView.AddRepairAttempt(true);
                 shipView.RemoveAlteration(location, side, type, slotType);
+
+                if (slotType == HitLocationSlotType.ForwardImpeller || slotType == HitLocationSlotType.AftImpeller)
+                {
+                    // Also repair movement
+                    shipView.RemoveAlteration(location, side, SsdAlterationType.Movement, HitLocationSlotType.None);
+                }
+
                 shipView.GetComponent<ShipLog>().AddReport(new Report()
                 {
                     turn = Turn,
