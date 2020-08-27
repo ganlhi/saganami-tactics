@@ -34,7 +34,7 @@ namespace ST.Play.UI
         {
             _gameManager.OnTurnStepChange += (sender, step) => RemoveTargetMarkers();
             _gameManager.OnTargetsIdentified += (sender, args) => SetTargetMarkers();
-            _gameManager.OnSelectShip += (sender, ship) => SetTargetMarkers();
+            _gameManager.OnSelectShip += (sender, selection) => SetTargetMarkers();
         }
 
         private void Update()

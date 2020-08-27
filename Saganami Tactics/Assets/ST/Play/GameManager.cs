@@ -28,6 +28,7 @@ namespace ST.Play
             get => _turn;
             private set
             {
+                if (_turn == value) return;
                 _turn = value;
                 OnTurnChange?.Invoke(this, value);
             }
@@ -40,6 +41,7 @@ namespace ST.Play
             get => _step;
             private set
             {
+                if (_step == value) return;
                 _step = value;
                 OnTurnStepChange?.Invoke(this, value);
             }
@@ -64,8 +66,10 @@ namespace ST.Play
             get => _selectedShip;
             set
             {
+                if (_selectedShip == value) return;
+                var previous = _selectedShip;
                 _selectedShip = value;
-                OnSelectShip?.Invoke(this, value);
+                OnSelectShip?.Invoke(this, new Tuple<ShipView, ShipView>(value, previous));
             }
         }
 
@@ -73,7 +77,7 @@ namespace ST.Play
         public event EventHandler<int> OnTurnChange;
         public event EventHandler<TurnStep> OnTurnStepChange;
         public event EventHandler OnShipsInit;
-        public event EventHandler<ShipView> OnSelectShip;
+        public event EventHandler<Tuple<ShipView, ShipView>> OnSelectShip;
         public event EventHandler OnTargetsIdentified;
         public event EventHandler OnShipStatusChanged;
 
@@ -458,7 +462,7 @@ namespace ST.Play
         {
             foreach (var kv in _pendingReports)
             {
-                kv.Value.ForEach(report => kv.Key.GetComponent<ShipLog>().AddReport(report));
+                kv.Key.GetComponent<ShipLog>().AddReports(kv.Value);
             }
 
             _pendingReports.Clear();

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -64,7 +65,7 @@ namespace ST.Play.UI
         private void UpdateShipsListOnChanges()
         {
             _gameManager.OnShipsInit += (sender, args) => { shipsList.Ships = GameManager.GetAllShips(); };
-            _gameManager.OnSelectShip += (sender, shipView) => { shipsList.SetSelectedShip(shipView); };
+            _gameManager.OnSelectShip += (sender, selection) => { shipsList.SetSelectedShip(selection.Item1); };
 
             shipsList.OnSelectShip += (sender, shipView) => { _gameManager.SelectedShip = shipView; };
             shipsList.OnFocusCameraOnShip += (sender, shipView) => { _gameManager.LockCameraToShip(shipView); };
@@ -82,8 +83,9 @@ namespace ST.Play.UI
 
         private void UpdateShipInfoOnChanges()
         {
-            _gameManager.OnSelectShip += (sender, shipView) =>
+            _gameManager.OnSelectShip += (sender, selection) =>
             {
+                var (shipView, _) = selection;
                 shipInfo.ship = shipView.ship;
                 shipInfo.ssd = shipView.ship.Ssd;
             };
@@ -270,15 +272,28 @@ namespace ST.Play.UI
                 ListSelectedShipReports();
             }
 
-            _gameManager.OnSelectShip += (sender, ship) => ListSelectedShipReports();
+            _gameManager.OnSelectShip += (sender, selection) => ListSelectedShipReports(selection);
             _gameManager.OnTurnChange += (sender, turn) => ListSelectedShipReports();
         }
 
-        private void ListSelectedShipReports()
+        private void ListSelectedShipReports(Tuple<ShipView, ShipView> selection = null)
         {
             if (_gameManager.SelectedShip == null) return;
             SetReports();
-            _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportLogged += (sender, args) => SetReports();
+
+            if (selection != null && selection.Item2 != null)
+            {
+                selection.Item2.GetComponent<ShipLog>().OnReportLogged -= AddReport;
+                selection.Item2.GetComponent<ShipLog>().OnReportsLogged -= SetReports;
+            }
+            
+            _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportLogged += AddReport;
+            _gameManager.SelectedShip.GetComponent<ShipLog>().OnReportsLogged += SetReports;
+        }
+
+        private void SetReports(object sender, EventArgs e)
+        {
+            SetReports();
         }
 
         private void SetReports()
@@ -289,6 +304,12 @@ namespace ST.Play.UI
             var reports = log.Reports.ToList();
             reportsPanel.Reports = reports.Where(r => r.turn == _gameManager.Turn).ToList();
             fullReportsPanel.Reports = reports;
+        }
+
+        private void AddReport(object sender, Report report)
+        {
+            reportsPanel.AddReport(report);
+            fullReportsPanel.AddReport(report);
         }
 
         #endregion Reports
@@ -308,20 +329,28 @@ namespace ST.Play.UI
                 SetSelectedShipEngineeringPanel();
             }
 
-            _gameManager.OnSelectShip += (sender, ship) => SetSelectedShipEngineeringPanel();
+            _gameManager.OnSelectShip += (sender, selection) => SetSelectedShipEngineeringPanel(selection);
 
             _gameManager.OnTurnStepChange += (sender, step) => UpdateEngineeringPanelMode();
 
             ssdPanel.OnRepair += (sender, alteration) => _gameManager.AttemptRepair(alteration);
         }
 
-        private void SetSelectedShipEngineeringPanel()
+        private void SetSelectedShipEngineeringPanel(Tuple<ShipView, ShipView> selection = null)
         {
             if (_gameManager.SelectedShip == null) return;
             SetEngineeringPanel();
-            _gameManager.SelectedShip.OnAlterationsChange += (sender, args) => UpdateEngineeringPanelAlterations();
-            _gameManager.SelectedShip.OnConsumedAmmo += (sender, args) => UpdateEngineeringPanelConsumedAmmo();
-            _gameManager.SelectedShip.OnAttemptedRepair += (sender, args) => UpdateEngineeringPanelRepairAttempts();
+
+            if (selection != null && selection.Item2 != null)
+            {
+                selection.Item2.OnAlterationsChange -= UpdateEngineeringPanelAlterations;
+                selection.Item2.OnConsumedAmmo -= UpdateEngineeringPanelConsumedAmmo;
+                selection.Item2.OnAttemptedRepair -= UpdateEngineeringPanelRepairAttempts;
+            }
+            
+            _gameManager.SelectedShip.OnAlterationsChange += UpdateEngineeringPanelAlterations;
+            _gameManager.SelectedShip.OnConsumedAmmo += UpdateEngineeringPanelConsumedAmmo;
+            _gameManager.SelectedShip.OnAttemptedRepair += UpdateEngineeringPanelRepairAttempts;
         }
 
         private void SetEngineeringPanel()
@@ -342,19 +371,19 @@ namespace ST.Play.UI
                 : SsdPanelMode.View;
         }
 
-        private void UpdateEngineeringPanelAlterations()
+        private void UpdateEngineeringPanelAlterations(object sender, EventArgs eventArgs)
         {
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.Alterations = ship.alterations;
         }
 
-        private void UpdateEngineeringPanelConsumedAmmo()
+        private void UpdateEngineeringPanelConsumedAmmo(object sender, EventArgs eventArgs)
         {
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.ConsumedAmmo = ship.consumedAmmo;
         }
 
-        private void UpdateEngineeringPanelRepairAttempts()
+        private void UpdateEngineeringPanelRepairAttempts(object sender, EventArgs eventArgs)
         {
             var ship = _gameManager.SelectedShip.ship;
             ssdPanel.RepairAttempts = ship.repairAttempts;

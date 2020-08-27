@@ -18,6 +18,7 @@ namespace ST.Play.UI
         [SerializeField] private TextMeshProUGUI stepText;
         [SerializeField] private GameObject content;
         [SerializeField] private GameObject loading;
+        [SerializeField] private TextMeshProUGUI loadingText;
         [SerializeField] private Button readyBtn;
         [SerializeField] private Image readyBtnImage;
         [SerializeField] private Sprite notReadySprite;
@@ -36,6 +37,16 @@ namespace ST.Play.UI
             readyBtnImage.sprite = ready ? readySprite : notReadySprite;
             content.SetActive(!busy);
             loading.SetActive(busy);
+
+            switch (step)
+            {
+                case TurnStep.Beams:
+                    loadingText.text = "Firing";
+                    break;
+                default:
+                    loadingText.text = "Moving";
+                    break;
+            }
         }
     }
 }

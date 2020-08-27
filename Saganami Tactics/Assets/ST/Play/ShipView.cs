@@ -105,7 +105,7 @@ namespace ST.Play
         public void ResetRepairAttempts()
         {
             ship.ResetRepairAttempts();
-            SyncShip(andThen:ShipPostSyncAction.None);
+            SyncShip(andThen: ShipPostSyncAction.None);
         }
 
         [PunRPC]
@@ -181,7 +181,8 @@ namespace ST.Play
             );
         }
 
-        public void SetAlterationDestroyed(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        public void SetAlterationDestroyed(int location, Side side, SsdAlterationType type,
+            HitLocationSlotType slotType)
         {
             photonView.RPC("RPC_SetAlterationDestroyed", RpcTarget.All,
                 location,
@@ -266,11 +267,7 @@ namespace ST.Play
             {
                 ship = new Ship(shipName, team, ssdName, uid);
             }
-            
-//            ship.uid = uid;
-//            ship.name = shipName;
-//            ship.team = team;
-//            ship.ssdName = ssdName;
+
             ship.position = position;
             ship.rotation = rotation;
             ship.velocity = velocity;
@@ -479,7 +476,8 @@ namespace ST.Play
         }
 
         [PunRPC]
-        private void RPC_SetAlterationDestroyed(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        private void RPC_SetAlterationDestroyed(int location, Side side, SsdAlterationType type,
+            HitLocationSlotType slotType)
         {
             var index = ship.alterations.FindIndex(a =>
                 a.location == location && a.side == side && a.type == type && a.slotType == slotType && !a.destroyed);
@@ -536,7 +534,7 @@ namespace ST.Play
         {
             photonView.RPC("RPC_Surrender", RpcTarget.MasterClient);
         }
-        
+
         [PunRPC]
         private void RPC_AddRepairAttempt(bool successful)
         {

@@ -11,7 +11,8 @@ namespace ST.Play
         private readonly List<Report> _reports = new List<Report>();
         public IReadOnlyList<Report> Reports => _reports.AsReadOnly();
         
-        public event EventHandler OnReportLogged;
+        public event EventHandler<Report> OnReportLogged;
+        public event EventHandler OnReportsLogged;
 
         public void AddReport(Report report)
         {
@@ -21,14 +22,50 @@ namespace ST.Play
         [PunRPC]
         private void RPC_AddReport(ReportType type, int turn, string message)
         {
-            _reports.Add(new Report()
+            var report = new Report()
             {
                 type = type,
                 turn = turn,
                 message = message,
-            });   
+            };
             
-            OnReportLogged?.Invoke(this, EventArgs.Empty);
+            _reports.Add(report);   
+            
+            OnReportLogged?.Invoke(this, report);
+        }
+        public void AddReports(List<Report> reports)
+        {
+            var nb = reports.Count;
+            var data = new object[nb * 3];
+
+            var i = 0;
+            foreach (var report in reports)
+            {
+                data[i] = report.type;
+                data[i+1] = report.turn;
+                data[i+2] = report.message;
+                i += 3;
+            }
+
+            photonView.RPC("RPC_AddReports", RpcTarget.All, nb, data);
+        }
+
+        [PunRPC]
+        private void RPC_AddReports(int nb, object[] data)
+        {
+            for (var i = 0; i < nb * 3; i += 3)
+            {
+                var report = new Report()
+                {
+                    type = (ReportType) data[i],
+                    turn = (int) data[i+1],
+                    message = (string) data[i+2],
+                };
+                
+                _reports.Add(report);
+            }
+            
+            OnReportsLogged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Start()

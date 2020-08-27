@@ -22,6 +22,11 @@ namespace ST.Play.UI
             set => UpdateUi(value);
         }
 
+        public void AddReport(Report report)
+        {
+            AddReportLine(report);
+        }
+
         private void UpdateUi(IReadOnlyCollection<Report> reports)
         {
             foreach (Transform child in content)
@@ -46,33 +51,38 @@ namespace ST.Play.UI
 
                 foreach (var report in turnReports)
                 {
-                    TextMeshProUGUI prefab;
-                    switch (report.type)
-                    {
-                        case ReportType.ShipDestroyed:
-                        case ReportType.DamageTaken:
-                            prefab = dangerReportLinePrefab;
-                            break;
-                        case ReportType.ShipSurrendered:
-                        case ReportType.MissilesHit:
-                        case ReportType.BeamsHit:
-                            prefab = warningReportLinePrefab;
-                            break;
-                        case ReportType.ShipDisengaged:
-                        case ReportType.MissilesMissed:
-                        case ReportType.MissilesStopped:
-                        case ReportType.BeamsMiss:
-                        case ReportType.Info:
-                            prefab = defaultReportLinePrefab;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                    var txt = Instantiate(prefab, content).GetComponent<TextMeshProUGUI>();
-                    txt.text = report.message;
+                    AddReportLine(report);
                 }
             }
+        }
+
+        private void AddReportLine(Report report)
+        {
+            TextMeshProUGUI prefab;
+            switch (report.type)
+            {
+                case ReportType.ShipDestroyed:
+                case ReportType.DamageTaken:
+                    prefab = dangerReportLinePrefab;
+                    break;
+                case ReportType.ShipSurrendered:
+                case ReportType.MissilesHit:
+                case ReportType.BeamsHit:
+                    prefab = warningReportLinePrefab;
+                    break;
+                case ReportType.ShipDisengaged:
+                case ReportType.MissilesMissed:
+                case ReportType.MissilesStopped:
+                case ReportType.BeamsMiss:
+                case ReportType.Info:
+                    prefab = defaultReportLinePrefab;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            var txt = Instantiate(prefab, content).GetComponent<TextMeshProUGUI>();
+            txt.text = report.message;
         }
     }
 }
