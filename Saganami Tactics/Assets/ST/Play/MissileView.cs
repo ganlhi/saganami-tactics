@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Photon.Pun;
+using ST.Common;
 using ST.Scriptable;
 using UnityEngine;
 
@@ -111,13 +112,17 @@ namespace ST.Play
             var startPos = missileTransform.position;
 
             var toPos = missile.position;
-            
+
             var startRot = missileTransform.rotation;
             var dir = toPos - startPos;
             var toRot = Quaternion.LookRotation(dir);
 
-            const float duration = 2f;
+            
+            var distanceToTravel = startPos.DistanceTo(toPos);
+            var duration = distanceToTravel / GameSettings.Default.MissilesMovementPerSecond;
+            
             const float rotDuration = .5f; // missiles rotate very quickly!
+            
             var elapsedTime = 0f;
 
             Busy = true;
