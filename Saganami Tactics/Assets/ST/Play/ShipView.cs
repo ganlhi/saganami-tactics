@@ -469,8 +469,12 @@ namespace ST.Play
         [PunRPC]
         private void RPC_RemoveAlteration(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
         {
-            var index = ship.alterations.FindIndex(a =>
-                a.location == location && a.side == side && a.type == type && a.slotType == slotType && !a.destroyed);
+            var index = FindRelevantAlterationIndex(location, side, type, slotType, false);
+            if (index == -1)
+            {
+                Debug.LogError($"Cannot find alteration in {ship.name}: location {location}, side {side}, type {type}, slotType {slotType}");
+                return;
+            }
             ship.alterations.RemoveAt(index);
             OnAlterationsChange?.Invoke(this, EventArgs.Empty);
         }
@@ -479,13 +483,56 @@ namespace ST.Play
         private void RPC_SetAlterationDestroyed(int location, Side side, SsdAlterationType type,
             HitLocationSlotType slotType)
         {
-            var index = ship.alterations.FindIndex(a =>
-                a.location == location && a.side == side && a.type == type && a.slotType == slotType && !a.destroyed);
+            var index = FindRelevantAlterationIndex(location, side, type, slotType, false);
+            if (index == -1)
+            {
+                Debug.LogError($"Cannot find alteration in {ship.name}: location {location}, side {side}, type {type}, slotType {slotType}");
+                return;
+            }
             var alteration = ship.alterations[index];
             alteration.destroyed = true;
             ship.alterations.RemoveAt(index);
             ship.alterations.Add(alteration);
             OnAlterationsChange?.Invoke(this, EventArgs.Empty);
+        }
+
+        private int FindRelevantAlterationIndex(int location, Side side, SsdAlterationType type,
+            HitLocationSlotType slotType, bool destroyed)
+        {
+            switch (type)
+            {
+                case SsdAlterationType.Slot:
+                    switch (slotType)
+                    {
+                        case HitLocationSlotType.Missile:
+                        case HitLocationSlotType.Laser:
+                        case HitLocationSlotType.CounterMissile:
+                        case HitLocationSlotType.PointDefense:
+                            return ship.alterations.FindIndex(a =>
+                                a.type == SsdAlterationType.Slot && a.slotType == slotType && a.side == side &&
+                                a.destroyed == destroyed);
+                        case HitLocationSlotType.Decoy:
+                            // TODO side specific?
+                            return ship.alterations.FindIndex(a =>
+                                a.type == type && a.location == location && a.slotType == slotType &&
+                                a.destroyed == destroyed);
+                        default:
+                            return ship.alterations.FindIndex(a =>
+                                a.type == type && a.location == location && a.slotType == slotType &&
+                                a.destroyed == destroyed);
+                    }
+                case SsdAlterationType.Structural:
+                    return ship.alterations.FindIndex(a =>
+                        a.type == SsdAlterationType.Structural && a.destroyed == destroyed);
+                case SsdAlterationType.Movement:
+                    return ship.alterations.FindIndex(a =>
+                        a.type == SsdAlterationType.Movement && a.destroyed == destroyed);
+                case SsdAlterationType.Sidewall:
+                    return ship.alterations.FindIndex(a =>
+                        a.type == SsdAlterationType.Sidewall && a.side == side && a.destroyed == destroyed);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
 
         [PunRPC]

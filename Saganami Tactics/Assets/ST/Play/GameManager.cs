@@ -112,16 +112,16 @@ namespace ST.Play
         private IEnumerator Init()
         {
             LoadStateFromHolder();
-         
+
             _clientsReadyToContinue = 0;
-            
+
             InitShips();
-            
+
             do
             {
                 yield return null;
             } while (_clientsReadyToContinue < PhotonNetwork.CurrentRoom.PlayerCount);
-            
+
             photonView.RPC("RPC_SetStep", RpcTarget.All, _state.turn, _state.step);
             OnStepStart(_state.turn, _state.step);
         }
@@ -550,13 +550,22 @@ namespace ST.Play
         }
 
         [PunRPC]
-        private void RPC_AttemptRepair(int location, Side side, SsdAlterationType type, HitLocationSlotType slotType)
+        private void RPC_AttemptRepair(string shipId, int location, Side side, SsdAlterationType type,
+            HitLocationSlotType slotType)
         {
-            if (Game.AttemptCrewRateCheck(SelectedShip.ship))
+            var shipView = GetShipById(shipId);
+
+            if (shipView == null)
             {
-                SelectedShip.AddRepairAttempt(true);
-                SelectedShip.RemoveAlteration(location, side, type, slotType);
-                SelectedShip.GetComponent<ShipLog>().AddReport(new Report()
+                Debug.LogError("Cannot find ship with ID " + shipId);
+                return;
+            }
+
+            if (Game.AttemptCrewRateCheck(shipView.ship))
+            {
+                shipView.AddRepairAttempt(true);
+                shipView.RemoveAlteration(location, side, type, slotType);
+                shipView.GetComponent<ShipLog>().AddReport(new Report()
                 {
                     turn = Turn,
                     type = ReportType.Info,
@@ -565,9 +574,9 @@ namespace ST.Play
             }
             else
             {
-                SelectedShip.AddRepairAttempt(false);
-                SelectedShip.SetAlterationDestroyed(location, side, type, slotType);
-                SelectedShip.GetComponent<ShipLog>().AddReport(new Report()
+                shipView.AddRepairAttempt(false);
+                shipView.SetAlterationDestroyed(location, side, type, slotType);
+                shipView.GetComponent<ShipLog>().AddReport(new Report()
                 {
                     turn = Turn,
                     type = ReportType.DamageTaken,
@@ -591,6 +600,7 @@ namespace ST.Play
                         default:
                             return $"{SsdHelper.SlotTypeToString(slotType)} (location {location})";
                     }
+
                 case SsdAlterationType.Movement:
                     return "movement";
                 case SsdAlterationType.Sidewall:
@@ -838,9 +848,10 @@ namespace ST.Play
 
         public void AttemptRepair(SsdAlteration alteration)
         {
-            photonView.RPC("RPC_AttemptRepair", RpcTarget.MasterClient, (int) alteration.location, alteration.side, alteration.type, alteration.slotType);
-        } 
-        
+            photonView.RPC("RPC_AttemptRepair", RpcTarget.MasterClient, SelectedShip.ship.uid,
+                (int) alteration.location, alteration.side, alteration.type, alteration.slotType);
+        }
+
         public static List<ShipView> GetAllShips()
         {
             return PhotonNetwork
@@ -872,6 +883,7 @@ namespace ST.Play
         {
             PhotonNetwork.LocalPlayer.SetReady(ready);
         }
+
         #endregion AllClients
     }
 }
