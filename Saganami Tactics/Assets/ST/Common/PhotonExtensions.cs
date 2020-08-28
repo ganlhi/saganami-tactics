@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using ExitGames.Client.Photon;
+using Photon.Pun;
 using Photon.Realtime;
 using ST.Scriptable;
 using UnityEngine;
@@ -46,6 +48,22 @@ namespace ST.Common
             {
                 Debug.LogError("Failed to cycle color index");
             }
+        }
+
+        public static bool AssignFirstAvailableColorIndex(this Player player)
+        {
+            var allPlayers = PhotonNetwork.CurrentRoom.Players.Values.ToList();
+            var usedColorIndices = allPlayers.Where(p => !Equals(p, player)).Select(p => p.GetColorIndex()).ToList();
+            
+            for (var i = 1; i <= 4; i++)
+            {
+                if (usedColorIndices.Contains(i)) continue;
+                player.SetColorIndex(i);
+                return true;
+            }
+            
+            Debug.LogError("Unable to assign a color index to player");
+            return false;
         }
 
         public static void CycleColorIndex(this Player player)
@@ -103,6 +121,16 @@ namespace ST.Common
             }
 
             return 0;
+        }
+        
+        public static bool IsGameStarted(this RoomInfo room)
+        {
+            if (room.CustomProperties.TryGetValue(GameSettings.Default.GameStartedProp, out var started))
+            {
+                return (bool) started;
+            }
+
+            return false;
         }
     }
 

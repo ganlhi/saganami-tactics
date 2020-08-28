@@ -17,6 +17,7 @@ namespace ST.Common
             if (PhotonNetwork.IsConnected)
             {
                 Destroy(gameObject);
+                return;
             }
 
             Debug.Log("Auto connect");
@@ -30,7 +31,7 @@ namespace ST.Common
             PhotonNetwork.JoinOrCreateRoom("AutoConnect_Room", new RoomOptions()
             {
                 IsOpen = true,
-                IsVisible = false,
+//                IsVisible = false,
                 MaxPlayers = (byte)expectedPlayers,
 //                EmptyRoomTtl = 120000,
 //                PlayerTtl = 120000,

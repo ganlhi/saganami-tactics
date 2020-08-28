@@ -16,13 +16,13 @@ namespace ST.Scriptable
         public readonly string ColorIndexProp = "cid";
         public readonly string ReadyProp = "rdy";
         public readonly string MaxPointsProp = "pts";
+        public readonly string GameStartedProp = "gst";
 
         #endregion
 
         #region Scenes names
 
-        public readonly string SceneLauncher = "Launcher";
-        public readonly string SceneInRoom = "InRoom";
+        public readonly string SceneMainMenu = "Main Menu";
         public readonly string SceneSetup = "Setup";
         public readonly string SceneDeploy = "Deploy";
         public readonly string ScenePlay = "Play";

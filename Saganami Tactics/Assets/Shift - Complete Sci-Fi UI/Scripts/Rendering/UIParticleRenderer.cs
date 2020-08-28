@@ -11,7 +11,8 @@ namespace Michsky.UI.Shift
     [RequireComponent(typeof(ParticleSystem))]
     public class UIParticleRenderer : MaskableGraphic
     {
-        [Tooltip("Having this enabled run the system in LateUpdate rather than in Update making it faster but less precise (more clunky)")]
+        [Tooltip(
+            "Having this enabled run the system in LateUpdate rather than in Update making it faster but less precise (more clunky)")]
         public bool fixedTime = true;
 
         private Transform _transform;
@@ -30,10 +31,7 @@ namespace Michsky.UI.Shift
 
         public override Texture mainTexture
         {
-            get
-            {
-                return currentTexture;
-            }
+            get { return currentTexture; }
         }
 
         protected bool Initialize()
@@ -43,6 +41,7 @@ namespace Michsky.UI.Shift
             {
                 _transform = transform;
             }
+
             if (pSystem == null)
             {
                 pSystem = GetComponent<ParticleSystem>();
@@ -62,11 +61,14 @@ namespace Michsky.UI.Shift
                 if (pRenderer != null)
                     pRenderer.enabled = false;
 
-                Shader foundShader = Shader.Find("UI/Particles/Additive");
-                Material pMaterial = new Material(foundShader);
 
                 if (material == null)
+                {
+                    Shader foundShader = Shader.Find("UI/Particles/Additive");
+                    Material pMaterial = new Material(foundShader);
                     material = pMaterial;
+                }
+
 
                 currentMaterial = material;
 
@@ -96,7 +98,8 @@ namespace Michsky.UI.Shift
             if (textureSheetAnimation.enabled)
             {
                 textureSheetAnimationFrames = textureSheetAnimation.numTilesX * textureSheetAnimation.numTilesY;
-                textureSheetAnimationFrameSize = new Vector2(1f / textureSheetAnimation.numTilesX, 1f / textureSheetAnimation.numTilesY);
+                textureSheetAnimationFrameSize = new Vector2(1f / textureSheetAnimation.numTilesX,
+                    1f / textureSheetAnimation.numTilesY);
             }
 
             return true;
@@ -137,7 +140,9 @@ namespace Michsky.UI.Shift
                 ParticleSystem.Particle particle = particles[i];
 
                 // get particle properties
-                Vector2 position = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
+                Vector2 position = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local
+                    ? particle.position
+                    : _transform.InverseTransformPoint(particle.position));
 
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 float rotation90 = rotation + Mathf.PI / 2;
@@ -152,14 +157,15 @@ namespace Michsky.UI.Shift
                 Vector4 particleUV = imageUV;
                 if (textureSheetAnimation.enabled)
                 {
-                    float frameProgress = textureSheetAnimation.frameOverTime.curveMin.Evaluate(1 - (particle.remainingLifetime / particle.startLifetime));
+                    float frameProgress =
+                        textureSheetAnimation.frameOverTime.curveMin.Evaluate(
+                            1 - (particle.remainingLifetime / particle.startLifetime));
 
                     frameProgress = Mathf.Repeat(frameProgress * textureSheetAnimation.cycleCount, 1);
                     int frame = 0;
 
                     switch (textureSheetAnimation.animation)
                     {
-
                         case ParticleSystemAnimationType.WholeSheet:
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimationFrames);
                             break;
@@ -173,12 +179,12 @@ namespace Michsky.UI.Shift
                             //                    }
                             frame += row * textureSheetAnimation.numTilesX;
                             break;
-
                     }
 
                     frame %= textureSheetAnimationFrames;
                     particleUV.x = (frame % textureSheetAnimation.numTilesX) * textureSheetAnimationFrameSize.x;
-                    particleUV.y = Mathf.FloorToInt(frame / textureSheetAnimation.numTilesX) * textureSheetAnimationFrameSize.y;
+                    particleUV.y = Mathf.FloorToInt(frame / textureSheetAnimation.numTilesX) *
+                                   textureSheetAnimationFrameSize.y;
                     particleUV.z = particleUV.x + textureSheetAnimationFrameSize.x;
                     particleUV.w = particleUV.y + textureSheetAnimationFrameSize.y;
                 }
