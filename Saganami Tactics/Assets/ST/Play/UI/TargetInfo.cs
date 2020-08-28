@@ -25,6 +25,8 @@ namespace ST.Play.UI
         [SerializeField] private TextMeshProUGUI target;
         [SerializeField] private TextMeshProUGUI number;
         [SerializeField] private TextMeshProUGUI distance;
+        [SerializeField] private Sprite sideSpriteShortRange;
+        [SerializeField] private Sprite sideSpriteLongRange;
 #pragma warning restore 649
 
         private void UpdateUi()
@@ -41,6 +43,10 @@ namespace ST.Play.UI
                     sideImage.localRotation = Quaternion.Euler(0, 0, 270);
                     break;
             }
+
+            sideImage.GetComponent<Image>().sprite = TargetingContext.ShortRange
+                ? sideSpriteShortRange
+                : sideSpriteLongRange;
 
             weapon.text = TargetingContext.Mount.model.name;
             target.text = TargetingContext.Target.name;

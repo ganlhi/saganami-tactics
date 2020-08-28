@@ -9,6 +9,7 @@ namespace ST.Scriptable
         public float MoveDuration = 2f;
         public float BeamDuration = 1f;
         public float MissilesMovementPerSecond = 8f;
+        public int MissileShortRange = 6;
 
         #region Custom properties keys
 

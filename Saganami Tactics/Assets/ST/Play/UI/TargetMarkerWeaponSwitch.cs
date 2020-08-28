@@ -58,6 +58,9 @@ namespace ST.Play.UI
 
 #pragma warning disable 649
         [SerializeField] private Transform iconTransform;
+        [SerializeField] private Image icon;
+        [SerializeField] private Sprite spriteShortRange;
+        [SerializeField] private Sprite spriteLongRange;
         [SerializeField] private TextMeshProUGUI typeText;
         [SerializeField] private SwitchManager switchManager;
 #pragma warning restore 649
@@ -91,6 +94,8 @@ namespace ST.Play.UI
                     iconTransform.localRotation = Quaternion.Euler(0, 0, 270);
                     break;
             }
+
+            icon.sprite = _targetingContext.ShortRange ? spriteShortRange : spriteLongRange;
 
             // TODO handle other types
             typeText.text = TargetingContext.Mount.model.type == WeaponType.Missile ? "M" : "L";

@@ -45,6 +45,7 @@ namespace ST.Play
                 missile.attackerId,
                 missile.targetId,
                 missile.launchPoint,
+                missile.shortRange,
                 missile.number,
                 missile.weapon.name,
                 missile.position,
@@ -66,6 +67,7 @@ namespace ST.Play
             string attackerId,
             string targetId,
             Vector3 launchPoint,
+            bool shortRange,
             int number,
             string weaponName,
             Vector3 position,
@@ -80,6 +82,7 @@ namespace ST.Play
             missile.attackerId = attackerId;
             missile.targetId = targetId;
             missile.launchPoint = launchPoint;
+            missile.shortRange = shortRange;
             missile.number = number;
             missile.weapon = WeaponHelper.GetWeaponByName(weaponName);
             missile.position = position;
@@ -110,7 +113,7 @@ namespace ST.Play
         {
             var missileTransform = transform;
             var startPos = missileTransform.position;
-
+            
             var toPos = missile.position;
 
             var startRot = missileTransform.rotation;
@@ -136,6 +139,12 @@ namespace ST.Play
             }
 
             Busy = false;
+            
+            if (missile.status != MissileStatus.Accelerating)
+            {
+                // hide in prevision of destruction
+                gameObject.SetActive(false);
+            }
         }
 
         #endregion AllClients

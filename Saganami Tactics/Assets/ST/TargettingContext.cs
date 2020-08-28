@@ -29,6 +29,7 @@ namespace ST
         public Ship Target;
         public Vector3 LaunchPoint;
         public float LaunchDistance;
+        public bool ShortRange;
 
         private bool Equals(TargetingContext other)
         {

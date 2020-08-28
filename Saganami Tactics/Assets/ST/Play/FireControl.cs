@@ -49,7 +49,8 @@ namespace ST.Play
                 targetingContext.Number,
                 targetingContext.Target.uid,
                 targetingContext.LaunchPoint,
-                targetingContext.LaunchDistance
+                targetingContext.LaunchDistance,
+                targetingContext.ShortRange
             );
         }
 
@@ -68,7 +69,7 @@ namespace ST.Play
 
         [PunRPC]
         private void RPC_LockTarget(Side side, int mountIndex, int number, string targetId, Vector3 launchPoint,
-            float launchDistance)
+            float launchDistance, bool shortRange)
         {
             var mount = _shipView.ship.Ssd.weaponMounts[mountIndex];
             var target = GameManager.GetShipById(targetId);
@@ -82,7 +83,8 @@ namespace ST.Play
                 Side = side,
                 Target = target.ship,
                 LaunchPoint = launchPoint,
-                LaunchDistance = launchDistance
+                LaunchDistance = launchDistance,
+                ShortRange = shortRange,
             };
 
             _locks.Add(mount, targetingContext);

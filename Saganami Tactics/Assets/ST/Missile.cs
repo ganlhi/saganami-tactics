@@ -12,6 +12,7 @@ namespace ST
         public string attackerId;
         public string targetId;
         public Vector3 launchPoint;
+        public bool shortRange;
         public int number;
         public Weapon weapon;
         public Vector3 position;
@@ -27,6 +28,7 @@ namespace ST
             attackerId = launchShip.uid;
             targetId = context.Target.uid;
             launchPoint = context.LaunchPoint;
+            shortRange = context.ShortRange;
             number = context.Number;
             weapon = context.Mount.model;
             position = context.LaunchPoint;

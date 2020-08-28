@@ -159,24 +159,47 @@ namespace ST
 
             Vector3 targetPos;
             HitLocationSlotType slotType;
-            switch (type)
+            var isShortRange = false;
+
+            if (type == WeaponType.Missile)
             {
-                case WeaponType.Missile:
-                    targetPos = target.endMarkerPosition;
-                    slotType = HitLocationSlotType.Missile;
-                    break;
-                case WeaponType.Laser:
+                if (attacker.position.DistanceTo(target.position) <= GameSettings.Default.MissileShortRange)
+                {
                     targetPos = target.position;
-                    slotType = HitLocationSlotType.Laser;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    isShortRange = true;
+                }
+                else
+                {
+                    if (attacker.position.DistanceTo(target.endMarkerPosition) <=
+                        GameSettings.Default.MissileShortRange)
+                    {
+                        // Special case: current position of target is too far for short range attack
+                        // but future position of target is too close to a long range attack. 
+                        // This means the target can be attacked at short range next turn.
+                        return targetingContexts;
+                    }
+                    
+                    targetPos = target.endMarkerPosition;
+                }
+                
+                slotType = HitLocationSlotType.Missile;
             }
-
+            else if (type == WeaponType.Laser)
+            {
+                isShortRange = true;
+                targetPos = target.position;
+                slotType = HitLocationSlotType.Laser;
+            }
+            else
+            {
+                // For future weapon types
+                return targetingContexts;
+            }
+            
             var (mainBearing, _) = attacker.GetBearingTo(targetPos);
-            if (mainBearing == Side.Bottom || mainBearing == Side.Top) return targetingContexts;
-
             var distance = attacker.position.DistanceTo(targetPos);
+
+            if (mainBearing == Side.Bottom || mainBearing == Side.Top) return targetingContexts;
 
             var mounts = attacker.Ssd.weaponMounts.Where(m => m.side == mainBearing).ToArray();
 
@@ -188,10 +211,14 @@ namespace ST
                     attacker.alterations.Count(a =>
                         a.side == mainBearing && a.type == SsdAlterationType.Slot && a.slotType == slotType));
 
-                var remainingAmmo = SsdHelper.GetRemainingAmmo(attacker.Ssd, mount, attacker.consumedAmmo);
+                if (nbWeapons == 0) continue;
 
-                if (nbWeapons == 0 || (type == WeaponType.Missile && remainingAmmo <= 0)) continue;
-
+                if (type == WeaponType.Missile)
+                {
+                    var remainingAmmo = SsdHelper.GetRemainingAmmo(attacker.Ssd, mount, attacker.consumedAmmo);
+                    if (remainingAmmo <= 0) continue;
+                }
+                
                 if (mount.model.GetMaxRange() < distance) continue;
 
                 targetingContexts.Add(new TargetingContext()
@@ -199,6 +226,7 @@ namespace ST
                     Mount = mount,
                     Side = mainBearing,
                     Target = target,
+                    ShortRange = isShortRange,
                     LaunchPoint = attacker.position,
                     LaunchDistance = distance,
                     Number = type == WeaponType.Missile
@@ -223,6 +251,12 @@ namespace ST
                     missile.status = MissileStatus.Accelerating;
                     missile.position =
                         missile.launchPoint + .5f * (target.endMarkerPosition - missile.launchPoint);
+                    
+                    if (missile.shortRange)
+                    {
+                        // accelerate then immediately attack
+                        return UpdateMissile(missile, attacker, target, turn, ref reports);
+                    }
                     break;
                 case MissileStatus.Accelerating:
                     if (!CanStillCatchTarget(missile, attacker, target, ref reports))
@@ -315,7 +349,7 @@ namespace ST
             var (mainBearing, _) = target.GetBearingTo(missile.position);
             var wedgeMalus = SsdHelper.HasWedge(target.Ssd, mainBearing) ? 4 : 0;
             var decoyMalus = target.deployedDecoy ? 2 : 0;
-            
+
             var accuracy = rangeBand.Value.accuracy + activeEcm + wedgeMalus + decoyMalus;
             var diceRolls = Dice.D10s(missile.number);
 
@@ -467,9 +501,9 @@ namespace ST
                     var damages = rangeBand.Value.damage + actualPenetration;
                     var location = (uint) Dice.D10();
 
-                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, hitNum, 
+                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, hitNum,
                         ref reports,
-                        ref alterations, 
+                        ref alterations,
                         ref destroyedAmmo);
                 }
             }

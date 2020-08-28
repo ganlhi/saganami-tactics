@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MoveDuration: 2
   BeamDuration: 1
+  MissilesMovementPerSecond: 6
+  MissileShortRange: 6
   BlueTeam: {r: 0, g: 0.48235294, b: 1, a: 1}
   YellowTeam: {r: 0.98039216, g: 0.81960785, b: 0, a: 1}
   GreenTeam: {r: 0.105882354, g: 0.8862745, b: 0.3372549, a: 1}

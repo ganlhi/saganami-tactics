@@ -346,6 +346,7 @@ MonoBehaviour:
     attackerId: 
     targetId: 
     launchPoint: {x: 0, y: 0, z: 0}
+    shortRange: 0
     number: 0
     weapon: {fileID: 0}
     position: {x: 0, y: 0, z: 0}

@@ -297,6 +297,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iconTransform: {fileID: 1077078783273465718}
+  icon: {fileID: 1077078783273465719}
+  spriteShortRange: {fileID: 21300000, guid: aee32ac59e8651542b5e2cd8a66769dc, type: 3}
+  spriteLongRange: {fileID: 21300000, guid: b0eeeaef8ffb8f942bfc914b004a909f, type: 3}
   typeText: {fileID: 1077078781817063569}
   switchManager: {fileID: 1109416093725364585}
 --- !u!1 &1077548514565779039
