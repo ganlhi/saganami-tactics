@@ -16,7 +16,9 @@ namespace ST.Play
     public class GameManager : MonoBehaviourPunCallbacks
     {
 #pragma warning disable 649
-        [SerializeField] private new Moba_Camera camera;
+#pragma warning disable 108,114
+        [SerializeField] private Moba_Camera camera;
+#pragma warning restore 108,114
 #pragma warning restore 649
 
         private int _expectedShips;

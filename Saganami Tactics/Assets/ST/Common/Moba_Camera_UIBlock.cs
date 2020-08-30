@@ -5,10 +5,10 @@ namespace ST.Common
 {
     public class Moba_Camera_UIBlock : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-#pragma warning disable 0649
+#pragma warning disable 0649,108,114
         [SerializeField]
-        private new Moba_Camera camera;
-#pragma warning restore 0649
+        private Moba_Camera camera;
+#pragma warning restore 0649,108,114
     
         public void OnPointerEnter(PointerEventData eventData)
         {
