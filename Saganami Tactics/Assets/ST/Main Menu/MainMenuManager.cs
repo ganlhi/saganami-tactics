@@ -32,6 +32,14 @@ namespace ST.Main_Menu
         [SerializeField] private Slider maxPointsField;
 #pragma warning restore 649
 
+        [Header("Join game inputs")]
+#pragma warning disable 649
+        [SerializeField]
+        private TMP_InputField joinPlayerNameField;
+        [SerializeField]
+        private TMP_Text joinGameNameText;
+#pragma warning restore 649
+
         public void CreateGameFromInputs()
         {
             var gameName = gameNameField.text;
@@ -46,7 +54,7 @@ namespace ST.Main_Menu
             PlayerPrefs.SetString("nickname", playerNameField.text);
         }
 
-        public void CreateGame(string gameName, int nbPlayers, int maxPoints)
+        private void CreateGame(string gameName, int nbPlayers, int maxPoints)
         {
             var props = new Hashtable
             {
@@ -60,7 +68,26 @@ namespace ST.Main_Menu
                 IsOpen = true,
                 IsVisible = true,
                 CustomRoomProperties = props,
+                CustomRoomPropertiesForLobby = new string[]
+                {
+                    GameSettings.Default.MaxPointsProp,
+                    GameSettings.Default.GameStartedProp,
+                }
             });
+        }
+
+        public void JoinGameFromInputs()
+        {
+            var gameName = joinGameNameText.text;
+            JoinGame(gameName);
+            
+            // Remember player name for next time
+            PlayerPrefs.SetString("nickname", joinPlayerNameField.text);
+        }
+
+        private void JoinGame(string gameName)
+        {
+            PhotonNetwork.JoinRoom(gameName);
         }
 
         public override void OnLeftRoom()
@@ -83,12 +110,11 @@ namespace ST.Main_Menu
             ShowMessage("Failed to join game", message);
         }
 
-//        public override void OnCreatedRoom()
-//        {
-//            base.OnCreatedRoom();
-//            Debug.LogFormat("Created game successfully: {0}", PhotonNetwork.CurrentRoom.Name);
-//            ShowMessage("Create game", "Created game successfully");
-//        }
+        public override void OnCreatedRoom()
+        {
+            base.OnCreatedRoom();
+            Debug.LogFormat("Created game successfully: {0}", PhotonNetwork.CurrentRoom.Name);
+        }
 
         public override void OnJoinedRoom()
         {

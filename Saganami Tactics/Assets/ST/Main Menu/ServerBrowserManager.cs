@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Michsky.UI.Shift;
 using Photon.Pun;
 using Photon.Realtime;
 using ST.Common;
@@ -11,50 +12,15 @@ namespace ST.Main_Menu
 {
     public class ServerBrowserManager : MonoBehaviourPunCallbacks
     {
-        
 #pragma warning disable 0649
-        [SerializeField]
-        private Transform listContent;
+        [SerializeField] private Transform listContent;
 
-        [SerializeField]
-        private GameObject listEntryPrefab;
+        [SerializeField] private GameObject listEntryPrefab;
+
+        [SerializeField] private BlurManager blurManager;
+
+        [SerializeField] private ModalWindowManager joinGameModal;
 #pragma warning restore 0649
-        
-//        private Animator _mWindowAnimator;
-//        private bool _isOn;
-//
-//        private void Start()
-//        {
-//            _mWindowAnimator = gameObject.GetComponent<Animator>();
-//        }
-//
-//        public void ManageServerList()
-//        {
-//            if (!_isOn)
-//            {
-//                _mWindowAnimator.CrossFade("List Minimize", 0.1f);
-//                _isOn = true;
-//            }
-//            else
-//            {
-//                _mWindowAnimator.CrossFade("List Expand", 0.1f);
-//                _isOn = false;
-//            }
-//        }
-//
-//        public void ExpandServerList()
-//        {
-//            if (!_isOn) return;
-//            _mWindowAnimator.CrossFade("List Expand", 0.1f);
-//            _isOn = false;
-//        }
-//
-//        public void MinimizeServerList()
-//        {
-//            if (_isOn) return;
-//            _mWindowAnimator.CrossFade("List Minimize", 0.1f);
-//            _isOn = true;
-//        }
 
         public void ListRooms()
         {
@@ -68,11 +34,10 @@ namespace ST.Main_Menu
             {
                 Debug.Log("Already in lobby");
             }
-            
+
             // Empty current list
             foreach (Transform child in listContent)
             {
-//                child.GetComponent<RoomsListEntry>().JoinEvent.RemoveAllListeners();
                 Destroy(child.gameObject);
             }
         }
@@ -91,23 +56,39 @@ namespace ST.Main_Menu
             foreach (var ri in roomList)
             {
                 Debug.Log($"Room: {ri.Name}");
-                
+                Debug.Log(ri.CustomProperties);
+
                 var entry = Instantiate(listEntryPrefab, listContent);
-                
+
                 entry.transform.Find("Content/Title").GetComponent<TextMeshProUGUI>().text = ri.Name;
-                entry.transform.Find("Content/Players").GetComponent<TextMeshProUGUI>().text = $"{ri.PlayerCount}/{ri.MaxPlayers}";
-                entry.transform.Find("Content/MaxPoints").GetComponent<TextMeshProUGUI>().text = ri.GetMaxPoints().ToString();
+                entry.transform.Find("Content/Players").GetComponent<TextMeshProUGUI>().text =
+                    $"{ri.PlayerCount}/{ri.MaxPlayers}";
+                entry.transform.Find("Content/MaxPoints").GetComponent<TextMeshProUGUI>().text =
+                    ri.GetMaxPoints().ToString();
 
                 var entryBtn = entry.GetComponent<Button>();
-                
+
                 entryBtn.interactable = ri.IsOpen && ri.PlayerCount < ri.MaxPlayers;
-                entryBtn.onClick.AddListener(() => Join(ri.Name));
+                entryBtn.onClick.AddListener(() => ShowJoinModal(ri));
             }
         }
 
-        public void Join(string roomName)
+        private void ShowJoinModal(RoomInfo roomInfo)
         {
-            PhotonNetwork.JoinRoom(roomName);
+            blurManager.BlurInAnim();
+            joinGameModal.ModalWindowIn();
+
+            joinGameModal.transform.Find("Content/Content/Game Name/Text")
+                .GetComponent<TMP_Text>().text = roomInfo.Name;
+
+            joinGameModal.transform.Find("Content/Content/Players/Text")
+                .GetComponent<TMP_Text>().text = roomInfo.MaxPlayers.ToString();
+
+            joinGameModal.transform.Find("Content/Content/Max Points/Text")
+                .GetComponent<TMP_Text>().text = roomInfo.GetMaxPoints().ToString();
+
+            joinGameModal.transform.Find("Content/Content/Started/Text")
+                .GetComponent<TMP_Text>().text = roomInfo.IsGameStarted() ? "Yes" : "No";
         }
 
         public void Refresh()
@@ -122,7 +103,7 @@ namespace ST.Main_Menu
             {
                 yield return null;
             } while (PhotonNetwork.InLobby);
-            
+
             ListRooms();
         }
     }
