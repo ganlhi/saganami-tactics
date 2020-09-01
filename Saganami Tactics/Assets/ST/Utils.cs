@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using UnityEngine;
 
 namespace ST
 {
@@ -10,6 +12,12 @@ namespace ST
                 .Replace("=", "")
                 .Replace("+", "-")
                 .Replace("/", "_");
+        }
+
+        public static IEnumerator DelayedAction(Action action, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            action.Invoke();
         }
     }
 }

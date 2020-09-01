@@ -59,7 +59,7 @@ namespace ST.Main_Menu
             var props = new Hashtable
             {
                 {GameSettings.Default.MaxPointsProp, maxPoints},
-                {GameSettings.Default.GameStartedProp, true}
+                {GameSettings.Default.GameStartedProp, false} // will be true for loaded game
             };
 
             PhotonNetwork.CreateRoom(gameName, new RoomOptions()
