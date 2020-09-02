@@ -370,7 +370,9 @@ namespace ST.Setup
             foreach (var team in allTeams)
             {
                 if (!_teamShips.ContainsKey(team)) continue;
-
+                
+                var teamShipStates = new List<ShipState>();
+                
                 foreach (var (ssd, shipName) in _teamShips[team])
                 {
                     var shipState = new ShipState()
@@ -385,8 +387,10 @@ namespace ST.Setup
                         velocity = Vector3.zero,
                     };
 
-                    allShips.Add(shipState);
+                    teamShipStates.Add(shipState);
                 }
+
+                allShips.AddRange(Game.PrePlaceTeamShips(team, teamShipStates));
             }
 
             var gameState = new GameState()

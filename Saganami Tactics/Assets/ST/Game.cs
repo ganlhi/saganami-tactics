@@ -178,10 +178,10 @@ namespace ST
                         // This means the target can be attacked at short range next turn.
                         return targetingContexts;
                     }
-                    
+
                     targetPos = target.endMarkerPosition;
                 }
-                
+
                 slotType = HitLocationSlotType.Missile;
             }
             else if (type == WeaponType.Laser)
@@ -195,7 +195,7 @@ namespace ST
                 // For future weapon types
                 return targetingContexts;
             }
-            
+
             var (mainBearing, _) = attacker.GetBearingTo(targetPos);
             var distance = attacker.position.DistanceTo(targetPos);
 
@@ -218,7 +218,7 @@ namespace ST
                     var remainingAmmo = SsdHelper.GetRemainingAmmo(attacker.Ssd, mount, attacker.consumedAmmo);
                     if (remainingAmmo <= 0) continue;
                 }
-                
+
                 if (mount.model.GetMaxRange() < distance) continue;
 
                 targetingContexts.Add(new TargetingContext()
@@ -251,12 +251,13 @@ namespace ST
                     missile.status = MissileStatus.Accelerating;
                     missile.position =
                         missile.launchPoint + .5f * (target.endMarkerPosition - missile.launchPoint);
-                    
+
                     if (missile.shortRange)
                     {
                         // accelerate then immediately attack
                         return UpdateMissile(missile, attacker, target, turn, ref reports);
                     }
+
                     break;
                 case MissileStatus.Accelerating:
                     if (!CanStillCatchTarget(missile, attacker, target, ref reports))
@@ -768,6 +769,122 @@ namespace ST
             var crewRate = ship.Ssd.crewRate;
             var diceRoll = Dice.D10();
             return diceRoll >= crewRate;
+        }
+
+        public static Vector3 GetTeamSpawnPoint(Team team, out Vector3 fwdDirection, out Vector3 rightDirection)
+        {
+            const float offset = 30f;
+
+            switch (team)
+            {
+                case Team.Blue:
+                    fwdDirection = Vector3.back;
+                    rightDirection = Vector3.left;
+                    return Vector3.forward * offset;
+                case Team.Yellow:
+                    fwdDirection = Vector3.forward;
+                    rightDirection = Vector3.right;
+                    return Vector3.back * offset;
+                case Team.Green:
+                    fwdDirection = Vector3.right;
+                    rightDirection = Vector3.back;
+                    return Vector3.left * offset;
+                case Team.Magenta:
+                    fwdDirection = Vector3.left;
+                    rightDirection = Vector3.forward;
+                    return Vector3.right * offset;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(team), team, null);
+            }
+        }
+
+        public static List<ShipState> PrePlaceTeamShips(Team team, IEnumerable<ShipState> ships)
+        {
+            var basePosition = GetTeamSpawnPoint(team, out var fwdDirection, out var rightDirection);
+
+            var rowOffsets = new Vector3[]
+            {
+                Vector3.zero,
+                rightDirection,
+                -rightDirection,
+                rightDirection * 2,
+                -rightDirection * 2,
+                rightDirection * 3,
+                -rightDirection * 3,
+                rightDirection * 4,
+                -rightDirection * 4,
+                rightDirection * 5,
+                -rightDirection * 5,
+            };
+            var colOffsets = new Vector3[]
+            {
+                Vector3.zero,
+                -fwdDirection,
+                -fwdDirection * 2,
+                -fwdDirection * 3,
+                -fwdDirection * 4,
+                -fwdDirection * 5,
+                fwdDirection,
+                fwdDirection * 2,
+                fwdDirection * 3,
+                fwdDirection * 4,
+                fwdDirection * 5,
+            };
+            var verticalOffsets = new Vector3[]
+            {
+                Vector3.zero,
+                Vector3.up,
+                Vector3.down,
+                Vector3.up * 2,
+                Vector3.down * 2,
+                Vector3.up * 3,
+                Vector3.down * 3,
+                Vector3.up * 4,
+                Vector3.down * 4,
+                Vector3.up * 5,
+                Vector3.down * 5,
+            };
+
+            var curRowOffset = 0;
+            var curColOffset = 0;
+            var curVerticalOffset = 0;
+
+            var updatedShips = new List<ShipState>();
+
+            foreach (var ship in ships)
+            {
+                var position = basePosition
+                               + rowOffsets[curRowOffset]
+                               + colOffsets[curColOffset]
+                               + verticalOffsets[curVerticalOffset];
+                
+                var updatedShip = ship;
+
+                updatedShip.position = position;
+                updatedShip.rotation = Quaternion.LookRotation(fwdDirection);
+
+                updatedShips.Add(updatedShip);
+
+                if (curRowOffset < rowOffsets.Length - 1)
+                {
+                    curRowOffset++;
+                } else if (curColOffset < colOffsets.Length - 1)
+                {
+                    curRowOffset = 0;
+                    curColOffset++;
+                } else if (curVerticalOffset < verticalOffsets.Length - 1)
+                {
+                    curRowOffset = 0;
+                    curColOffset = 0;
+                    curVerticalOffset++;
+                }
+                else
+                {
+                    throw new IndexOutOfRangeException("Too many ships to place");
+                }
+            }
+
+            return updatedShips;
         }
     }
 }
