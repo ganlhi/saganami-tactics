@@ -358,7 +358,54 @@ namespace ST.Setup
 
         private void CreateGameStateAndContinue()
         {
-            //TODO
+            var allShips = new List<ShipState>();
+            var allTeams = new Team[]
+            {
+                Team.Blue,
+                Team.Yellow,
+                Team.Green,
+                Team.Magenta
+            };
+
+            foreach (var team in allTeams)
+            {
+                if (!_teamShips.ContainsKey(team)) continue;
+
+                foreach (var (ssd, shipName) in _teamShips[team])
+                {
+                    var shipState = new ShipState()
+                    {
+                        ssdName = ssd.className,
+                        name = shipName ?? ssd.className,
+                        status = ShipStatus.Ok,
+                        uid = Utils.GenerateId(),
+                        team = team,
+                        position = Vector3.zero,
+                        rotation = Quaternion.identity,
+                        velocity = Vector3.zero,
+                    };
+
+                    allShips.Add(shipState);
+                }
+            }
+
+            var gameState = new GameState()
+            {
+                turn = 1,
+                step = TurnStep.Plotting,
+                setup = new GameSetup()
+                {
+                    maxCost = PhotonNetwork.CurrentRoom.GetMaxPoints(),
+                    nbPlayers = PhotonNetwork.CurrentRoom.PlayerCount
+                },
+                ships = allShips
+            };
+
+            var gameStateGo = new GameObject {name = "_GameState"};
+            DontDestroyOnLoad(gameStateGo);
+            var container = gameStateGo.AddComponent<HasGameState>();
+            container.gameState = gameState;
+            PhotonNetwork.LoadLevel(GameSettings.Default.ScenePlay);
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)

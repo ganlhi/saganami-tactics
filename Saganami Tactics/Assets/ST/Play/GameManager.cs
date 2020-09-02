@@ -180,7 +180,13 @@ namespace ST.Play
 
         private void LoadStateFromHolder()
         {
-            if (stateHolder != null)
+            var gameObjectHolder = FindObjectOfType<HasGameState>();
+
+            if (gameObjectHolder != null)
+            {
+                _state = gameObjectHolder.gameState;
+            }
+            else if (stateHolder != null)
             {
                 _state = Instantiate(stateHolder).state;
             }
