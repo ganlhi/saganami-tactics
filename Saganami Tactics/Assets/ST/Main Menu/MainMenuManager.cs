@@ -126,8 +126,7 @@ namespace ST.Main_Menu
                     : GameSettings.Default.SceneSetup);
             }));
 
-//            Debug.LogFormat("Joined game successfully: {0}", PhotonNetwork.CurrentRoom.Name);
-//            ShowMessage("Create game", "Joined game successfully");
+            Debug.LogFormat("Joined game successfully: {0}", PhotonNetwork.CurrentRoom.Name);
         }
 
         private IEnumerator WaitForPlayerHasTeam(Action andThen)

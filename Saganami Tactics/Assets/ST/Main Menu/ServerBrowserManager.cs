@@ -55,9 +55,6 @@ namespace ST.Main_Menu
             // Fill with new list items
             foreach (var ri in roomList)
             {
-                Debug.Log($"Room: {ri.Name}");
-                Debug.Log(ri.CustomProperties);
-
                 var entry = Instantiate(listEntryPrefab, listContent);
 
                 entry.transform.Find("Content/Title").GetComponent<TextMeshProUGUI>().text = ri.Name;
@@ -87,7 +84,7 @@ namespace ST.Main_Menu
             joinGameModal.transform.Find("Content/Content/Max Points/Text")
                 .GetComponent<TMP_Text>().text = roomInfo.GetMaxPoints().ToString();
 
-            joinGameModal.transform.Find("Content/Content/Started/Text")
+            joinGameModal.transform.Find("Content/Content/Is Started/Text")
                 .GetComponent<TMP_Text>().text = roomInfo.IsGameStarted() ? "Yes" : "No";
         }
 
