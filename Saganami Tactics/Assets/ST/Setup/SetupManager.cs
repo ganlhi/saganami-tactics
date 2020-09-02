@@ -11,6 +11,7 @@ using ST.Scriptable;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace ST.Setup
@@ -21,6 +22,7 @@ namespace ST.Setup
         [SerializeField] private ModalWindowManager messageModal;
         [SerializeField] private BlurManager blurManager;
         [SerializeField] private TextMeshProUGUI titleText;
+        [SerializeField] private Button exitButton;
 
         [SerializeField] private HorizontalSelector factionSelector;
         [SerializeField] private HorizontalSelector categorySelector;
@@ -39,6 +41,8 @@ namespace ST.Setup
         [SerializeField] private Button readyButton;
         [SerializeField] private GameObject waitingFoOtherPlayers;
 #pragma warning restore 649
+
+        private bool _initOnNextUpdate;
 
         private List<Faction> _factions;
         private List<ShipCategory> _categories;
@@ -68,6 +72,15 @@ namespace ST.Setup
 
             if (PhotonNetwork.InRoom)
             {
+                _initOnNextUpdate = true;
+            }
+        }
+
+        private void Update()
+        {
+            if (_initOnNextUpdate)
+            {
+                _initOnNextUpdate = false;
                 Init();
             }
         }
@@ -80,8 +93,13 @@ namespace ST.Setup
 
         private void Init()
         {
+            exitButton.onClick.AddListener(() =>
+            {
+                PhotonNetwork.LeaveRoom();
+                SceneManager.LoadScene(GameSettings.Default.SceneMainMenu);
+            });
             readyButton.onClick.AddListener(() => PhotonNetwork.LocalPlayer.SetReady());
-            
+
             InitOtherPlayersCostAndReadiness();
             UpdateTitle();
 
@@ -99,21 +117,21 @@ namespace ST.Setup
 
         private void InitOtherPlayersCostAndReadiness()
         {
-            otherPlayersCostAndReadiness.ForEach(op => op.gameObject.SetActive(false));
+            var allTeams = new Team[]
+            {
+                Team.Blue,
+                Team.Yellow,
+                Team.Green,
+                Team.Magenta
+            };
 
             var i = 0;
-            foreach (var player in PhotonNetwork.CurrentRoom.Players.Values)
+            foreach (var team in allTeams)
             {
-                if (player.IsLocal) continue;
-
-                var otherPlayerTeam = player.GetTeam();
-                if (!otherPlayerTeam.HasValue) continue;
-
-                otherPlayersCostAndReadiness[i].Team = otherPlayerTeam.Value;
+                otherPlayersCostAndReadiness[i].Team = team;
                 otherPlayersCostAndReadiness[i].SetCost(0, false);
-                otherPlayersCostAndReadiness[i].SetReady(player.IsReady());
-                otherPlayersCostAndReadiness[i].gameObject.SetActive(true);
-
+                otherPlayersCostAndReadiness[i].SetReady(false);
+                otherPlayersCostAndReadiness[i].gameObject.SetActive(false);
                 i++;
             }
         }
@@ -236,6 +254,7 @@ namespace ST.Setup
                 var otherPlayerCostAndReadiness = otherPlayersCostAndReadiness.First(op => op.Team == team);
                 if (otherPlayerCostAndReadiness != null)
                 {
+                    otherPlayerCostAndReadiness.gameObject.SetActive(true);
                     otherPlayerCostAndReadiness.SetCost(totalCost, costOverflow);
                 }
             }
@@ -250,7 +269,6 @@ namespace ST.Setup
                 {
                     readyButton.gameObject.SetActive(!targetPlayer.IsReady());
                     waitingFoOtherPlayers.SetActive(targetPlayer.IsReady());
-                    
                 }
                 else
                 {
@@ -331,6 +349,7 @@ namespace ST.Setup
 
         private void SendUpdatedTotalCost(Team team)
         {
+            if (!_teamShips.ContainsKey(team)) return;
             var totalCost = _teamShips[team].Sum(t => t.Item1.baseCost);
             photonView.RPC("RPC_UpdateTotalCost", RpcTarget.All, team, totalCost,
                 totalCost > PhotonNetwork.CurrentRoom.GetMaxPoints(),
@@ -340,6 +359,15 @@ namespace ST.Setup
         private void CreateGameStateAndContinue()
         {
             //TODO
+        }
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            base.OnPlayerEnteredRoom(newPlayer);
+            SendUpdatedTotalCost(Team.Blue);
+            SendUpdatedTotalCost(Team.Yellow);
+            SendUpdatedTotalCost(Team.Green);
+            SendUpdatedTotalCost(Team.Magenta);
         }
 
         #endregion
