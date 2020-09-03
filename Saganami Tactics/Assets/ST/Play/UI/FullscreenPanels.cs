@@ -22,14 +22,20 @@ namespace ST.Play.UI
             mainGroup.alpha = 1;
             mainGroup.interactable = true;
             mainGroup.blocksRaycasts = true;
-            
-            reportsGroup.alpha = 1;
-            reportsGroup.interactable = true;
-            reportsGroup.blocksRaycasts = true;
-            
-            engiGroup.alpha = 0;
-            engiGroup.interactable = false;
-            engiGroup.blocksRaycasts = false;
+
+            if (reportsGroup != null)
+            {
+                reportsGroup.alpha = 1;
+                reportsGroup.interactable = true;
+                reportsGroup.blocksRaycasts = true;
+            }
+
+            if (engiGroup != null)
+            {
+                engiGroup.alpha = 0;
+                engiGroup.interactable = false;
+                engiGroup.blocksRaycasts = false;
+            }
         }
 
         public void ShowEngineeringPanel()
@@ -38,14 +44,20 @@ namespace ST.Play.UI
             mainGroup.alpha = 1;
             mainGroup.interactable = true;
             mainGroup.blocksRaycasts = true;
-            
-            reportsGroup.alpha = 0;
-            reportsGroup.interactable = false;
-            reportsGroup.blocksRaycasts = false;
-            
-            engiGroup.alpha = 1;
-            engiGroup.interactable = true;
-            engiGroup.blocksRaycasts = true;
+
+            if (reportsGroup != null)
+            {
+                reportsGroup.alpha = 0;
+                reportsGroup.interactable = false;
+                reportsGroup.blocksRaycasts = false;
+            }
+
+            if (engiGroup != null)
+            {
+                engiGroup.alpha = 1;
+                engiGroup.interactable = true;
+                engiGroup.blocksRaycasts = true;
+            }
         }
 
         public void Close()

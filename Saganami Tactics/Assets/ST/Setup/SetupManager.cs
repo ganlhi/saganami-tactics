@@ -409,7 +409,7 @@ namespace ST.Setup
             DontDestroyOnLoad(gameStateGo);
             var container = gameStateGo.AddComponent<HasGameState>();
             container.gameState = gameState;
-            PhotonNetwork.LoadLevel(GameSettings.Default.ScenePlay);
+            PhotonNetwork.LoadLevel(GameSettings.Default.SceneDeploy);
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)

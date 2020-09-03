@@ -798,6 +798,11 @@ namespace ST
             }
         }
 
+        public static Vector3 GetTeamSpawnPoint(Team team)
+        {
+            return GetTeamSpawnPoint(team, out var f, out var r);
+        }
+
         public static List<ShipState> PrePlaceTeamShips(Team team, IEnumerable<ShipState> ships)
         {
             var basePosition = GetTeamSpawnPoint(team, out var fwdDirection, out var rightDirection);
