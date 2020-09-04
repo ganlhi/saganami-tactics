@@ -40,6 +40,8 @@ namespace ST.Setup
 
         [SerializeField] private Button readyButton;
         [SerializeField] private GameObject waitingFoOtherPlayers;
+
+        [SerializeField] private Button addButton;
 #pragma warning restore 649
 
         private bool _initOnNextUpdate;
@@ -269,6 +271,15 @@ namespace ST.Setup
                 {
                     readyButton.gameObject.SetActive(!targetPlayer.IsReady());
                     waitingFoOtherPlayers.SetActive(targetPlayer.IsReady());
+
+                    addButton.interactable = !targetPlayer.IsReady();
+                    foreach (Transform shipListItem in shipListContent)
+                    {
+                        shipListItem.Find("DeleteButton").gameObject.SetActive(!targetPlayer.IsReady());
+                        shipListItem.Find("RandomNameButton").gameObject.SetActive(!targetPlayer.IsReady());
+                        shipListItem.Find("UnitName").GetComponent<TMP_InputField>().interactable =
+                            !targetPlayer.IsReady();
+                    }
                 }
                 else
                 {
@@ -286,7 +297,9 @@ namespace ST.Setup
             }
 
             // Only for master
-            if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.Players.Values.All(p => p.IsReady()))
+            if (PhotonNetwork.IsMasterClient &&
+                PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers &&
+                PhotonNetwork.CurrentRoom.Players.Values.All(p => p.IsReady()))
             {
                 CreateGameStateAndContinue();
             }
@@ -370,9 +383,9 @@ namespace ST.Setup
             foreach (var team in allTeams)
             {
                 if (!_teamShips.ContainsKey(team)) continue;
-                
+
                 var teamShipStates = new List<ShipState>();
-                
+
                 foreach (var (ssd, shipName) in _teamShips[team])
                 {
                     var shipState = new ShipState()

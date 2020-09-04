@@ -152,18 +152,18 @@ namespace ST.Deploy
             if (shipView == null) return;
 
             var newPosition = shipView.ship.position + movement;
-            
+
             // Is it in zone?
             var spawnPoint = Game.GetTeamSpawnPoint(shipView.ship.team);
             var diffX = Math.Abs(spawnPoint.x - newPosition.x);
             var diffY = Math.Abs(spawnPoint.y - newPosition.y);
             var diffZ = Math.Abs(spawnPoint.z - newPosition.z);
-            
+
             if (diffX > 5 || diffY > 5 || diffZ > 5) return;
-            
+
             // Is there another ship in this position?
             if (GetAllShips().Any(s => s.ship.uid != uid && s.ship.position == newPosition)) return;
-            
+
             // Set position
             shipView.ship.position = newPosition;
             shipView.transform.position = newPosition;
@@ -177,13 +177,13 @@ namespace ST.Deploy
             if (shipView == null) return;
 
             var newVelocity = shipView.ship.velocity + acc;
-            
+
             if (newVelocity.magnitude > 10) return;
-            
+
             shipView.ship.velocity = newVelocity;
             shipView.PlaceMarker();
         }
-        
+
         [PunRPC]
         private void RPC_ChangeShipAttitude(string uid, PlottingAction action, int value)
         {
@@ -212,17 +212,19 @@ namespace ST.Deploy
             shipView.transform.rotation = newRotation;
             shipView.PlaceMarker();
         }
-        
+
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
         {
             base.OnPlayerPropertiesUpdate(targetPlayer, changedProps);
-            
-            if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.Players.Values.All(p => p.IsReady()))
+
+            if (PhotonNetwork.IsMasterClient &&
+                PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers &&
+                PhotonNetwork.CurrentRoom.Players.Values.All(p => p.IsReady()))
             {
                 CreateGameStateAndContinue();
             }
         }
-        
+
         private void CreateGameStateAndContinue()
         {
             var allShips = new List<ShipState>();
@@ -245,7 +247,7 @@ namespace ST.Deploy
                 ships = allShips
             };
 
-            
+
             var gameStateContainer = FindObjectOfType<HasGameState>();
 
             if (gameStateContainer == null)
@@ -254,7 +256,7 @@ namespace ST.Deploy
                 DontDestroyOnLoad(gameStateGo);
                 gameStateContainer = gameStateGo.AddComponent<HasGameState>();
             }
-                
+
             gameStateContainer.gameState = gameState;
             PhotonNetwork.LoadLevel(GameSettings.Default.ScenePlay);
         }
@@ -397,37 +399,43 @@ namespace ST.Deploy
         public void PitchUp()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Pitch, -1);
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+                PlottingAction.Pitch, -1);
         }
 
         public void PitchDown()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Pitch, 1);
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+                PlottingAction.Pitch, 1);
         }
 
         public void YawLeft()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Yaw, -1);
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Yaw,
+                -1);
         }
 
         public void YawRight()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Yaw, 1);
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Yaw,
+                1);
         }
 
         public void RollLeft()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Roll, 1);
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+                PlottingAction.Roll, 1);
         }
 
         public void RollRight()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Roll, -1);
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+                PlottingAction.Roll, -1);
         }
 
         public void AccelerateForward()
