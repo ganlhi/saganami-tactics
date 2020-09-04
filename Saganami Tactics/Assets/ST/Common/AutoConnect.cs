@@ -28,6 +28,7 @@ namespace ST.Common
             Debug.Log("Auto connect");
             manager.SetActive(false);
             EnableCanvasGroups(false);
+            PhotonNetwork.AutomaticallySyncScene = true;
             PhotonNetwork.ConnectUsingSettings();
         }
 

@@ -227,6 +227,8 @@ namespace ST.Deploy
 
         private void CreateGameStateAndContinue()
         {
+            PhotonNetwork.CurrentRoom.ResetPlayersReadiness();
+            
             var allShips = new List<ShipState>();
 
             foreach (var shipView in GetAllShips())
@@ -363,115 +365,115 @@ namespace ST.Deploy
         public void MoveForward()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_MoveShip", RpcTarget.MasterClient, _selectedShip.ship.uid, _fwdDirection);
+            photonView.RPC("RPC_MoveShip", RpcTarget.All, _selectedShip.ship.uid, _fwdDirection);
         }
 
         public void MoveBackward()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_MoveShip", RpcTarget.MasterClient, _selectedShip.ship.uid, -_fwdDirection);
+            photonView.RPC("RPC_MoveShip", RpcTarget.All, _selectedShip.ship.uid, -_fwdDirection);
         }
 
         public void MoveLeft()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_MoveShip", RpcTarget.MasterClient, _selectedShip.ship.uid, -_rightDirection);
+            photonView.RPC("RPC_MoveShip", RpcTarget.All, _selectedShip.ship.uid, -_rightDirection);
         }
 
         public void MoveRight()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_MoveShip", RpcTarget.MasterClient, _selectedShip.ship.uid, _rightDirection);
+            photonView.RPC("RPC_MoveShip", RpcTarget.All, _selectedShip.ship.uid, _rightDirection);
         }
 
         public void MoveUp()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_MoveShip", RpcTarget.MasterClient, _selectedShip.ship.uid, Vector3.up);
+            photonView.RPC("RPC_MoveShip", RpcTarget.All, _selectedShip.ship.uid, Vector3.up);
         }
 
         public void MoveDown()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_MoveShip", RpcTarget.MasterClient, _selectedShip.ship.uid, Vector3.down);
+            photonView.RPC("RPC_MoveShip", RpcTarget.All, _selectedShip.ship.uid, Vector3.down);
         }
 
         public void PitchUp()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.All, _selectedShip.ship.uid,
                 PlottingAction.Pitch, -1);
         }
 
         public void PitchDown()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.All, _selectedShip.ship.uid,
                 PlottingAction.Pitch, 1);
         }
 
         public void YawLeft()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Yaw,
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.All, _selectedShip.ship.uid, PlottingAction.Yaw,
                 -1);
         }
 
         public void YawRight()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid, PlottingAction.Yaw,
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.All, _selectedShip.ship.uid, PlottingAction.Yaw,
                 1);
         }
 
         public void RollLeft()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.All, _selectedShip.ship.uid,
                 PlottingAction.Roll, 1);
         }
 
         public void RollRight()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.MasterClient, _selectedShip.ship.uid,
+            photonView.RPC("RPC_ChangeShipAttitude", RpcTarget.All, _selectedShip.ship.uid,
                 PlottingAction.Roll, -1);
         }
 
         public void AccelerateForward()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_AccelerateShip", RpcTarget.MasterClient, _selectedShip.ship.uid, _fwdDirection);
+            photonView.RPC("RPC_AccelerateShip", RpcTarget.All, _selectedShip.ship.uid, _fwdDirection);
         }
 
         public void AccelerateBackward()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_AccelerateShip", RpcTarget.MasterClient, _selectedShip.ship.uid, -_fwdDirection);
+            photonView.RPC("RPC_AccelerateShip", RpcTarget.All, _selectedShip.ship.uid, -_fwdDirection);
         }
 
         public void AccelerateLeft()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_AccelerateShip", RpcTarget.MasterClient, _selectedShip.ship.uid, -_rightDirection);
+            photonView.RPC("RPC_AccelerateShip", RpcTarget.All, _selectedShip.ship.uid, -_rightDirection);
         }
 
         public void AccelerateRight()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_AccelerateShip", RpcTarget.MasterClient, _selectedShip.ship.uid, _rightDirection);
+            photonView.RPC("RPC_AccelerateShip", RpcTarget.All, _selectedShip.ship.uid, _rightDirection);
         }
 
         public void AccelerateUp()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_AccelerateShip", RpcTarget.MasterClient, _selectedShip.ship.uid, Vector3.up);
+            photonView.RPC("RPC_AccelerateShip", RpcTarget.All, _selectedShip.ship.uid, Vector3.up);
         }
 
         public void AccelerateDown()
         {
             if (_selectedShip == null) return;
-            photonView.RPC("RPC_AccelerateShip", RpcTarget.MasterClient, _selectedShip.ship.uid, Vector3.down);
+            photonView.RPC("RPC_AccelerateShip", RpcTarget.All, _selectedShip.ship.uid, Vector3.down);
         }
 
         #endregion Deployment

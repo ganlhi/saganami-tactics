@@ -95,6 +95,8 @@ namespace ST.Setup
 
         private void Init()
         {
+            PhotonNetwork.AutomaticallySyncScene = true;
+            
             exitButton.onClick.AddListener(() =>
             {
                 PhotonNetwork.LeaveRoom();
@@ -371,6 +373,8 @@ namespace ST.Setup
 
         private void CreateGameStateAndContinue()
         {
+            PhotonNetwork.CurrentRoom.ResetPlayersReadiness();
+            
             var allShips = new List<ShipState>();
             var allTeams = new Team[]
             {
@@ -422,6 +426,7 @@ namespace ST.Setup
             DontDestroyOnLoad(gameStateGo);
             var container = gameStateGo.AddComponent<HasGameState>();
             container.gameState = gameState;
+            
             PhotonNetwork.LoadLevel(GameSettings.Default.SceneDeploy);
         }
 
