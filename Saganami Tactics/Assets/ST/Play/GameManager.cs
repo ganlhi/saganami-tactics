@@ -22,6 +22,7 @@ namespace ST.Play
 #pragma warning restore 649
 
         private int _expectedShips;
+        private int _expectedMissiles;
 
         private int _turn;
 
@@ -117,7 +118,7 @@ namespace ST.Play
 
             _clientsReadyToContinue = 0;
 
-            InitShips();
+            InitShipsAndMissiles();
 
             do
             {
@@ -178,6 +179,8 @@ namespace ST.Play
         private readonly Dictionary<ShipView, List<Tuple<int, int>>> _pendingDestroyedAmmo =
             new Dictionary<ShipView, List<Tuple<int, int>>>();
 
+        public GameSetup GameSetup => _state.setup;
+
         private void LoadStateFromHolder()
         {
             var gameObjectHolder = FindObjectOfType<HasGameState>();
@@ -192,9 +195,9 @@ namespace ST.Play
             }
         }
 
-        private void InitShips()
+        private void InitShipsAndMissiles()
         {
-            photonView.RPC("RPC_ExpectShips", RpcTarget.All, _state.ships.Count);
+            photonView.RPC("RPC_ExpectShipsAndMissiles", RpcTarget.All, _state.ships.Count, _state.missiles.Count);
 
             foreach (var shipState in _state.ships)
             {
@@ -206,8 +209,26 @@ namespace ST.Play
 
                 sv.ship = ship;
             }
-        }
+            
+            foreach (var missileState in _state.missiles)
+            {
+                var missile = MissileState.ToMissile(missileState);
 
+                var mv = PhotonNetwork
+                    .InstantiateSceneObject("Prefabs/MissileView", missile.position, missile.rotation)
+                    .GetComponent<MissileView>();
+
+                mv.missile = missile;
+            }
+
+            foreach (var shipReports in _state.shipsReports)
+            {
+                var shipView = GetShipById(shipReports.shipUid);
+                if (shipView == null) continue;
+                shipView.GetComponent<ShipLog>().AddReports(shipReports.reports.ToList());
+            }
+        }
+        
         public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)
         {
             if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.Players.Values.All(p => p.IsReady()))
@@ -647,11 +668,12 @@ namespace ST.Play
 #pragma warning restore 0649
 
         [PunRPC]
-        private void RPC_ExpectShips(int nbShips)
+        private void RPC_ExpectShipsAndMissiles(int nbShips, int nbMissiles)
         {
             _expectedShips = nbShips;
+            _expectedMissiles = nbMissiles;
 
-            StartCoroutine(WaitForShipsInit());
+            StartCoroutine(WaitForShipsAndMissilesInit());
         }
 
         [PunRPC]
@@ -733,13 +755,13 @@ namespace ST.Play
             LockCameraToShip(_selectedShip);
         }
 
-        private IEnumerator WaitForShipsInit()
+        private IEnumerator WaitForShipsAndMissilesInit()
         {
             Busy = true;
             do
             {
                 yield return null;
-            } while (GetAllShips().Count < _expectedShips);
+            } while (GetAllShips().Count < _expectedShips || GetAllMissiles().Count < _expectedMissiles);
 
             GetAllShips().ForEach(sv => sv.PlaceMarker());
             FocusPlayerShip();

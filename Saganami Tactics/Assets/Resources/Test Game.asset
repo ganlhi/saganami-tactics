@@ -15,6 +15,9 @@ MonoBehaviour:
   state:
     turn: 1
     step: 0
+    setup:
+      nbPlayers: 1
+      maxCost: 100
     ships:
     - uid: n3HLL9LT1UWpabYNa7K9SA
       name: HMS Havoc
@@ -24,6 +27,12 @@ MonoBehaviour:
       position: {x: -15, y: 0, z: 0}
       rotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
       velocity: {x: 4, y: 0, z: 0}
+      alterations:
+      - destroyed: 0
+        side: 0
+        type: 0
+        slotType: 6
+        location: 2
     - uid: _E4XYL6Qmkmbe7pySipRiw
       name: PNS Bastogne
       ssdName: Bastogne
@@ -32,6 +41,27 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 15}
       rotation: {x: 0, y: 1, z: 0, w: 0}
       velocity: {x: 0, y: 0, z: -4}
-    setup:
-      nbPlayers: 1
-      maxCost: 100
+      alterations: []
+    missiles:
+    - uid: _E2XYL6Qmkmbe3pySipRiw
+      attackerId: n3HLL9LT1UWpabYNa7K9SA
+      targetId: _E4XYL6Qmkmbe7pySipRiw
+      launchPoint: {x: -15, y: 0, z: 0}
+      shortRange: 0
+      number: 2
+      weaponName: Mk34 Anti Ship Missile
+      position: {x: -7.5, y: 0, z: 7.5}
+      rotation: {x: 0, y: 0, z: 0, w: 0}
+      status: 1
+      hitSide: 1
+      attackRange: 20
+      updatedAtTurn: 0
+    shipsReports:
+    - shipUid: _E4XYL6Qmkmbe7pySipRiw
+      reports:
+      - type: 9
+        message: Fake info 1
+        turn: 1
+      - type: 9
+        message: Fake info 2
+        turn: 1
