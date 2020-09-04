@@ -2,6 +2,7 @@ using System;
 using ST.Scriptable;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ST.Setup
 {
@@ -50,7 +51,12 @@ namespace ST.Setup
 
         public void RandomizeName()
         {
-            //TODO
+            var nbSampleNames = _ship.Item1.sampleNames.Count;
+            if (nbSampleNames == 0) return;
+            var rnd = Random.Range(0, nbSampleNames);
+            var sampleName = _ship.Item1.sampleNames[rnd];
+            unitNameField.text = sampleName;
+            SetName(sampleName);
         }
 
         public void Delete()

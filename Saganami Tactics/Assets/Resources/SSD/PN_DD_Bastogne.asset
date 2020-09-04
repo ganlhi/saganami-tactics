@@ -177,3 +177,23 @@ MonoBehaviour:
       boxes: 030000000200000001000000
     - type: 1
       boxes: 
+  sampleNames:
+  - PNS Arlon
+  - PNS Bastogne
+  - PNS Breslau
+  - PNS Bruges
+  - PNS Busko
+  - PNS Charleroi
+  - PNS Gorzow
+  - PNS Jaroslaw
+  - PNS Kessler
+  - PNS Krakow
+  - PNS Leuven
+  - PNS Liege
+  - PNS Lubin
+  - PNS Malbork
+  - PNS Poznan
+  - PNS Suwalki
+  - PNS Torun
+  - PNS Toulon
+  - PNS Tournai

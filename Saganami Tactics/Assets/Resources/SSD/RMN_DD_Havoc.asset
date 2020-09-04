@@ -177,3 +177,12 @@ MonoBehaviour:
       boxes: 0200000001000000
     - type: 1
       boxes: 
+  sampleNames:
+  - HMS Chaos
+  - HMS Devastation
+  - HMS Harrow
+  - HMS Havoc
+  - HMS Hotspur
+  - HMS Turbulent
+  - HMS Vengeance
+  - HMS Wrack

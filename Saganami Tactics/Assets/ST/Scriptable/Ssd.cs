@@ -21,6 +21,8 @@ namespace ST.Scriptable
         public WeaponMount[] weaponMounts;
         public SideDefenses[] defenses;
         public HitLocation[] hitLocations;
+
+        public List<string> sampleNames;
     }
 
 
