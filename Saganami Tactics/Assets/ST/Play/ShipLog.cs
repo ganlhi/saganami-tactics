@@ -68,16 +68,16 @@ namespace ST.Play
             OnReportsLogged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void Start()
-        {
-            var shipView = GetComponent<ShipView>();
-            
-            _reports.Add(new Report()
-            {
-                type = ReportType.Info,
-                turn = 1,
-                message = $"Initialize ship log - {shipView.ship.name}",
-            });
-        }
+//        private void Start()
+//        {
+//            var shipView = GetComponent<ShipView>();
+//            
+//            _reports.Add(new Report()
+//            {
+//                type = ReportType.Info,
+//                turn = 1,
+//                message = $"Initialize ship log - {shipView.ship.name}",
+//            });
+//        }
     }
 }

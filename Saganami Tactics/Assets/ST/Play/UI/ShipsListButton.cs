@@ -31,6 +31,10 @@ namespace ST.Play.UI
         [SerializeField] private Button focusCameraBtn;
         [SerializeField] private UIManagerImage icon;
         [SerializeField] private UIManagerText text;
+        [SerializeField] private GameObject notification;
+        [SerializeField] private Color infoColor;
+        [SerializeField] private Color warningColor;
+        [SerializeField] private Color dangerColor;
 #pragma warning restore 649
 
         private void Start()
@@ -39,6 +43,7 @@ namespace ST.Play.UI
             teamColorImage.color = ship.team.ToColor();
 
             UpdateSelectedState();
+            if (_selected) UpdateNotification(null);
 
             var button = GetComponent<Button>();
             button.interactable = ship.Status == ShipStatus.Ok;
@@ -51,6 +56,31 @@ namespace ST.Play.UI
         {
             icon.colorType = _selected ? UIManagerImage.ColorType.SECONDARY : UIManagerImage.ColorType.PRIMARY;
             text.colorType = _selected ? UIManagerText.ColorType.SECONDARY : UIManagerText.ColorType.PRIMARY;
+        }
+
+        public void UpdateNotification(ReportSeverity? worstReportSeverity)
+        {
+            notification.SetActive(worstReportSeverity.HasValue);
+            if (!worstReportSeverity.HasValue) return;
+
+            Color color;
+
+            switch (worstReportSeverity.Value)
+            {
+                case ReportSeverity.Danger:
+                    color = dangerColor;
+                    break;
+                case ReportSeverity.Warning:
+                    color = warningColor;
+                    break;
+                case ReportSeverity.Info:
+                    color = infoColor;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            notification.transform.Find("Dot").GetComponent<Image>().color = color;
         }
     }
 }

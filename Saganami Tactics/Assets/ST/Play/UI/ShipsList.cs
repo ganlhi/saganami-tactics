@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +25,7 @@ namespace ST.Play.UI
         public event EventHandler<ShipView> OnFocusCameraOnShip;
 
         private ShipView _selectedShip;
-        
+
 #pragma warning disable 649
         [SerializeField] private Transform content;
         [SerializeField] private GameObject shipListButtonPrefab;
@@ -52,6 +53,25 @@ namespace ST.Play.UI
                 btn.Selected = shipView == _selectedShip;
                 btn.OnSelect += (sender, args) => { OnSelectShip?.Invoke(this, shipView); };
                 btn.OnFocusCamera += (sender, args) => { OnFocusCameraOnShip?.Invoke(this, shipView); };
+                var shipLog = shipView.GetComponent<ShipLog>();
+                shipLog.OnReportsLogged += (sender, args) =>
+                {
+                    ReportSeverity? severity = null;
+                    if (shipLog.Reports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Danger))
+                    {
+                        severity = ReportSeverity.Danger;
+                    }
+                    else if (shipLog.Reports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Warning))
+                    {
+                        severity = ReportSeverity.Warning;
+                    }
+                    else if (shipLog.Reports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Info))
+                    {
+                        severity = ReportSeverity.Info;
+                    }
+                    
+                    btn.UpdateNotification(severity);
+                };
             }
         }
 
@@ -61,13 +81,16 @@ namespace ST.Play.UI
             foreach (Transform child in content)
             {
                 var btn = child.GetComponent<ShipsListButton>();
-                
+
                 if (btn == null) continue;
-                
+
                 if (btn.ship.uid == shipView.ship.uid)
                 {
                     btn.Selected = true;
-                } 
+
+                    // Remove any notification dot
+                    btn.UpdateNotification(null);
+                }
                 else if (btn.Selected)
                 {
                     btn.Selected = false;
