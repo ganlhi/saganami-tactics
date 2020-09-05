@@ -95,7 +95,6 @@ namespace ST.Play
 
         private void AssociatePlayerToTeam(Player player)
         {
-            Debug.Log($"AssociatePlayerToTeam {player.NickName} {player.GetTeam()}");
             string playerTeamProp;
             switch (player.GetTeam())
             {

@@ -70,7 +70,7 @@ namespace ST.Play.UI
                         severity = ReportSeverity.Info;
                     }
                     
-                    btn.UpdateNotification(severity);
+                    btn.UpdateNotification(shipView == _selectedShip ? null : severity);
                 };
             }
         }

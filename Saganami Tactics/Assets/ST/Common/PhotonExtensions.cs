@@ -68,8 +68,6 @@ namespace ST.Common
 
         public static bool AutoAssignTeam(this Player player)
         {
-            Debug.Log(
-                $"AutoAssignTeam - {player.NickName} - {PhotonNetwork.CurrentRoom.BluePlayerName()} - {PhotonNetwork.CurrentRoom.YellowPlayerName()} - {PhotonNetwork.CurrentRoom.GreenPlayerName()} - {PhotonNetwork.CurrentRoom.MagentaPlayerName()}");
             if (player.NickName == string.Empty) return player.AssignFirstAvailableColorIndex();
             if (PhotonNetwork.CurrentRoom.BluePlayerName() == player.NickName)
             {

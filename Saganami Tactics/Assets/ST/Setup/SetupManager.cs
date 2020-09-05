@@ -144,7 +144,6 @@ namespace ST.Setup
         {
             var selectedFaction =
                 _factions.First(f => f.Name == factionSelector.itemList[factionSelector.index].itemTitle);
-            Debug.Log($"selectedFaction {selectedFaction.Name}");
 
             var ssdsInFaction = _ssds.Where(s => s.faction == selectedFaction);
             var availableCategories = ssdsInFaction.Select(s => s.category);
@@ -168,8 +167,6 @@ namespace ST.Setup
             var selectedCategory =
                 _categories.First(c => c.Name == categorySelector.itemList[categorySelector.index].itemTitle);
 
-            Debug.Log($"selectedCategory {selectedCategory.Name}");
-
             var ssdsInFactionAndCategory =
                 _ssds.Where(s => s.faction == selectedFaction && s.category == selectedCategory);
 
@@ -188,7 +185,6 @@ namespace ST.Setup
         private void OnSsdChanged()
         {
             _selectedSsd = _ssds.First(s => s.className == ssdSelector.itemList[ssdSelector.index].itemTitle);
-            Debug.Log($"selectedSsd {_selectedSsd.className}");
 
             if (_displayedSsd == null)
             {
