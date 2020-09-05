@@ -28,6 +28,7 @@ namespace ST.Play
         public event EventHandler OnAlterationsChange;
         public event EventHandler OnConsumedAmmo;
         public event EventHandler OnAttemptedRepair;
+        public event EventHandler<ShipStatus> OnStatusChange;
 
         private ShipMarker _endMarker;
 
@@ -325,6 +326,7 @@ namespace ST.Play
 
             if (!_lastCheckedStatus.HasValue || _lastCheckedStatus.Value != ship.Status)
             {
+                OnStatusChange?.Invoke(this, ship.Status);
                 UpdateGraphicsBasedOnStatus();
                 _lastCheckedStatus = ship.Status;
             }

@@ -72,6 +72,12 @@ namespace ST.Play.UI
                     
                     btn.UpdateNotification(shipView == _selectedShip ? null : severity);
                 };
+                
+                btn.UpdateStatus(shipView.ship.Status);
+                shipView.OnStatusChange += (sender, status) =>
+                {
+                    btn.UpdateStatus(status);
+                };
             }
         }
 

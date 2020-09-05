@@ -35,6 +35,10 @@ namespace ST.Play.UI
         [SerializeField] private Color infoColor;
         [SerializeField] private Color warningColor;
         [SerializeField] private Color dangerColor;
+        [SerializeField] private Sprite destroyedSprite;
+        [SerializeField] private Sprite surrenderedSprite;
+        [SerializeField] private Sprite disengagedSprite;
+        [SerializeField] private Image statusIcon;
 #pragma warning restore 649
 
         private void Start()
@@ -81,6 +85,27 @@ namespace ST.Play.UI
             }
             
             notification.transform.Find("Dot").GetComponent<Image>().color = color;
+        }
+
+        public void UpdateStatus(ShipStatus status)
+        {
+            statusIcon.gameObject.SetActive(status != ShipStatus.Ok);
+            switch (status)
+            {
+                case ShipStatus.Ok:
+                    break;
+                case ShipStatus.Destroyed:
+                    statusIcon.sprite = destroyedSprite;
+                    break;
+                case ShipStatus.Surrendered:
+                    statusIcon.sprite = surrenderedSprite;
+                    break;
+                case ShipStatus.Disengaged:
+                    statusIcon.sprite = disengagedSprite;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
+            }
         }
     }
 }
