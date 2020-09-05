@@ -30,6 +30,7 @@ namespace ST.Scriptable
         public readonly string SceneSetup = "Setup";
         public readonly string SceneDeploy = "Deploy";
         public readonly string ScenePlay = "Play";
+        public readonly string SceneEndGame = "EndGame";
 
         #endregion
 

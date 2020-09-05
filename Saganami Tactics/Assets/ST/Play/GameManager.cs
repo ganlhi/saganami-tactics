@@ -320,9 +320,48 @@ namespace ST.Play
                     case GameEvent.ResetDeployedDecoys:
                         GetAllShips().ForEach(shipView => shipView.ResetDeployedDecoys());
                         break;
+                    case GameEvent.CheckEndGame:
+                        CheckEndGame();
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+            }
+        }
+
+        private void CheckEndGame()
+        {
+            if (Game.ShouldEndGame(GetAllShips().Select(s => s.ship)))
+            {
+                var allShips = new List<ShipState>();
+
+                foreach (var shipView in GetAllShips())
+                {
+                    var shipState = ShipState.FromShip(shipView.ship);
+                    allShips.Add(shipState);
+                }
+
+                var gameState = new GameState()
+                {
+                    turn = _turn,
+                    step = _step,
+                    setup = _state.setup,
+                    ships = allShips
+                };
+
+
+                var gameStateContainer = FindObjectOfType<HasGameState>();
+
+                if (gameStateContainer == null)
+                {
+                    var gameStateGo = new GameObject {name = "_GameState"};
+                    DontDestroyOnLoad(gameStateGo);
+                    gameStateContainer = gameStateGo.AddComponent<HasGameState>();
+                }
+
+                gameStateContainer.gameState = gameState;
+                
+                PhotonNetwork.LoadLevel(GameSettings.Default.SceneEndGame);
             }
         }
 

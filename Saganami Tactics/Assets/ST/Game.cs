@@ -21,7 +21,8 @@ namespace ST
         MoveMissiles,
         FireBeams,
         ResetRepairAttempts,
-        ResetDeployedDecoys
+        ResetDeployedDecoys,
+        CheckEndGame
     }
 
     public static class Game
@@ -129,6 +130,7 @@ namespace ST
                     events.Add(GameEvent.ClearTargets);
                     events.Add(GameEvent.ResetRepairAttempts);
                     events.Add(GameEvent.ResetDeployedDecoys);
+                    events.Add(GameEvent.CheckEndGame);
                     break;
 
                 default:
@@ -862,7 +864,7 @@ namespace ST
                                + rowOffsets[curRowOffset]
                                + colOffsets[curColOffset]
                                + verticalOffsets[curVerticalOffset];
-                
+
                 var updatedShip = ship;
 
                 updatedShip.position = position;
@@ -873,11 +875,13 @@ namespace ST
                 if (curRowOffset < rowOffsets.Length - 1)
                 {
                     curRowOffset++;
-                } else if (curColOffset < colOffsets.Length - 1)
+                }
+                else if (curColOffset < colOffsets.Length - 1)
                 {
                     curRowOffset = 0;
                     curColOffset++;
-                } else if (curVerticalOffset < verticalOffsets.Length - 1)
+                }
+                else if (curVerticalOffset < verticalOffsets.Length - 1)
                 {
                     curRowOffset = 0;
                     curColOffset = 0;
@@ -890,6 +894,47 @@ namespace ST
             }
 
             return updatedShips;
+        }
+
+        public static bool ShouldEndGame(IEnumerable<Ship> ships)
+        {
+            var okShips = ships.Where(s => s.Status == ShipStatus.Ok).ToList();
+            return okShips.Select(s => s.team).Distinct().ToList().Count < 2;
+        }
+
+        public static int GetTeamScore(Team team, IEnumerable<Ship> ships, out List<ScoreLine> scoreDetails)
+        {
+            var totalScore = 0;
+            scoreDetails = new List<ScoreLine>();
+
+            var ennemyShips = ships.Where(s => s.team != team).ToList();
+
+            foreach (var ennemyShip in ennemyShips)
+            {
+                var ssd = ennemyShip.Ssd;
+                var score = 0;
+                if (ennemyShip.Status == ShipStatus.Destroyed)
+                {
+                    score = ssd.baseCost;
+                    scoreDetails.Add(new ScoreLine() {Reason = $"Destroyed ship: {ennemyShip.name}", Score = score});
+                }
+                else if (ennemyShip.Status == ShipStatus.Surrendered)
+                {
+                    score = ssd.baseCost
+                            - Mathf.CeilToInt((float) ssd.crewOfficers / 5f)
+                            - Mathf.CeilToInt((float) ssd.crewEnlisted / 100f);
+                    scoreDetails.Add(new ScoreLine() {Reason = $"Surrendered ship: {ennemyShip.name}", Score = score});
+                }
+                else
+                {
+                    score = Mathf.CeilToInt(ssd.baseCost * SsdHelper.GetDamagedBoxesRatio(ssd, ennemyShip.alterations));
+                    scoreDetails.Add(new ScoreLine() {Reason = $"Damaged ship: {ennemyShip.name}", Score = score});
+                }
+
+                totalScore += score;
+            }
+
+            return totalScore;
         }
     }
 }

@@ -205,6 +205,15 @@ namespace ST
             games.Sort((a, b) => a.Date.CompareTo(b.Date));
             return games;
         }
+
+        public static void DeleteGame(string gameName)
+        {
+            var path = PathFromGameName(gameName);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
         
         public struct SaveGameInfo
         {

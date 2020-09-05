@@ -13,7 +13,10 @@ namespace ST.Scriptable
         public Faction faction;
         public int baseCost;
         public int crewRate;
-        public int crew;
+        public int crewOfficers;
+        public int crewEnlisted;
+
+        public int crew => crewOfficers + crewEnlisted;
 
         public uint[] movement;
         public uint[] structuralIntegrity;
@@ -244,13 +247,15 @@ namespace ST.Scriptable
         public static uint GetRemainingStructuralPoints(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var structuralAlterations = alterations.Count(a => a.type == SsdAlterationType.Structural);
-            return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations); 
+            return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations);
         }
 
-        public static uint GetDamageControl(Ssd ssd, IEnumerable<SsdAlteration> alterations, IEnumerable<bool> repairAttempts)
+        public static uint GetDamageControl(Ssd ssd, IEnumerable<SsdAlteration> alterations,
+            IEnumerable<bool> repairAttempts)
         {
-            var dcAlterations = alterations.Count(a => a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.DamageControl);
-            
+            var dcAlterations = alterations.Count(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.DamageControl);
+
             var boxes = Array.Empty<uint>();
             foreach (var hitLocation in ssd.hitLocations)
             {
@@ -261,15 +266,15 @@ namespace ST.Scriptable
                 }
             }
 
-            return Math.Max(0 , GetUndamagedValue(boxes, dcAlterations) - (uint) repairAttempts.Count());
+            return Math.Max(0, GetUndamagedValue(boxes, dcAlterations) - (uint) repairAttempts.Count());
         }
 
         public static int GetRemainingAmmo(Ssd ssd, WeaponMount mount, Dictionary<int, int> consumedAmmo)
         {
             var remainingAmmo = mount.ammo;
-            
+
             var mountIndex = Array.FindIndex(ssd.weaponMounts, m => m.Equals(mount));
-            
+
             if (consumedAmmo.ContainsKey(mountIndex))
             {
                 remainingAmmo -= consumedAmmo[mountIndex];
@@ -312,7 +317,7 @@ namespace ST.Scriptable
                 case HitLocationSlotType.Pivot:
                 case HitLocationSlotType.Roll:
                     return slotType.ToString();
-                    
+
                 case HitLocationSlotType.CounterMissile:
                     return "Counter missile";
                 case HitLocationSlotType.PointDefense:
@@ -326,6 +331,20 @@ namespace ST.Scriptable
                 default:
                     throw new ArgumentOutOfRangeException(nameof(slotType), slotType, null);
             }
+        }
+
+        public static float GetDamagedBoxesRatio(Ssd ssd, List<SsdAlteration> alterations)
+        {
+            var totalBoxes = ssd.hitLocations.Sum(location => location.slots.Sum(slot => slot.boxes.Length))
+                             + ssd.movement.Length
+                             + ssd.structuralIntegrity.Length
+                             + ssd.weaponMounts.Sum(mount => mount.weapons.Length)
+                             + ssd.defenses.Sum(defense =>
+                                 defense.sidewall.Length
+                                 + defense.counterMissiles.Length
+                                 + defense.pointDefense.Length);
+
+            return (float) alterations.Count / totalBoxes;
         }
     }
 }

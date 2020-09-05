@@ -28,7 +28,7 @@ namespace ST.Common.UI
         {
             classNameAndCategoryText.text = $"<b>{ssd.className}</b> class {ssd.category.Name}";
             factionText.text = ssd.faction.Name;
-            costAndCrewText.text = $"Cost: {ssd.baseCost}\nCrew: {ssd.crew}";
+            costAndCrewText.text = $"Cost: {ssd.baseCost}\nCrew: {ssd.crew} ({ssd.crewOfficers}/{ssd.crewEnlisted})";
             flagImage.sprite = ssd.faction.Flag;
         }
     }
