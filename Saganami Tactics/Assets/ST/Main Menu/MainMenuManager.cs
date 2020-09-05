@@ -25,8 +25,8 @@ namespace ST.Main_Menu
 #pragma warning disable 649
         [SerializeField]
         private TMP_InputField playerNameField;
-        [SerializeField]
-        private TMP_InputField gameNameField;
+
+        [SerializeField] private TMP_InputField gameNameField;
 
         [SerializeField] private HorizontalSelector nbPlayersField;
         [SerializeField] private Slider maxPointsField;
@@ -36,8 +36,14 @@ namespace ST.Main_Menu
 #pragma warning disable 649
         [SerializeField]
         private TMP_InputField joinPlayerNameField;
+
+        [SerializeField] private TMP_Text joinGameNameText;
+#pragma warning restore 649
+
+        [Header("Load game")]
+#pragma warning disable 649
         [SerializeField]
-        private TMP_Text joinGameNameText;
+        private ModalWindowManager loadGameModal;
 #pragma warning restore 649
 
         public void CreateGameFromInputs()
@@ -48,23 +54,27 @@ namespace ST.Main_Menu
 
             if (gameName.Length <= 0 || nbPlayers <= 0 || maxPoints <= 0) return;
 
-            CreateGame(gameName, nbPlayers, maxPoints);
-            
+            CreateGame(gameName, new GameSetup() {nbPlayers = nbPlayers, maxCost = maxPoints});
+
             // Remember player name for next time
             PlayerPrefs.SetString("nickname", playerNameField.text);
         }
 
-        private void CreateGame(string gameName, int nbPlayers, int maxPoints)
+        private void CreateGame(string gameName, GameSetup setup, bool isStarted = false)
         {
             var props = new Hashtable
             {
-                {GameSettings.Default.MaxPointsProp, maxPoints},
-                {GameSettings.Default.GameStartedProp, false} // will be true for loaded game
+                {GameSettings.Default.MaxPointsProp, setup.maxCost},
+                {GameSettings.Default.GameStartedProp, isStarted},
+                {GameSettings.Default.BluePlayerProp, setup.bluePlayer},
+                {GameSettings.Default.YellowPlayerProp, setup.yellowPlayer},
+                {GameSettings.Default.GreenPlayerProp, setup.greenPlayer},
+                {GameSettings.Default.MagentaPlayerProp, setup.magentaPlayer}
             };
 
             PhotonNetwork.CreateRoom(gameName, new RoomOptions()
             {
-                MaxPlayers = (byte) nbPlayers,
+                MaxPlayers = (byte) setup.nbPlayers,
                 IsOpen = true,
                 IsVisible = true,
                 CustomRoomProperties = props,
@@ -80,7 +90,7 @@ namespace ST.Main_Menu
         {
             var gameName = joinGameNameText.text;
             JoinGame(gameName);
-            
+
             // Remember player name for next time
             PlayerPrefs.SetString("nickname", joinPlayerNameField.text);
         }
@@ -131,8 +141,8 @@ namespace ST.Main_Menu
 
         private IEnumerator WaitForPlayerHasTeam(Action andThen)
         {
-            PhotonNetwork.LocalPlayer.NickName = playerNameField.text;
-            PhotonNetwork.LocalPlayer.AssignFirstAvailableColorIndex();
+            PhotonNetwork.LocalPlayer.NickName = PlayerPrefs.GetString("nickname");
+            PhotonNetwork.LocalPlayer.AutoAssignTeam();
 
             do
             {
@@ -149,6 +159,38 @@ namespace ST.Main_Menu
             messageModal.windowTitle.text = title;
             messageModal.windowDescription.text = message;
             messageModal.ModalWindowIn();
+        }
+
+        public void ShowLoadGames()
+        {
+            blurManager.BlurInAnim();
+            loadGameModal.ModalWindowIn();
+        }
+
+        public void LoadGame(GameStateSaveSystem.SaveGameInfo gameInfo, string playerName)
+        {
+            // Remember player name for next time
+            PlayerPrefs.SetString("nickname", playerName);
+
+            loadGameModal.ModalWindowOut();
+            blurManager.BlurOutAnim();
+
+            var gameState = GameStateSaveSystem.Load(gameInfo.GameName);
+            if (!gameState.HasValue) return;
+
+            var gameStateContainer = FindObjectOfType<HasGameState>();
+
+            if (gameStateContainer == null)
+            {
+                var gameStateGo = new GameObject {name = "_GameState"};
+                DontDestroyOnLoad(gameStateGo);
+                gameStateContainer = gameStateGo.AddComponent<HasGameState>();
+            }
+
+            gameStateContainer.gameState = gameState.Value;
+
+            var setup = gameState.Value.setup;
+            CreateGame(gameInfo.GameName, setup, true);
         }
     }
 }

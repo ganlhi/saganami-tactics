@@ -4266,8 +4266,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   expectedPlayers: 1
-  gameStarted: 0
+  gameStarted: 1
   maxPoints: 100
+  bluePlayer: 
+  yellowPlayer: phoenix
+  greenPlayer: 
+  magentaPlayer: 
+  playerName: phoenix
   manager: {fileID: 592222519}
   groups: []
 --- !u!4 &412064287
@@ -12764,11 +12769,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3691755860455593151, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 137.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3691755860455593151, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 275
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3691755860455593151, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -15804,11 +15809,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6591882830222933600, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 137.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6591882830222933600, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 275
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6591882830222933600, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -15868,11 +15873,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6591882830436053388, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 137.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6591882830436053388, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 275
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6591882830436053388, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -33085,7 +33090,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 139.00003, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224674836521786095

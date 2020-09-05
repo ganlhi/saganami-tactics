@@ -679,8 +679,17 @@ namespace ST.Play
         [PunRPC]
         private void RPC_SetStep(int turn, TurnStep step)
         {
-            Turn = turn;
-            Step = step;
+            if (turn != Turn)
+            {
+               // wait for broadcast new turn
+               _turn = turn;
+               Step = step;
+               OnTurnChange?.Invoke(this, _turn);
+            }
+            else
+            {
+                Step = step;
+            }
         }
 
         [PunRPC]

@@ -13,6 +13,14 @@ namespace ST.Common
 
         public bool gameStarted;
         public int maxPoints = 100;
+        
+        public string bluePlayer;
+        public string yellowPlayer;
+        public string greenPlayer;
+        public string magentaPlayer;
+        
+        public string playerName;
+        
         public GameObject manager;
         public List<CanvasGroup> groups;
 
@@ -44,7 +52,11 @@ namespace ST.Common
             var props = new Hashtable
             {
                 {GameSettings.Default.MaxPointsProp, maxPoints},
-                {GameSettings.Default.GameStartedProp, false} // will be true for loaded game
+                {GameSettings.Default.GameStartedProp, false},
+                {GameSettings.Default.BluePlayerProp, bluePlayer}, 
+                {GameSettings.Default.YellowPlayerProp, yellowPlayer}, 
+                {GameSettings.Default.GreenPlayerProp, greenPlayer}, 
+                {GameSettings.Default.MagentaPlayerProp, magentaPlayer}, 
             };
 
             PhotonNetwork.JoinOrCreateRoom("AutoConnect_Room", new RoomOptions()
@@ -52,8 +64,6 @@ namespace ST.Common
                 IsOpen = true,
 //                IsVisible = false,
                 MaxPlayers = (byte) expectedPlayers,
-//                EmptyRoomTtl = 120000,
-//                PlayerTtl = 120000,
                 CustomRoomProperties = props
             }, TypedLobby.Default);
         }
@@ -68,10 +78,9 @@ namespace ST.Common
         {
             base.OnJoinedRoom();
 
-//            var n = PhotonNetwork.CurrentRoom.PlayerCount;
-//            PhotonNetwork.LocalPlayer.NickName = "Player "+n;
-//            PhotonNetwork.LocalPlayer.SetColorIndex(n);
-            PhotonNetwork.LocalPlayer.AssignFirstAvailableColorIndex();
+            var n = PhotonNetwork.CurrentRoom.PlayerCount;
+            PhotonNetwork.LocalPlayer.NickName = playerName ?? $"Player {n}";
+            PhotonNetwork.LocalPlayer.AutoAssignTeam();
         }
 
         public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)

@@ -39,7 +39,7 @@ namespace ST.Common
         {
             // Throws exception if index is out of range
             TeamHelper.FromIndex(colorIndex);
-            
+
             // Index is valid
             if (!player.SetCustomProperties(new Hashtable()
             {
@@ -54,16 +54,48 @@ namespace ST.Common
         {
             var allPlayers = PhotonNetwork.CurrentRoom.Players.Values.ToList();
             var usedColorIndices = allPlayers.Where(p => !Equals(p, player)).Select(p => p.GetColorIndex()).ToList();
-            
+
             for (var i = 1; i <= 4; i++)
             {
                 if (usedColorIndices.Contains(i)) continue;
                 player.SetColorIndex(i);
                 return true;
             }
-            
+
             Debug.LogError("Unable to assign a color index to player");
             return false;
+        }
+
+        public static bool AutoAssignTeam(this Player player)
+        {
+            Debug.Log(
+                $"AutoAssignTeam - {player.NickName} - {PhotonNetwork.CurrentRoom.BluePlayerName()} - {PhotonNetwork.CurrentRoom.YellowPlayerName()} - {PhotonNetwork.CurrentRoom.GreenPlayerName()} - {PhotonNetwork.CurrentRoom.MagentaPlayerName()}");
+            if (player.NickName == string.Empty) return player.AssignFirstAvailableColorIndex();
+            if (PhotonNetwork.CurrentRoom.BluePlayerName() == player.NickName)
+            {
+                player.SetColorIndex(Team.Blue.ToIndex());
+                return true;
+            }
+
+            if (PhotonNetwork.CurrentRoom.YellowPlayerName() == player.NickName)
+            {
+                player.SetColorIndex(Team.Yellow.ToIndex());
+                return true;
+            }
+
+            if (PhotonNetwork.CurrentRoom.GreenPlayerName() == player.NickName)
+            {
+                player.SetColorIndex(Team.Green.ToIndex());
+                return true;
+            }
+
+            if (PhotonNetwork.CurrentRoom.MagentaPlayerName() == player.NickName)
+            {
+                player.SetColorIndex(Team.Magenta.ToIndex());
+                return true;
+            }
+
+            return player.AssignFirstAvailableColorIndex();
         }
 
         public static void CycleColorIndex(this Player player)
@@ -122,7 +154,7 @@ namespace ST.Common
 
             return 0;
         }
-        
+
         public static bool IsGameStarted(this RoomInfo room)
         {
             if (room.CustomProperties.TryGetValue(GameSettings.Default.GameStartedProp, out var started))
@@ -131,6 +163,46 @@ namespace ST.Common
             }
 
             return false;
+        }
+
+        public static string BluePlayerName(this RoomInfo room)
+        {
+            if (room.CustomProperties.TryGetValue(GameSettings.Default.BluePlayerProp, out var playerName))
+            {
+                return (string) playerName;
+            }
+
+            return "";
+        }
+
+        public static string YellowPlayerName(this RoomInfo room)
+        {
+            if (room.CustomProperties.TryGetValue(GameSettings.Default.YellowPlayerProp, out var playerName))
+            {
+                return (string) playerName;
+            }
+
+            return "";
+        }
+
+        public static string GreenPlayerName(this RoomInfo room)
+        {
+            if (room.CustomProperties.TryGetValue(GameSettings.Default.GreenPlayerProp, out var playerName))
+            {
+                return (string) playerName;
+            }
+
+            return "";
+        }
+
+        public static string MagentaPlayerName(this RoomInfo room)
+        {
+            if (room.CustomProperties.TryGetValue(GameSettings.Default.MagentaPlayerProp, out var playerName))
+            {
+                return (string) playerName;
+            }
+
+            return "";
         }
     }
 

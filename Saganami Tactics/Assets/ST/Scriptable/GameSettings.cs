@@ -17,6 +17,10 @@ namespace ST.Scriptable
         public readonly string ReadyProp = "rdy";
         public readonly string MaxPointsProp = "pts";
         public readonly string GameStartedProp = "gst";
+        public readonly string BluePlayerProp = "bpl";
+        public readonly string YellowPlayerProp = "ypl";
+        public readonly string GreenPlayerProp = "gpl";
+        public readonly string MagentaPlayerProp = "mpl";
 
         #endregion
 

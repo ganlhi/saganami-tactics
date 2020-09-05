@@ -13,6 +13,10 @@ namespace ST
     {
         public int nbPlayers;
         public int maxCost;
+        public string bluePlayer;
+        public string yellowPlayer;
+        public string greenPlayer;
+        public string magentaPlayer;
     }
 
     [Serializable]
@@ -154,10 +158,14 @@ namespace ST
 
         public static GameState? Load(string gameName)
         {
-            var path = PathFromGameName(gameName);
+            return LoadPath(PathFromGameName(gameName));
+        }
+        
+        private static GameState? LoadPath(string path) 
+        {
             if (!File.Exists(path))
             {
-                Debug.LogError($"Unable to find save file for game: {gameName}");
+                Debug.LogError($"Unable to find save file at path: {path}");
                 return null;
             }
 
@@ -170,6 +178,42 @@ namespace ST
             return data?.ToGameState();
         }
 
+        public static List<SaveGameInfo> ListGames()
+        {
+            var games = new List<SaveGameInfo>();
+            
+            var paths = Directory.GetFiles(Application.persistentDataPath, "*.stsave", SearchOption.TopDirectoryOnly);
+
+            foreach (var path in paths)
+            {
+                var gameState = LoadPath(path);
+                if (!gameState.HasValue) continue;
+
+                var gameName = Path.GetFileNameWithoutExtension(path);
+                
+                var info = new SaveGameInfo()
+                {
+                    GameName = gameName,
+                    Date = File.GetLastWriteTime(path),
+                    Turn = gameState.Value.turn,
+                    NbShips = gameState.Value.ships.Count,
+                };
+                
+                games.Add(info);
+            }
+            
+            games.Sort((a, b) => a.Date.CompareTo(b.Date));
+            return games;
+        }
+        
+        public struct SaveGameInfo
+        {
+            public string GameName;
+            public DateTime Date;
+            public int Turn;
+            public int NbShips;
+        }
+        
         private static string PathFromGameName(string gameName)
         {
             return Application.persistentDataPath + $"/{gameName}.stsave";
