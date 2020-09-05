@@ -8,6 +8,7 @@ using Photon.Realtime;
 using ST.Common;
 using ST.Scriptable;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace ST.Play
@@ -100,6 +101,17 @@ namespace ST.Play
         {
             base.OnPlayerEnteredRoom(newPlayer);
             InitWhenReady();
+        }
+
+        public override void OnLeftRoom()
+        {
+            base.OnLeftRoom();
+            SceneManager.LoadScene(GameSettings.Default.SceneMainMenu);
+        }
+
+        public void ExitToMainMenu()
+        {
+            PhotonNetwork.LeaveRoom();
         }
 
         private void InitWhenReady()

@@ -18,7 +18,7 @@ namespace ST.Play.UI
 
         private void Update()
         {
-            if (camera.settings.cameraLocked)
+            if (camera.settings.cameraLocked && camera.settings.lockTargetTransform != null)
             {
                 icon.colorType = UIManagerImage.ColorType.SECONDARY;
                 shipName.text = camera.settings.lockTargetTransform.GetComponent<ShipView>()?.ship.name;
