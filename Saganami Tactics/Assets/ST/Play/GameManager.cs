@@ -209,38 +209,49 @@ namespace ST.Play
 
         private void InitShipsAndMissiles()
         {
-            photonView.RPC("RPC_ExpectShipsAndMissiles", RpcTarget.All, _state.ships.Count, _state.missiles.Count);
+            photonView.RPC("RPC_ExpectShipsAndMissiles", RpcTarget.All,
+                _state.ships?.Count ?? 0,
+                _state.missiles?.Count ?? 0);
 
-            foreach (var shipState in _state.ships)
+            if (_state.ships != null)
             {
-                var ship = ShipState.ToShip(shipState);
+                foreach (var shipState in _state.ships)
+                {
+                    var ship = ShipState.ToShip(shipState);
 
-                var sv = PhotonNetwork
-                    .InstantiateSceneObject("Prefabs/ShipView", ship.position, ship.rotation)
-                    .GetComponent<ShipView>();
+                    var sv = PhotonNetwork
+                        .InstantiateSceneObject("Prefabs/ShipView", ship.position, ship.rotation)
+                        .GetComponent<ShipView>();
 
-                sv.ship = ship;
-            }
-            
-            foreach (var missileState in _state.missiles)
-            {
-                var missile = MissileState.ToMissile(missileState);
-
-                var mv = PhotonNetwork
-                    .InstantiateSceneObject("Prefabs/MissileView", missile.position, missile.rotation)
-                    .GetComponent<MissileView>();
-
-                mv.missile = missile;
+                    sv.ship = ship;
+                }
             }
 
-            foreach (var shipReports in _state.shipsReports)
+            if (_state.missiles != null)
             {
-                var shipView = GetShipById(shipReports.shipUid);
-                if (shipView == null) continue;
-                shipView.GetComponent<ShipLog>().AddReports(shipReports.reports.ToList());
+                foreach (var missileState in _state.missiles)
+                {
+                    var missile = MissileState.ToMissile(missileState);
+
+                    var mv = PhotonNetwork
+                        .InstantiateSceneObject("Prefabs/MissileView", missile.position, missile.rotation)
+                        .GetComponent<MissileView>();
+
+                    mv.missile = missile;
+                }
+            }
+
+            if (_state.shipsReports != null)
+            {
+                foreach (var shipReports in _state.shipsReports)
+                {
+                    var shipView = GetShipById(shipReports.shipUid);
+                    if (shipView == null) continue;
+                    shipView.GetComponent<ShipLog>().AddReports(shipReports.reports.ToList());
+                }
             }
         }
-        
+
         public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)
         {
             if (PhotonNetwork.IsMasterClient && PhotonNetwork.CurrentRoom.Players.Values.All(p => p.IsReady()))
@@ -360,7 +371,7 @@ namespace ST.Play
                 }
 
                 gameStateContainer.gameState = gameState;
-                
+
                 PhotonNetwork.LoadLevel(GameSettings.Default.SceneEndGame);
             }
         }
@@ -733,10 +744,10 @@ namespace ST.Play
         {
             if (turn != Turn)
             {
-               // wait for broadcast new turn
-               _turn = turn;
-               Step = step;
-               OnTurnChange?.Invoke(this, _turn);
+                // wait for broadcast new turn
+                _turn = turn;
+                Step = step;
+                OnTurnChange?.Invoke(this, _turn);
             }
             else
             {

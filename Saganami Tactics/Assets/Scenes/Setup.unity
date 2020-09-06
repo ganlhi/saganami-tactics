@@ -2494,7 +2494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1bd18e3bfab4d8a9113d3d7c4b83de7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  expectedPlayers: 2
+  expectedPlayers: 1
   gameStarted: 0
   maxPoints: 10000
   bluePlayer: 
