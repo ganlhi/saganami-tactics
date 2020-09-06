@@ -17,6 +17,7 @@ namespace ST.Main_Menu
     public class MainMenuManager : MonoBehaviourPunCallbacks
     {
 #pragma warning disable 649
+        [SerializeField] private TMP_Text versionNumberText;
         [SerializeField] private ModalWindowManager messageModal;
         [SerializeField] private BlurManager blurManager;
 #pragma warning restore 649
@@ -45,6 +46,11 @@ namespace ST.Main_Menu
         [SerializeField]
         private ModalWindowManager loadGameModal;
 #pragma warning restore 649
+
+        private void Start()
+        {
+            versionNumberText.text = $"Version {Application.version}";
+        }
 
         public void CreateGameFromInputs()
         {
