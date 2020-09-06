@@ -10,11 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de7cd949520542feaf4fc06e233fdb64, type: 3}
-  m_Name: Short range attack
+  m_Name: MissilesTest
   m_EditorClassIdentifier: 
   state:
     turn: 1
     step: 0
+    setup:
+      nbPlayers: 1
+      maxCost: 100
+      bluePlayer: 
+      yellowPlayer: 
+      greenPlayer: 
+      magentaPlayer: 
     ships:
     - uid: n3HLL9LT1UWpabYNa7K9SA
       name: Havoc
@@ -24,38 +31,51 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: Uhlt-S88c0OfzVBsO8skNg
       name: S1
       ssdName: Bastogne
       team: 1
       status: 0
-      position: {x: -3, y: 0, z: 2}
+      position: {x: 0, y: 0, z: 25}
       rotation: {x: 0, y: 0, z: 0, w: 1}
-      velocity: {x: 3, y: 0, z: 3}
+      velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: jsrOw-X6iU25JvMTHQ2buQ
       name: S2
       ssdName: Bastogne
       team: 1
       status: 0
-      position: {x: 1, y: 0, z: -6}
+      position: {x: 0, y: 2, z: 20}
       rotation: {x: 0, y: 0, z: 0, w: 1}
-      velocity: {x: 0, y: 0, z: 2}
+      velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: 2DEEL05t8kmWPD44Q5QbYg
       name: S3
       ssdName: Bastogne
       team: 1
       status: 0
-      position: {x: -16, y: 0, z: 0}
+      position: {x: -5, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
-      velocity: {x: 6, y: 0, z: 0}
+      velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: r-1ybpDzXk2LgvINyFbhnA
       name: S4
       ssdName: Bastogne
       team: 1
       status: 0
-      position: {x: 15, y: 0, z: -2}
+      position: {x: 5, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
-      velocity: {x: 0, y: 0, z: 2}
-    setup:
-      nbPlayers: 1
-      maxCost: 100
+      velocity: {x: 0, y: 0, z: 0}
+      alterations: []
+    - uid: cl4S8u00ikitsV1qc26Ggw
+      name: S5
+      ssdName: Bastogne
+      team: 1
+      status: 0
+      position: {x: 2, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      velocity: {x: 0, y: 0, z: 0}
+      alterations: []
+    missiles: []
+    shipsReports: []

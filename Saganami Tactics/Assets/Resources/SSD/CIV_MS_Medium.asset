@@ -21,6 +21,7 @@ MonoBehaviour:
   crewEnlisted: 10
   movement: 0100000001000000010000000100000001000000010000000100000001000000
   structuralIntegrity: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  hull: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   weaponMounts: []
   defenses:
   - side: 4
@@ -64,11 +65,11 @@ MonoBehaviour:
     passThrough: 1
     structural: 0
     slots:
-    - type: 1
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
-    - type: 7
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -78,9 +79,9 @@ MonoBehaviour:
     slots:
     - type: 6
       boxes: 
-    - type: 5
+    - type: 6
       boxes: 
-    - type: 2
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -91,7 +92,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 8
-      boxes: 
+      boxes: 00000000000000000000000000000000
     - type: 6
       boxes: 
     - type: 6
@@ -100,9 +101,9 @@ MonoBehaviour:
     passThrough: 1
     structural: 0
     slots:
-    - type: 10
+    - type: 6
       boxes: 
-    - type: 1
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -115,21 +116,21 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 14
-      boxes: 
+      boxes: 020000000200000001000000
     - type: 6
       boxes: 
     - type: 12
-      boxes: 
+      boxes: 0000000000000000
   - coreArmor: 1
     passThrough: 0
     structural: 1
     slots:
     - type: 6
       boxes: 
-    - type: 11
+    - type: 6
       boxes: 
     - type: 13
-      boxes: 
+      boxes: 010000000100000001000000
     - type: 6
       boxes: 
   - coreArmor: 0
@@ -138,7 +139,7 @@ MonoBehaviour:
     slots:
     - type: 6
       boxes: 
-    - type: 2
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -151,7 +152,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 9
-      boxes: 
+      boxes: 00000000000000000000000000000000
     - type: 6
       boxes: 
     - type: 6
@@ -162,7 +163,7 @@ MonoBehaviour:
     slots:
     - type: 6
       boxes: 
-    - type: 4
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -175,9 +176,19 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 15
-      boxes: 
-    - type: 1
+      boxes: 00000000
+    - type: 6
       boxes: 
     - type: 6
-      boxes:
-  sampleNames: []
+      boxes: 
+  sampleNames:
+  - Argonaut
+  - Artemis
+  - Athena
+  - Bonaventure
+  - Carnarvon
+  - Carolyn
+  - Harlequin
+  - Mandrake
+  - Voyager
+  - Yellow Rose

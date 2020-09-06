@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de7cd949520542feaf4fc06e233fdb64, type: 3}
+  m_Name: Freighter Escort
+  m_EditorClassIdentifier: 
+  state:
+    turn: 1
+    step: 0
+    setup:
+      nbPlayers: 1
+      maxCost: 100
+      bluePlayer: 
+      yellowPlayer: 
+      greenPlayer: 
+      magentaPlayer: 
+    ships:
+    - uid: dD06bpYazkq3AA7SvSE3mA
+      name: HMS Tortuga
+      ssdName: Courageous
+      team: 0
+      status: 0
+      position: {x: 0, y: 0, z: 3}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      velocity: {x: 0, y: 0, z: 6}
+      alterations: []
+    - uid: gMeN0eVtAkq1x3sunILlig
+      name: Sylar
+      ssdName: Medium Freighter
+      team: 0
+      status: 0
+      position: {x: 1, y: 0, z: 4}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      velocity: {x: 0, y: 0, z: 6}
+      alterations: []
+    - uid: G_Fl6OzVRUej98wcBleYHg
+      name: PNS Kessler
+      ssdName: Bastogne
+      team: 1
+      status: 0
+      position: {x: 0, y: 0, z: -4}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      velocity: {x: 0, y: 0, z: 3}
+      alterations: []
+    - uid: SVHqyDpl20q9Gl2i_fTIzw
+      name: PNS Breslau
+      ssdName: Bastogne
+      team: 1
+      status: 0
+      position: {x: 2, y: 0, z: -4}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      velocity: {x: 0, y: 0, z: 3}
+      alterations: []
+    missiles: []
+    shipsReports: []

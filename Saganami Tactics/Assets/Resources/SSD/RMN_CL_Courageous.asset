@@ -133,7 +133,7 @@ MonoBehaviour:
       boxes: 
     - type: 8
       boxes: 0000000000000000000000000000000000000000
-    - type: 6
+    - type: 3
       boxes: 
     - type: 6
       boxes: 
@@ -193,7 +193,7 @@ MonoBehaviour:
       boxes: 
     - type: 9
       boxes: 0000000000000000000000000000000000000000
-    - type: 6
+    - type: 3
       boxes: 
     - type: 6
       boxes: 

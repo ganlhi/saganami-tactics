@@ -15,6 +15,13 @@ MonoBehaviour:
   state:
     turn: 1
     step: 0
+    setup:
+      nbPlayers: 1
+      maxCost: 100
+      bluePlayer: 
+      yellowPlayer: 
+      greenPlayer: 
+      magentaPlayer: 
     ships:
     - uid: n3HLL9LT1UWpabYNa7K9SA
       name: Yellow 1
@@ -24,6 +31,7 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: -30}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: Y9e9UBx7k0-NKtd4HMcDvA
       name: Yellow 2
       ssdName: Havoc
@@ -32,6 +40,7 @@ MonoBehaviour:
       position: {x: -1, y: 0, z: -30}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: I2Q4YYRtd0WxjCU2EAafnQ
       name: Yellow 3
       ssdName: Havoc
@@ -40,6 +49,7 @@ MonoBehaviour:
       position: {x: 1, y: 0, z: -30}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: KEebOLum5EuQP6tO6wUTlA
       name: Blue 1
       ssdName: Bastogne
@@ -48,6 +58,7 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 30}
       rotation: {x: 0, y: 1, z: 0, w: 0}
       velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: zu0BR4EDUEig8C0TTApyxg
       name: Blue 2
       ssdName: Bastogne
@@ -56,6 +67,7 @@ MonoBehaviour:
       position: {x: -1, y: 0, z: 30}
       rotation: {x: 0, y: 1, z: 0, w: 0}
       velocity: {x: 0, y: 0, z: 0}
+      alterations: []
     - uid: gpdYmP-G0kioN2AooQGM6g
       name: Blue 3
       ssdName: Bastogne
@@ -64,6 +76,6 @@ MonoBehaviour:
       position: {x: 1, y: 0, z: 30}
       rotation: {x: 0, y: 1, z: 0, w: 0}
       velocity: {x: 0, y: 0, z: 0}
-    setup:
-      nbPlayers: 1
-      maxCost: 100
+      alterations: []
+    missiles: []
+    shipsReports: []
