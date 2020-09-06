@@ -18,6 +18,10 @@ MonoBehaviour:
     setup:
       nbPlayers: 1
       maxCost: 100
+      bluePlayer: 
+      yellowPlayer: 
+      greenPlayer: 
+      magentaPlayer: 
     ships:
     - uid: n3HLL9LT1UWpabYNa7K9SA
       name: HMS Havoc
@@ -39,6 +43,15 @@ MonoBehaviour:
       team: 1
       status: 0
       position: {x: 0, y: 0, z: 15}
+      rotation: {x: 0, y: 1, z: 0, w: 0}
+      velocity: {x: 0, y: 0, z: -4}
+      alterations: []
+    - uid: rtCOHS6FM0ux6wqT_l33zg
+      name: HMS Valiant
+      ssdName: Courageous
+      team: 0
+      status: 0
+      position: {x: -1, y: 0, z: 15}
       rotation: {x: 0, y: 1, z: 0, w: 0}
       velocity: {x: 0, y: 0, z: -4}
       alterations: []

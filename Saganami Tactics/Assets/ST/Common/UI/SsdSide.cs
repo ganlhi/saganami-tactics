@@ -107,13 +107,26 @@ namespace ST.Common.UI
                 var ssdWeaponMount = Instantiate(ssdWeaponMountPrefab, slotsContent).GetComponent<SsdWeaponMount>();
                 ssdWeaponMount.WeaponMount = weaponMount;
 
+                HitLocationSlotType slotType;
+                switch (weaponMount.model.type) {
+                    case WeaponType.Missile:
+                        slotType = HitLocationSlotType.Missile;
+                        break;
+                    case WeaponType.Laser:
+                        slotType = HitLocationSlotType.Laser;
+                        break;
+                    case WeaponType.Graser:
+                        slotType = HitLocationSlotType.Graser;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                
                 ssdWeaponMount.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
                 {
                     side = _side,
                     type = SsdAlterationType.Slot,
-                    slotType = weaponMount.model.type == WeaponType.Missile
-                        ? HitLocationSlotType.Missile
-                        : HitLocationSlotType.Laser
+                    slotType = slotType
                 });
 
                 _ssdWeaponMounts[i] = ssdWeaponMount;
@@ -184,9 +197,20 @@ namespace ST.Common.UI
             {
                 var weaponMount = _weaponMounts[i];
 
-                var slotType = weaponMount.model.type == WeaponType.Missile
-                    ? HitLocationSlotType.Missile
-                    : HitLocationSlotType.Laser;
+                HitLocationSlotType slotType;
+                switch (weaponMount.model.type) {
+                    case WeaponType.Missile:
+                        slotType = HitLocationSlotType.Missile;
+                        break;
+                    case WeaponType.Laser:
+                        slotType = HitLocationSlotType.Laser;
+                        break;
+                    case WeaponType.Graser:
+                        slotType = HitLocationSlotType.Graser;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
 
                 var ssdWeaponMount = _ssdWeaponMounts[i];
 

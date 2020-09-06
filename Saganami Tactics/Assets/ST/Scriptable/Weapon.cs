@@ -65,6 +65,7 @@ namespace ST.Scriptable
     {
         Missile,
         Laser,
+        Graser,
         // TODO add other types needing special rules
     }
 
@@ -82,6 +83,34 @@ namespace ST.Scriptable
             }
 
             return _weapons.TryGetValue(name, out var weapon) ? weapon : null;
+        }
+
+        public static bool IsBeamWeapon(Weapon weapon)
+        {
+            switch (weapon.type)
+            {
+                case WeaponType.Missile:
+                    return false;
+                case WeaponType.Laser:
+                case WeaponType.Graser:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static bool IsProjectileWeapon(Weapon weapon)
+        {
+            switch (weapon.type)
+            {
+                case WeaponType.Missile:
+                    return true;
+                case WeaponType.Laser:
+                case WeaponType.Graser:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

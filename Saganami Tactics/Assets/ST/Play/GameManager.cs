@@ -412,7 +412,7 @@ namespace ST.Play
 
                 foreach (var targetingContext in fcon.Locks.Values)
                 {
-                    if (targetingContext.Mount.model.type != WeaponType.Missile) continue;
+                    if (!WeaponHelper.IsProjectileWeapon(targetingContext.Mount.model)) continue;
 
                     var missile = new Missile(shipView.ship, targetingContext, Turn);
 
@@ -437,7 +437,7 @@ namespace ST.Play
 
                 foreach (var targetingContext in fcon.Locks.Values)
                 {
-                    if (targetingContext.Mount.model.type != WeaponType.Laser) continue;
+                    if (!WeaponHelper.IsBeamWeapon(targetingContext.Mount.model)) continue;
                     var target = GetShipById(targetingContext.Target.uid);
 
                     if (target == null || target.ship.Status != ShipStatus.Ok) continue;
@@ -692,6 +692,7 @@ namespace ST.Play
                     {
                         case HitLocationSlotType.Missile:
                         case HitLocationSlotType.Laser:
+                        case HitLocationSlotType.Graser:
                         case HitLocationSlotType.CounterMissile:
                         case HitLocationSlotType.PointDefense:
                             return $"{side.ToFriendlyString()} {SsdHelper.SlotTypeToString(slotType)}";

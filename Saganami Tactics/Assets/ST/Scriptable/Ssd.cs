@@ -88,6 +88,7 @@ namespace ST.Scriptable
         None,
         Missile,
         Laser,
+        Graser,
         CounterMissile,
         PointDefense,
         Cargo,
@@ -308,6 +309,7 @@ namespace ST.Scriptable
                 case HitLocationSlotType.None:
                 case HitLocationSlotType.Missile:
                 case HitLocationSlotType.Laser:
+                case HitLocationSlotType.Graser:
                 case HitLocationSlotType.Cargo:
                 case HitLocationSlotType.Hull:
                 case HitLocationSlotType.Decoy:

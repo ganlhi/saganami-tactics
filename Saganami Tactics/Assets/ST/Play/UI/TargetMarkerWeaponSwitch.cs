@@ -98,7 +98,20 @@ namespace ST.Play.UI
             icon.sprite = _targetingContext.ShortRange ? spriteShortRange : spriteLongRange;
 
             // TODO handle other types
-            typeText.text = TargetingContext.Mount.model.type == WeaponType.Missile ? "M" : "L";
+            switch (TargetingContext.Mount.model.type)
+            {
+                case WeaponType.Missile:
+                    typeText.text = "M";
+                    break;
+                case WeaponType.Laser:
+                    typeText.text = "L";
+                    break;
+                case WeaponType.Graser:
+                    typeText.text = "G";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
 
             switchManager.isOn = IsLocked;
         }

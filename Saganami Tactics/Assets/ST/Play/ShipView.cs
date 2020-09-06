@@ -541,6 +541,7 @@ namespace ST.Play
                     {
                         case HitLocationSlotType.Missile:
                         case HitLocationSlotType.Laser:
+                        case HitLocationSlotType.Graser:
                         case HitLocationSlotType.CounterMissile:
                         case HitLocationSlotType.PointDefense:
                             return ship.alterations.FindIndex(a =>

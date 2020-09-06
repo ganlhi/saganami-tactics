@@ -150,6 +150,7 @@ namespace ST
             {
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Missile));
                 targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Laser));
+                targets.AddRange(TryTargetWithWeaponType(attacker, ennemyShip, WeaponType.Graser));
             }
 
             return targets;
@@ -192,6 +193,12 @@ namespace ST
                 targetPos = target.position;
                 slotType = HitLocationSlotType.Laser;
             }
+            else if (type == WeaponType.Graser)
+            {
+                isShortRange = true;
+                targetPos = target.position;
+                slotType = HitLocationSlotType.Graser;
+            }
             else
             {
                 // For future weapon types
@@ -222,7 +229,10 @@ namespace ST
                 }
 
                 if (mount.model.GetMaxRange() < distance) continue;
-
+                if (attacker.name == "HMS Valiant")
+                {
+                    Debug.Log($"{mount.model.type} x{nbWeapons} dist {distance} max range {mount.model.GetMaxRange()}");
+                }
                 targetingContexts.Add(new TargetingContext()
                 {
                     Mount = mount,
@@ -422,7 +432,7 @@ namespace ST
             {
                 // Should not happen, but let's consider this case a miss
                 reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
-                    $"Lasers from {attacker.name} are out of range"));
+                    $"{weaponMount.model.type.ToString()}s from {attacker.name} are out of range"));
                 return attacker.position;
             }
 
@@ -431,7 +441,7 @@ namespace ST
             {
                 // Beams cannot shoot through wedges
                 reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
-                    $"Lasers from {attacker.position} have been stopped by wedge"));
+                    $"{weaponMount.model.type.ToString()}s from {attacker.position} have been stopped by wedge"));
 
                 return target.position; // TODO offset to hit wedge
             }
@@ -444,12 +454,12 @@ namespace ST
             if (successes == 0)
             {
                 reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
-                    $"Lasers from {attacker.name} missed"));
+                    $"{weaponMount.model.type.ToString()}s from {attacker.name} missed"));
                 return target.position + Random.insideUnitSphere; // TODO do not shoot through the target ship
             }
 
             reports.Add(new Tuple<ReportType, string>(ReportType.MissilesHit,
-                $"Lasers from {attacker.name}: {successes} hits"));
+                $"{weaponMount.model.type.ToString()}s from {attacker.name}: {successes} hits"));
 
             HitTarget(weaponMount.model, mainBearing, successes, totalRange, attacker, target,
                 ref reports,
@@ -464,7 +474,7 @@ namespace ST
             ref List<SsdAlteration> alterations,
             ref List<Tuple<int, int>> destroyedAmmo)
         {
-            var weaponType = weapon.type == WeaponType.Missile ? "Missile" : "Laser";
+            var weaponType = weapon.type.ToString();
 
             var rangeBand = weapon.GetRangeBand(range);
             var sidewallStrength = SsdHelper.GetSidewall(target.Ssd, targetSide, target.alterations);
@@ -508,6 +518,8 @@ namespace ST
                         ref reports,
                         ref alterations,
                         ref destroyedAmmo);
+                    
+                    // TODO extra damages to neighbour locations if graser
                 }
             }
         }
@@ -575,27 +587,37 @@ namespace ST
 
                                 break;
                             case HitLocationSlotType.Laser:
-                                var laserAlterations = MakeAlterationsForBoxes(
+                            case HitLocationSlotType.Graser:
+                                var beamWeaponType = slot.type == HitLocationSlotType.Laser
+                                    ? WeaponType.Laser
+                                    : WeaponType.Graser;
+                                var boxes = target.Ssd.weaponMounts.FirstOrDefault(m =>
+                                    m.side == side && m.model.type == beamWeaponType).weapons;
+                                if (boxes == null)
+                                {
+                                    Debug.Log($"{beamWeaponType} {target.ssdName} loc {currentLocation}");
+                                    break;
+                                }
+                                var beamWeaponAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
                                     {
                                         side = side,
                                         type = SsdAlterationType.Slot,
-                                        slotType = HitLocationSlotType.Laser,
+                                        slotType = slot.type,
                                         location = currentLocation
                                     },
                                     1,
-                                    target.Ssd.weaponMounts.First(m =>
-                                        m.side == side && m.model.type == WeaponType.Laser).weapons,
+                                    boxes,
                                     target.alterations,
                                     alterations
                                 );
 
-                                if (laserAlterations.Any())
+                                if (beamWeaponAlterations.Any())
                                 {
-                                    alterations.AddRange(laserAlterations);
-                                    remainingDamages -= laserAlterations.Count;
+                                    alterations.AddRange(beamWeaponAlterations);
+                                    remainingDamages -= beamWeaponAlterations.Count;
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} lasers"));
+                                        $"#{hitNum} {weaponType} damaged: {side.ToFriendlyString()} {beamWeaponType.ToString().ToLower()}"));
                                 }
 
                                 break;
