@@ -22,8 +22,220 @@ namespace ST.Scriptable
         public uint[] structuralIntegrity;
 
         public WeaponMount[] weaponMounts;
-        public SideDefenses[] defenses;
-        public HitLocation[] hitLocations;
+
+        public SideDefenses[] defenses = new[]
+        {
+            new SideDefenses()
+            {
+                side = Side.Top,
+                armorStrength = 1,
+                wedge = true,
+            },
+            new SideDefenses()
+            {
+                side = Side.Bottom,
+                armorStrength = 1,
+                wedge = true,
+            },
+            new SideDefenses()
+            {
+                side = Side.Aft,
+                armorStrength = 1,
+                sidewall = new uint[1],
+            },
+            new SideDefenses()
+            {
+                side = Side.Forward,
+                armorStrength = 1,
+            },
+            new SideDefenses()
+            {
+                side = Side.Port,
+                armorStrength = 1,
+            },
+            new SideDefenses()
+            {
+                side = Side.Starboard,
+                armorStrength = 1,
+            },
+        };
+
+        public HitLocation[] hitLocations = new[]
+        {
+            // 1
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Missile
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Cargo
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Decoy
+                    }, 
+                }
+            },
+            // 2
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.PointDefense
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Laser
+                    }, 
+                }
+            },
+            // 3
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.ForwardImpeller
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                }
+            },
+            // 4
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.ECCM
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Missile
+                    }, 
+                }
+            },
+            // 5
+            new HitLocation()
+            {
+                structural = true,
+                coreArmor = 1,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Roll
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Bridge
+                    }, 
+                }
+            },
+            // 6
+            new HitLocation()
+            {
+                structural = true,
+                coreArmor = 1,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.ECM
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Pivot
+                    }, 
+                }
+            },
+            // 7
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Laser
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                }
+            },
+            // 8
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.AftImpeller
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Cargo
+                    }, 
+                }
+            },
+            // 9
+            new HitLocation()
+            {
+                passThrough = true,
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.CounterMissile
+                    }, 
+                }
+            },
+            // 10
+            new HitLocation()
+            {
+                slots = new []
+                {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.DamageControl
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Missile
+                    }, 
+                }
+            },
+        };
 
         public List<string> sampleNames;
     }

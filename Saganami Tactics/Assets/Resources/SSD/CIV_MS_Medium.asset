@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6747749b3dcb407b932e19c8f79fddac, type: 3}
+  m_Name: CIV_MS_Medium
+  m_EditorClassIdentifier: 
+  className: Medium Freighter
+  category: {fileID: 11400000, guid: 626d32ccd9860f143bb2faf2437a221a, type: 2}
+  faction: {fileID: 11400000, guid: 6242b17e9d06b1a45bea8335dc8b42d8, type: 2}
+  baseCost: 12
+  crewRate: 5
+  crewOfficers: 10
+  crewEnlisted: 10
+  movement: 0100000001000000010000000100000001000000010000000100000001000000
+  structuralIntegrity: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  weaponMounts: []
+  defenses:
+  - side: 4
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 0
+  - side: 5
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 0
+  - side: 0
+    wedge: 0
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 0
+  - side: 1
+    wedge: 0
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 0
+  - side: 2
+    wedge: 0
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 0
+  - side: 3
+    wedge: 0
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    armorStrength: 0
+  hitLocations:
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 5
+      boxes: 
+    - type: 7
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 4
+      boxes: 
+    - type: 2
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 8
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 10
+      boxes: 
+    - type: 1
+      boxes: 
+  - coreArmor: 0
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 14
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 12
+      boxes: 
+  - coreArmor: 0
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 11
+      boxes: 
+    - type: 13
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 9
+      boxes: 
+    - type: 5
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 3
+      boxes: 
+  - coreArmor: 0
+    passThrough: 0
+    structural: 0
+    slots:
+    - type: 15
+      boxes: 
+    - type: 1
+      boxes: 
+  sampleNames: []
