@@ -754,8 +754,11 @@ namespace ST
                                         alterations
                                     ));
                                 }
-                                
-                                remainingDamages -= 1;
+
+                                if (remainingDamages <= nb)
+                                    remainingDamages = 0;
+                                else 
+                                    remainingDamages -= nb;
 
                                 break;
                             default:

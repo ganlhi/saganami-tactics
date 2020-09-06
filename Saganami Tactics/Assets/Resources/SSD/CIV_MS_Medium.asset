@@ -109,7 +109,7 @@ MonoBehaviour:
       boxes: 
     - type: 6
       boxes: 
-  - coreArmor: 1
+  - coreArmor: 0
     passThrough: 0
     structural: 1
     slots:
@@ -121,7 +121,7 @@ MonoBehaviour:
       boxes: 
     - type: 12
       boxes: 0000000000000000
-  - coreArmor: 1
+  - coreArmor: 0
     passThrough: 0
     structural: 1
     slots:
