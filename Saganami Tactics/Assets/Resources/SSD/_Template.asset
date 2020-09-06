@@ -21,6 +21,7 @@ MonoBehaviour:
   crewEnlisted: 0
   movement: 
   structuralIntegrity: 
+  hull: 
   weaponMounts: []
   defenses:
   - side: 4
@@ -68,65 +69,7 @@ MonoBehaviour:
       boxes: 
     - type: 6
       boxes: 
-    - type: 8
-      boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
     - type: 7
-      boxes: 
-    - type: 5
-      boxes: 
-    - type: 2
-      boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 9
-      boxes: 
-    - type: 7
-      boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 11
-      boxes: 
-    - type: 1
-      boxes: 
-  - coreArmor: 1
-    passThrough: 0
-    structural: 1
-    slots:
-    - type: 15
-      boxes: 
-    - type: 7
-      boxes: 
-    - type: 13
-      boxes: 
-  - coreArmor: 1
-    passThrough: 0
-    structural: 1
-    slots:
-    - type: 12
-      boxes: 
-    - type: 14
-      boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 2
-      boxes: 
-    - type: 7
-      boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 10
       boxes: 
     - type: 6
       boxes: 
@@ -134,16 +77,108 @@ MonoBehaviour:
     passThrough: 1
     structural: 0
     slots:
-    - type: 7
+    - type: 6
+      boxes: 
+    - type: 5
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 8
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 10
+      boxes: 
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 14
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 12
+      boxes: 
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 11
+      boxes: 
+    - type: 13
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 9
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
       boxes: 
     - type: 4
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
       boxes: 
   - coreArmor: 0
     passThrough: 0
     structural: 0
     slots:
-    - type: 16
+    - type: 6
+      boxes: 
+    - type: 15
       boxes: 
     - type: 1
+      boxes: 
+    - type: 6
       boxes: 
   sampleNames: []

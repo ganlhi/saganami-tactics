@@ -21,6 +21,7 @@ MonoBehaviour:
   crewEnlisted: 253
   movement: 03000000030000000300000002000000020000000200000002000000010000000100000001000000
   structuralIntegrity: 00000000000000000000000000000000000000000000000000000000
+  hull: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
   weaponMounts:
   - side: 1
     model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
@@ -99,84 +100,118 @@ MonoBehaviour:
     - type: 1
       boxes: 
     - type: 6
-      boxes: 0000000000000000
-    - type: 8
+      boxes: 
+    - type: 7
       boxes: 000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
   - coreArmor: 0
     passThrough: 1
     structural: 0
     slots:
-    - type: 7
-      boxes: 0000000000000000
+    - type: 6
+      boxes: 
     - type: 5
       boxes: 
     - type: 2
       boxes: 
+    - type: 6
+      boxes: 
   - coreArmor: 0
     passThrough: 1
     structural: 0
     slots:
-    - type: 9
+    - type: 6
+      boxes: 
+    - type: 8
       boxes: 0000000000000000000000000000000000000000
-    - type: 7
-      boxes: 0000000000000000
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 11
-      boxes: 01000000
-    - type: 1
+    - type: 6
       boxes: 
-  - coreArmor: 1
-    passThrough: 0
-    structural: 1
-    slots:
-    - type: 15
-      boxes: 060000000400000002000000
-    - type: 7
-      boxes: 0000000000000000
-    - type: 13
-      boxes: 0000000000000000
-  - coreArmor: 1
-    passThrough: 0
-    structural: 1
-    slots:
-    - type: 12
-      boxes: 01000000
-    - type: 14
-      boxes: 060000000400000002000000
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 2
+    - type: 6
       boxes: 
-    - type: 7
-      boxes: 0000000000000000
   - coreArmor: 0
     passThrough: 1
     structural: 0
     slots:
     - type: 10
-      boxes: 0000000000000000000000000000000000000000
+      boxes: 01000000
+    - type: 1
+      boxes: 
     - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 14
+      boxes: 060000000400000002000000
+    - type: 6
+      boxes: 
+    - type: 12
       boxes: 0000000000000000
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 11
+      boxes: 01000000
+    - type: 13
+      boxes: 060000000400000002000000
+    - type: 6
+      boxes: 
   - coreArmor: 0
     passThrough: 1
     structural: 0
     slots:
-    - type: 7
-      boxes: 0000000000000000
+    - type: 6
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 9
+      boxes: 0000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
     - type: 4
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
       boxes: 
   - coreArmor: 0
     passThrough: 0
     structural: 0
     slots:
-    - type: 16
+    - type: 6
+      boxes: 
+    - type: 15
       boxes: 0000000000000000
     - type: 1
+      boxes: 
+    - type: 6
       boxes: 
   sampleNames:
   - HMS Chaos

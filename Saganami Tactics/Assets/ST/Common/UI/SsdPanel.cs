@@ -77,7 +77,7 @@ namespace ST.Common.UI
                 PropagateConsumedAmmo();
             }
         }
-        
+
         private SsdPanelMode _mode = SsdPanelMode.View;
 
         public SsdPanelMode Mode
@@ -90,7 +90,7 @@ namespace ST.Common.UI
             }
         }
 
-        public event EventHandler<SsdAlteration> OnRepair; 
+        public event EventHandler<SsdAlteration> OnRepair;
 
 #pragma warning disable 649
         [SerializeField] private SsdHeader ssdHeader;
@@ -132,13 +132,16 @@ namespace ST.Common.UI
         private void PropagateMode()
         {
             if (_ssd == null) return;
-            
+
             var damageControl = SsdHelper.GetDamageControl(Ssd, _alterations, _repairAttempts);
             var canRepair = _mode == SsdPanelMode.Repair && damageControl > 0;
-            
+
             damageControlPartiesObject.SetActive(_mode == SsdPanelMode.Repair);
             damageControlPartiesText.text = damageControl.ToString();
             
+            // Core
+            ssdCore.CanRepair = canRepair;
+
             // Hit locations
             for (var i = 0; i < _ssd.hitLocations.Length; i++)
             {
@@ -166,6 +169,8 @@ namespace ST.Common.UI
             ssdCore.StructuralIntegrityAlterations =
                 _alterations.Where(a => a.type == SsdAlterationType.Structural).ToList();
             ssdCore.MovementAlterations = _alterations.Where(a => a.type == SsdAlterationType.Movement).ToList();
+            ssdCore.HullAlterations = _alterations
+                .Where(a => a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Hull).ToList();
 
             // Hit locations
             for (var i = 0; i < _ssd.hitLocations.Length; i++)
@@ -223,6 +228,7 @@ namespace ST.Common.UI
         {
             ssdCore.StructuralIntegrity = _ssd.structuralIntegrity;
             ssdCore.Movement = _ssd.movement;
+            ssdCore.Hull = _ssd.hull;
         }
 
         private void SetWeapons()
@@ -301,7 +307,7 @@ namespace ST.Common.UI
                 );
 
                 ssdSide.OnRepair += (sender, alteration) => OnRepair?.Invoke(this, alteration);
-                
+
                 _ssdSides.Add(side, ssdSide);
             }
         }

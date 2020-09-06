@@ -64,11 +64,25 @@ MonoBehaviour:
     passThrough: 1
     structural: 0
     slots:
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 7
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
     - type: 6
       boxes: 
     - type: 5
       boxes: 
-    - type: 7
+    - type: 2
+      boxes: 
+    - type: 6
       boxes: 
   - coreArmor: 0
     passThrough: 1
@@ -76,15 +90,9 @@ MonoBehaviour:
     slots:
     - type: 6
       boxes: 
-    - type: 4
-      boxes: 
-    - type: 2
-      boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
     - type: 8
+      boxes: 
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -96,39 +104,45 @@ MonoBehaviour:
       boxes: 
     - type: 1
       boxes: 
-  - coreArmor: 0
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 1
     passThrough: 0
     structural: 1
     slots:
+    - type: 6
+      boxes: 
     - type: 14
       boxes: 
     - type: 6
       boxes: 
     - type: 12
       boxes: 
-  - coreArmor: 0
+  - coreArmor: 1
     passThrough: 0
     structural: 1
     slots:
+    - type: 6
+      boxes: 
     - type: 11
       boxes: 
     - type: 13
       boxes: 
+    - type: 6
+      boxes: 
   - coreArmor: 0
     passThrough: 1
     structural: 0
     slots:
+    - type: 6
+      boxes: 
     - type: 2
       boxes: 
     - type: 6
       boxes: 
-  - coreArmor: 0
-    passThrough: 1
-    structural: 0
-    slots:
-    - type: 9
-      boxes: 
-    - type: 5
+    - type: 6
       boxes: 
   - coreArmor: 0
     passThrough: 1
@@ -136,14 +150,34 @@ MonoBehaviour:
     slots:
     - type: 6
       boxes: 
-    - type: 3
+    - type: 9
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 4
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
       boxes: 
   - coreArmor: 0
     passThrough: 0
     structural: 0
     slots:
+    - type: 6
+      boxes: 
     - type: 15
       boxes: 
     - type: 1
       boxes: 
+    - type: 6
+      boxes:
   sampleNames: []

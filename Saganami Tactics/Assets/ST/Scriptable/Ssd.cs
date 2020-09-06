@@ -20,6 +20,7 @@ namespace ST.Scriptable
 
         public uint[] movement;
         public uint[] structuralIntegrity;
+        public uint[] hull;
 
         public WeaponMount[] weaponMounts;
 
@@ -74,11 +75,15 @@ namespace ST.Scriptable
                     }, 
                     new HitLocationSlot()
                     {
-                        type = HitLocationSlotType.Cargo
+                        type = HitLocationSlotType.Hull
                     }, 
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Decoy
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
                     }, 
                 }
             },
@@ -100,6 +105,10 @@ namespace ST.Scriptable
                     {
                         type = HitLocationSlotType.Laser
                     }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
                 }
             },
             // 3
@@ -110,7 +119,15 @@ namespace ST.Scriptable
                 {
                     new HitLocationSlot()
                     {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
                         type = HitLocationSlotType.ForwardImpeller
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
                     }, 
                     new HitLocationSlot()
                     {
@@ -132,6 +149,14 @@ namespace ST.Scriptable
                     {
                         type = HitLocationSlotType.Missile
                     }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
                 }
             },
             // 5
@@ -141,6 +166,10 @@ namespace ST.Scriptable
                 coreArmor = 1,
                 slots = new []
                 {
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Roll
@@ -164,11 +193,19 @@ namespace ST.Scriptable
                 {
                     new HitLocationSlot()
                     {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
                         type = HitLocationSlotType.ECM
                     }, 
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Pivot
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
                     }, 
                 }
             },
@@ -180,7 +217,15 @@ namespace ST.Scriptable
                 {
                     new HitLocationSlot()
                     {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
                         type = HitLocationSlotType.Laser
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
                     }, 
                     new HitLocationSlot()
                     {
@@ -196,11 +241,19 @@ namespace ST.Scriptable
                 {
                     new HitLocationSlot()
                     {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
                         type = HitLocationSlotType.AftImpeller
                     }, 
                     new HitLocationSlot()
                     {
-                        type = HitLocationSlotType.Cargo
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
                     }, 
                 }
             },
@@ -218,6 +271,14 @@ namespace ST.Scriptable
                     {
                         type = HitLocationSlotType.CounterMissile
                     }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
+                    }, 
                 }
             },
             // 10
@@ -227,11 +288,19 @@ namespace ST.Scriptable
                 {
                     new HitLocationSlot()
                     {
+                        type = HitLocationSlotType.Hull
+                    }, 
+                    new HitLocationSlot()
+                    {
                         type = HitLocationSlotType.DamageControl
                     }, 
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Missile
+                    }, 
+                    new HitLocationSlot()
+                    {
+                        type = HitLocationSlotType.Hull
                     }, 
                 }
             },
@@ -303,7 +372,6 @@ namespace ST.Scriptable
         Graser,
         CounterMissile,
         PointDefense,
-        Cargo,
         Hull,
         Decoy,
         ForwardImpeller,
@@ -522,7 +590,6 @@ namespace ST.Scriptable
                 case HitLocationSlotType.Missile:
                 case HitLocationSlotType.Laser:
                 case HitLocationSlotType.Graser:
-                case HitLocationSlotType.Cargo:
                 case HitLocationSlotType.Hull:
                 case HitLocationSlotType.Decoy:
                 case HitLocationSlotType.ECCM:

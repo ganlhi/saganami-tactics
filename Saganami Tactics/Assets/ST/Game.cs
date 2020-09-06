@@ -545,7 +545,7 @@ namespace ST
                     {
                         var slot = loc.slots[i];
                         int weaponMountIndex;
-                        
+
                         switch (slot.type)
                         {
                             case HitLocationSlotType.None:
@@ -596,7 +596,7 @@ namespace ST
                                 var beamWeaponType = slot.type == HitLocationSlotType.Laser
                                     ? WeaponType.Laser
                                     : WeaponType.Graser;
-                                
+
                                 weaponMountIndex = Array.FindIndex(target.Ssd.weaponMounts, m =>
                                     m.side == side && m.model.type == beamWeaponType);
                                 if (weaponMountIndex == -1) continue;
@@ -687,8 +687,6 @@ namespace ST
                                 }
 
                                 break;
-                            case HitLocationSlotType.Cargo:
-                            case HitLocationSlotType.Hull:
                             case HitLocationSlotType.ECCM:
                             case HitLocationSlotType.ECM:
                             case HitLocationSlotType.Bridge:
@@ -717,6 +715,47 @@ namespace ST
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
                                         $"#{hitNum} {weaponType} damaged: {slot.type} (location {currentLocation})"));
                                 }
+
+                                break;
+                            case HitLocationSlotType.Hull:
+                                var nb = Dice.TwoD10Minus().Item1;
+                                var hullAlterations = MakeAlterationsForBoxes(
+                                    new SsdAlteration()
+                                    {
+                                        type = SsdAlterationType.Slot,
+                                        slotType = HitLocationSlotType.Hull,
+                                    },
+                                    nb,
+                                    target.Ssd.hull,
+                                    target.alterations,
+                                    alterations
+                                );
+
+                                if (hullAlterations.Any())
+                                {
+                                    alterations.AddRange(hullAlterations);
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{hitNum} {weaponType} damaged: Hull x{nb}"));
+                                }
+                                else
+                                {
+                                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                                        $"#{hitNum} {weaponType} made structural damages: 1"));
+
+                                    alterations.AddRange(MakeAlterationsForBoxes(
+                                        new SsdAlteration()
+                                        {
+                                            destroyed = true,
+                                            type = SsdAlterationType.Structural
+                                        },
+                                        1,
+                                        target.Ssd.structuralIntegrity,
+                                        target.alterations,
+                                        alterations
+                                    ));
+                                }
+                                
+                                remainingDamages -= 1;
 
                                 break;
                             default:
@@ -951,7 +990,7 @@ namespace ST
                             - Mathf.CeilToInt((float) ssd.crewEnlisted / 100f);
                     scoreDetails.Add(new ScoreLine() {Reason = $"Surrendered ship: {ennemyShip.name}", Score = score});
                 }
-                else
+                else if (ennemyShip.alterations.Any())
                 {
                     score = Mathf.CeilToInt(ssd.baseCost * SsdHelper.GetDamagedBoxesRatio(ssd, ennemyShip.alterations));
                     scoreDetails.Add(new ScoreLine() {Reason = $"Damaged ship: {ennemyShip.name}", Score = score});
