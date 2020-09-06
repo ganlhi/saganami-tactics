@@ -233,6 +233,7 @@ namespace ST
                 {
                     Debug.Log($"{mount.model.type} x{nbWeapons} dist {distance} max range {mount.model.GetMaxRange()}");
                 }
+
                 targetingContexts.Add(new TargetingContext()
                 {
                     Mount = mount,
@@ -518,7 +519,7 @@ namespace ST
                         ref reports,
                         ref alterations,
                         ref destroyedAmmo);
-                    
+
                     // TODO extra damages to neighbour locations if graser
                 }
             }
@@ -543,13 +544,17 @@ namespace ST
                     for (var i = 0; i < loc.slots.Length && remainingDamages > 0; i++)
                     {
                         var slot = loc.slots[i];
+                        int weaponMountIndex;
+                        
                         switch (slot.type)
                         {
                             case HitLocationSlotType.None:
                                 break;
                             case HitLocationSlotType.Missile:
-                                var weaponMount = target.Ssd.weaponMounts.First(m =>
+                                weaponMountIndex = Array.FindIndex(target.Ssd.weaponMounts, m =>
                                     m.side == side && m.model.type == WeaponType.Missile);
+                                if (weaponMountIndex == -1) continue;
+                                var weaponMount = target.Ssd.weaponMounts[weaponMountIndex];
 
                                 var missileAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
@@ -591,13 +596,12 @@ namespace ST
                                 var beamWeaponType = slot.type == HitLocationSlotType.Laser
                                     ? WeaponType.Laser
                                     : WeaponType.Graser;
-                                var boxes = target.Ssd.weaponMounts.FirstOrDefault(m =>
-                                    m.side == side && m.model.type == beamWeaponType).weapons;
-                                if (boxes == null)
-                                {
-                                    Debug.Log($"{beamWeaponType} {target.ssdName} loc {currentLocation}");
-                                    break;
-                                }
+                                
+                                weaponMountIndex = Array.FindIndex(target.Ssd.weaponMounts, m =>
+                                    m.side == side && m.model.type == beamWeaponType);
+                                if (weaponMountIndex == -1) continue;
+                                var boxes = target.Ssd.weaponMounts[weaponMountIndex].weapons;
+
                                 var beamWeaponAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
                                     {
