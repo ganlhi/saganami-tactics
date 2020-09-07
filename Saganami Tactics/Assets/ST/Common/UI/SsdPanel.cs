@@ -116,6 +116,24 @@ namespace ST.Common.UI
         {
             if (_ssd != null)
                 UpdateSsd();
+
+            HandleHullRepairs();
+        }
+
+        private void HandleHullRepairs()
+        {
+            ssdCore.OnRepairHull += (sender, args) =>
+            {
+                // Find alteration for this slot
+                var alterations = _alterations.Where(a =>
+                    a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Hull &&
+                    !a.destroyed).ToList();
+                Debug.Log($"OnRepairHull {alterations.Count}");
+                if (alterations.Count > 0)
+                {
+                    OnRepair?.Invoke(this, alterations.First());
+                }
+            };
         }
 
         private void UpdateSsd()
@@ -138,7 +156,7 @@ namespace ST.Common.UI
 
             damageControlPartiesObject.SetActive(_mode == SsdPanelMode.Repair);
             damageControlPartiesText.text = damageControl.ToString();
-            
+
             // Core
             ssdCore.CanRepair = canRepair;
 

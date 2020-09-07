@@ -31,7 +31,17 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 3}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       velocity: {x: 0, y: 0, z: 6}
-      alterations: []
+      alterations:
+      - destroyed: 0
+        side: 0
+        type: 0
+        slotType: 6
+        location: 0
+      - destroyed: 0
+        side: 0
+        type: 0
+        slotType: 6
+        location: 0
     - uid: gMeN0eVtAkq1x3sunILlig
       name: Sylar
       ssdName: Medium Freighter

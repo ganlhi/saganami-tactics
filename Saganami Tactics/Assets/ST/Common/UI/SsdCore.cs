@@ -72,6 +72,8 @@ namespace ST.Common.UI
             }
         }
 
+        public event EventHandler OnRepairHull;
+
         private bool _canRepair;
         private uint[] _structuralIntegrity;
         private uint[] _movement;
@@ -85,6 +87,16 @@ namespace ST.Common.UI
                 [SerializeField] private SsdBoxes mvtBoxes;
                 [SerializeField] private SsdBoxes hullBoxes;
         #pragma warning restore 649
+
+        private void Start()
+        {
+            hullBoxes.OnRepair += (sender, args) =>
+            {
+                Debug.Log($"hullBoxes.OnRepair");
+                OnRepairHull?.Invoke(this, EventArgs.Empty);
+                
+            };
+        }
 
         private void UpdateSi()
         {
@@ -103,8 +115,12 @@ namespace ST.Common.UI
         private void UpdateHull()
         {
             hullBoxes.CurrentValue = (int) SsdHelper.GetUndamagedValue(_hull, _hullAlterations.Count);
-            hullBoxes.CanRepair = _hullAlterations.Count > 0 && _canRepair;
-            hullBoxes.Damages = new Tuple<int, int>(0, _hullAlterations.Count);
+
+            var nbDestroyed = _hullAlterations.Count(a => a.destroyed);
+            var nbDamaged = _hullAlterations.Count(a => !a.destroyed);
+
+            hullBoxes.CanRepair = nbDamaged > 0 && _canRepair;
+            hullBoxes.Damages = new Tuple<int, int>(nbDestroyed, nbDamaged);
         }
 
         private void UpdateCanRepair()

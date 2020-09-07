@@ -25,6 +25,8 @@ namespace ST.Play
         private int _expectedShips;
         private int _expectedMissiles;
 
+        private bool _shouldGoToMainMenuOnLeftRoom;
+        
         private int _turn;
 
         public int Turn
@@ -106,11 +108,13 @@ namespace ST.Play
         public override void OnLeftRoom()
         {
             base.OnLeftRoom();
-            SceneManager.LoadScene(GameSettings.Default.SceneMainMenu);
+            if (_shouldGoToMainMenuOnLeftRoom)
+                SceneManager.LoadScene(GameSettings.Default.SceneMainMenu);
         }
 
         public void ExitToMainMenu()
         {
+            _shouldGoToMainMenuOnLeftRoom = true;
             PhotonNetwork.LeaveRoom();
         }
 
