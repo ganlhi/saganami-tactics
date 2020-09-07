@@ -35,5 +35,5 @@ MonoBehaviour:
   logoColor: {r: 0.3882353, g: 0.7764706, b: 1, a: 1}
   particleColor: {r: 0.3882353, g: 0.7764706, b: 1, a: 1}
   backgroundMusic: {fileID: 8300000, guid: 7ac1670904bb1624b87dc52bc71f00bc, type: 3}
-  hoverSound: {fileID: 8300000, guid: a6473f5264a14804e992a7a4a29cd744, type: 3}
-  clickSound: {fileID: 8300000, guid: bfc5803fa8fa8924bbeaa34f4f689bb1, type: 3}
+  hoverSound: {fileID: 8300000, guid: 75a82b4c090ff954a94871952809bb2e, type: 3}
+  clickSound: {fileID: 8300000, guid: a6473f5264a14804e992a7a4a29cd744, type: 3}
