@@ -67,96 +67,96 @@ namespace ST.Scriptable
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Missile
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Decoy
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 2
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.PointDefense
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Laser
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 3
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.ForwardImpeller
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 4
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.ECCM
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Missile
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 5
@@ -164,24 +164,24 @@ namespace ST.Scriptable
             {
                 structural = true,
                 coreArmor = 1,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Roll
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Bridge
-                    }, 
+                    },
                 }
             },
             // 6
@@ -189,119 +189,119 @@ namespace ST.Scriptable
             {
                 structural = true,
                 coreArmor = 1,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.ECM
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Pivot
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 7
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Laser
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 8
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.AftImpeller
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 9
             new HitLocation()
             {
                 passThrough = true,
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.CounterMissile
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
             // 10
             new HitLocation()
             {
-                slots = new []
+                slots = new[]
                 {
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.DamageControl
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Missile
-                    }, 
+                    },
                     new HitLocationSlot()
                     {
                         type = HitLocationSlotType.Hull
-                    }, 
+                    },
                 }
             },
         };
@@ -614,9 +614,11 @@ namespace ST.Scriptable
             }
         }
 
-        public static float GetDamagedBoxesRatio(Ssd ssd, List<SsdAlteration> alterations)
+        public static float GetDamagedBoxesRatio(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
-            var totalBoxes = ssd.hitLocations.Sum(location => location.slots.Sum(slot => slot.boxes.Length))
+            var totalBoxes = ssd.hitLocations.Sum(location =>
+                                 location.slots.Sum(slot =>
+                                     slot.type != HitLocationSlotType.Decoy ? slot.boxes.Length : 0))
                              + ssd.movement.Length
                              + ssd.structuralIntegrity.Length
                              + ssd.weaponMounts.Sum(mount => mount.weapons.Length)
@@ -625,7 +627,7 @@ namespace ST.Scriptable
                                  + defense.counterMissiles.Length
                                  + defense.pointDefense.Length);
 
-            return (float) alterations.Count / totalBoxes;
+            return (float) alterations.Count(a => a.slotType != HitLocationSlotType.Decoy) / totalBoxes;
         }
     }
 }

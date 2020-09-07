@@ -241,5 +241,10 @@ namespace ST
             
             return new Tuple<Side, Side>(first.Key, first.Key); 
         }
+
+        public bool HasRepairsToDo()
+        {
+            return alterations.Any(a => !a.destroyed && a.type != SsdAlterationType.Movement);
+        }
     }
 }

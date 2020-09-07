@@ -757,7 +757,7 @@ namespace ST
 
                                 if (remainingDamages <= nb)
                                     remainingDamages = 0;
-                                else 
+                                else
                                     remainingDamages -= nb;
 
                                 break;
@@ -993,10 +993,15 @@ namespace ST
                             - Mathf.CeilToInt((float) ssd.crewEnlisted / 100f);
                     scoreDetails.Add(new ScoreLine() {Reason = $"Surrendered ship: {ennemyShip.name}", Score = score});
                 }
-                else if (ennemyShip.alterations.Any())
+                else
                 {
-                    score = Mathf.CeilToInt(ssd.baseCost * SsdHelper.GetDamagedBoxesRatio(ssd, ennemyShip.alterations));
-                    scoreDetails.Add(new ScoreLine() {Reason = $"Damaged ship: {ennemyShip.name}", Score = score});
+                    var damagedBoxesRatio = SsdHelper.GetDamagedBoxesRatio(ssd, ennemyShip.alterations);
+
+                    if (damagedBoxesRatio > 0)
+                    {
+                        score = Mathf.CeilToInt(ssd.baseCost * damagedBoxesRatio);
+                        scoreDetails.Add(new ScoreLine() {Reason = $"Damaged ship: {ennemyShip.name}", Score = score});
+                    }
                 }
 
                 totalScore += score;

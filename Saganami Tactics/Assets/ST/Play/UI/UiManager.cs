@@ -214,7 +214,7 @@ namespace ST.Play.UI
                 var ship = _gameManager.SelectedShip.ship;
 
                 // can repair if has alterations
-                crewActionsPanel.CanRepair = ship.alterations.Any();
+                crewActionsPanel.CanRepair = ship.HasRepairsToDo();
 
                 // can disengage if at least 50 away from all operating enemy ships and able to move
                 var isFarEnough = !GameManager.GetAllShips().Any(s =>
