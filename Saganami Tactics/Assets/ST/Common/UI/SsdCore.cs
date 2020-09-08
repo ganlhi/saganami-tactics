@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ST.Scriptable;
+using TMPro;
 using UnityEngine;
 
 namespace ST.Common.UI
@@ -71,10 +72,21 @@ namespace ST.Common.UI
                 UpdateCanRepair();
             }
         }
+        
+        public int DecoysStrength
+        {
+            get => _decoysStrength;
+            set
+            {
+                _decoysStrength = value;
+                decoysStrengthText.text = _decoysStrength.ToString();
+            }
+        }
 
         public event EventHandler OnRepairHull;
 
         private bool _canRepair;
+        private int _decoysStrength;
         private uint[] _structuralIntegrity;
         private uint[] _movement;
         private uint[] _hull;
@@ -86,6 +98,7 @@ namespace ST.Common.UI
                 [SerializeField] private SsdBoxes siBoxes;
                 [SerializeField] private SsdBoxes mvtBoxes;
                 [SerializeField] private SsdBoxes hullBoxes;
+                [SerializeField] private TMP_Text decoysStrengthText;
         #pragma warning restore 649
 
         private void Start()

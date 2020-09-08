@@ -367,7 +367,7 @@ namespace ST
 
             var (mainBearing, _) = target.GetBearingTo(missile.position);
             var wedgeMalus = SsdHelper.HasWedge(target.Ssd, mainBearing) ? 4 : 0;
-            var decoyMalus = target.deployedDecoy ? 2 : 0;
+            var decoyMalus = target.deployedDecoy ? target.Ssd.decoyStrength : 0;
 
             var accuracy = rangeBand.Value.accuracy + activeEcm + wedgeMalus + decoyMalus;
             var diceRolls = Dice.D10s(missile.number);

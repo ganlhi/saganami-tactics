@@ -15,13 +15,15 @@ namespace ST.Scriptable
         public int crewRate;
         public int crewOfficers;
         public int crewEnlisted;
-
+        
         public int crew => crewOfficers + crewEnlisted;
 
         public uint[] movement;
         public uint[] structuralIntegrity;
         public uint[] hull;
 
+        public int decoyStrength;
+        
         public WeaponMount[] weaponMounts;
 
         public SideDefenses[] defenses = new[]

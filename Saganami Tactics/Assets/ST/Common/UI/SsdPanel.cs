@@ -247,6 +247,7 @@ namespace ST.Common.UI
             ssdCore.StructuralIntegrity = _ssd.structuralIntegrity;
             ssdCore.Movement = _ssd.movement;
             ssdCore.Hull = _ssd.hull;
+            ssdCore.DecoysStrength = _ssd.decoyStrength;
         }
 
         private void SetWeapons()
