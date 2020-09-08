@@ -21,3 +21,4 @@ MonoBehaviour:
     accuracy: 1
     damage: 4
     penetration: 1
+  span: 3

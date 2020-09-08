@@ -13,6 +13,7 @@ namespace ST.Scriptable
         public WeaponType type;
         public int evasion;
         public RangeBand[] bands;
+        public int span = 1;
 
         public int GetMaxRange()
         {

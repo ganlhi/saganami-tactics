@@ -24,8 +24,8 @@ MonoBehaviour:
       magentaPlayer: 
     ships:
     - uid: whdgKsbuQUKRyjltPSe-lA
-      name: Havoc
-      ssdName: Havoc
+      name: Brave
+      ssdName: Courageous
       team: 0
       status: 0
       position: {x: 0, y: 0, z: 0}

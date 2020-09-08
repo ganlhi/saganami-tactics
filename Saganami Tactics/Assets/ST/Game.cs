@@ -440,7 +440,7 @@ namespace ST
             {
                 totalRange = Mathf.CeilToInt((float) totalRange / 2f);
             }
-            
+
             var rangeBand = weaponMount.model.GetRangeBand(totalRange);
 
             if (!rangeBand.HasValue)
@@ -527,14 +527,17 @@ namespace ST
 
                     var actualPenetration = Math.Min(penetrationResult, rangeBand.Value.penetration);
                     var damages = rangeBand.Value.damage + actualPenetration;
-                    var location = (uint) Dice.D10();
-
-                    ApplyDamagesToLocation(targetSide, location, damages, target, weaponType, hitNum,
-                        ref reports,
-                        ref alterations,
-                        ref destroyedAmmo);
-
-                    // TODO extra damages to neighbour locations if graser
+                    var location = Dice.D10();
+                    
+                    var firstLocation = location - weapon.span / 2;
+                    for (var loc = firstLocation; loc < firstLocation + weapon.span; loc++)
+                    {
+                        if (loc <= 0 || loc > 10) continue;
+                        ApplyDamagesToLocation(targetSide, (uint) loc, damages, target, weaponType, hitNum,
+                            ref reports,
+                            ref alterations,
+                            ref destroyedAmmo);
+                    }
                 }
             }
         }
