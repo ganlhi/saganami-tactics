@@ -89,7 +89,16 @@ namespace ST.Play.UI
 
         private void AnimateMarker(Side side)
         {
-            var nbLocks = fcon.Locks.Keys.Count(m => m.side == side);
+
+            var nbLocks = 0;
+            foreach (var fconLock in fcon.Locks)
+            {
+                if (fconLock.Key.side == side && fconLock.Value.Target.uid == shipView.ship.uid)
+                {
+                    nbLocks++;
+                }
+            }
+                
             if (nbLocks > 0 && animator.GetCurrentAnimatorStateInfo(0).IsName("Potential"))
             {
                 animator.CrossFade("Actual", 0.1f);
