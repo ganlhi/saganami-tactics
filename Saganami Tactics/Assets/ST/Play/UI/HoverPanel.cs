@@ -48,7 +48,12 @@ namespace ST.Play.UI
 
 #pragma warning disable 649
         [SerializeField] private TextMeshProUGUI objectText;
-        [SerializeField] private TextMeshProUGUI distancesText;
+        [SerializeField] private TextMeshProUGUI curCurText;
+        [SerializeField] private TextMeshProUGUI curFutText;
+        [SerializeField] private TextMeshProUGUI futFutText;
+        [SerializeField] private GameObject curCurObj;
+        [SerializeField] private GameObject curFutObj;
+        [SerializeField] private GameObject futFutObj;
 #pragma warning restore 649
 
         private void Awake()
@@ -65,7 +70,9 @@ namespace ST.Play.UI
         private void UpdateUi()
         {
             SetVisible(_shipView != null || _missileView != null);
-            distancesText.text = "N/A";
+            curCurObj.SetActive(false);
+            curFutObj.SetActive(false);
+            futFutObj.SetActive(false);
 
             if (_shipView != null)
             {
@@ -74,12 +81,21 @@ namespace ST.Play.UI
 
                 if (_selectedShip != null)
                 {
-                    var distToShip = Mathf.CeilToInt(_selectedShip.ship.position.DistanceTo(_shipView.ship.position));
+                    var selectedShipPosition = _selectedShip.transform.position;
+                    var targetShipPosition = _shipView.transform.position;
+                    var selectedShipFuturePosition = _selectedShip.EndMarker.transform.position;
+                    var targetShipFuturePosition = _shipView.EndMarker.transform.position;
+                    
+                    var curCur = Mathf.CeilToInt(selectedShipPosition.DistanceTo(targetShipPosition));
+                    var curFut = Mathf.CeilToInt(selectedShipPosition.DistanceTo(targetShipFuturePosition));
+                    var futFut = Mathf.CeilToInt(selectedShipFuturePosition.DistanceTo(targetShipFuturePosition));
 
-                    var distToMarker = Mathf.CeilToInt(
-                        _selectedShip.ship.position.DistanceTo(_shipView.EndMarker.transform.position));
-
-                    distancesText.text = $"Current: {distToShip} - Future: {distToMarker}";
+                    curCurObj.SetActive(true);
+                    curFutObj.SetActive(true);
+                    futFutObj.SetActive(true);
+                    curCurText.text = curCur.ToString();
+                    curFutText.text = curFut.ToString();
+                    futFutText.text = futFut.ToString();
                 }
             }
 
@@ -99,9 +115,11 @@ namespace ST.Play.UI
 
                     if (_selectedShip != null)
                     {
+                        curCurObj.SetActive(true);
                         var distToMissile = Mathf.CeilToInt(
-                            _selectedShip.ship.position.DistanceTo(_missileView.missile.position));
-                        distancesText.text = $"{distToMissile}";
+                            _selectedShip.transform.position.DistanceTo(_missileView.transform.position));
+                        
+                        curCurText.text = distToMissile.ToString();
                     }
                 }
             }
