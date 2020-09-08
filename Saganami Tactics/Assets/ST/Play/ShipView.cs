@@ -257,7 +257,7 @@ namespace ST.Play
 
             ship.deployedDecoy = true;
             SyncShip(andThen: ShipPostSyncAction.None);
-            
+
             AddAlteration(new SsdAlteration()
             {
                 destroyed = true,
@@ -386,10 +386,15 @@ namespace ST.Play
         private void UpdateMarkerTransform()
         {
             var emTransform = EndMarker.transform;
+            var shipTransform = transform;
+
             emTransform.position = ship.endMarkerPosition;
             emTransform.rotation = ship.endMarkerRotation;
-            EndMarker.gameObject.SetActive(transform.position != ship.endMarkerPosition &&
-                                           ship.Status == ShipStatus.Ok);
+
+            EndMarker.gameObject.SetActive(
+                ship.Status == ShipStatus.Ok &&
+                (shipTransform.position != ship.endMarkerPosition || shipTransform.rotation != ship.endMarkerRotation)
+            );
         }
 
         public void AutoMove()

@@ -246,5 +246,18 @@ namespace ST
         {
             return alterations.Any(a => !a.destroyed && a.type != SsdAlterationType.Movement);
         }
+
+        public List<Side> GetUnprotectedSides()
+        {
+            var allSides = new List<Side>() {Side.Aft, Side.Forward, Side.Port, Side.Starboard};
+
+            var defenses = Ssd.defenses;
+            if (Array.TrueForAll(defenses, defense => defense.sidewall == null || defense.sidewall == Array.Empty<uint>()))
+            {
+                return allSides;
+            }
+
+            return new List<Side>() {Side.Aft, Side.Forward};
+        }
     }
 }

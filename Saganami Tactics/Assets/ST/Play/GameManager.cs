@@ -26,7 +26,7 @@ namespace ST.Play
         private int _expectedMissiles;
 
         private bool _shouldGoToMainMenuOnLeftRoom;
-        
+
         private int _turn;
 
         public int Turn
@@ -855,7 +855,8 @@ namespace ST.Play
 
             Busy = true;
 
-            if (ships.Any(s => s.ship.endMarkerPosition != s.ship.position))
+            if (ships.Any(s =>
+                s.ship.endMarkerPosition != s.ship.position || s.ship.endMarkerRotation != s.ship.rotation))
             {
                 ships.ForEach(shipView => shipView.AutoMove());
 

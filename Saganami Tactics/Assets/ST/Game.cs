@@ -163,6 +163,8 @@ namespace ST
             Vector3 targetPos;
             HitLocationSlotType slotType;
             var isShortRange = false;
+            var canExploitSideWithoutSidewall = false;
+
 
             if (type == WeaponType.Missile)
             {
@@ -190,12 +192,14 @@ namespace ST
             else if (type == WeaponType.Laser)
             {
                 isShortRange = true;
+                canExploitSideWithoutSidewall = true;
                 targetPos = target.position;
                 slotType = HitLocationSlotType.Laser;
             }
             else if (type == WeaponType.Graser)
             {
                 isShortRange = true;
+                canExploitSideWithoutSidewall = true;
                 targetPos = target.position;
                 slotType = HitLocationSlotType.Graser;
             }
@@ -207,6 +211,11 @@ namespace ST
 
             var (mainBearing, _) = attacker.GetBearingTo(targetPos);
             var distance = attacker.position.DistanceTo(targetPos);
+            var (defenseBearing, _) = target.GetBearingTo(attacker.position);
+
+            var distanceToCheck = canExploitSideWithoutSidewall && target.GetUnprotectedSides().Contains(defenseBearing)
+                ? Mathf.CeilToInt((float) distance / 2f)
+                : distance;
 
             if (mainBearing == Side.Bottom || mainBearing == Side.Top) return targetingContexts;
 
@@ -228,11 +237,7 @@ namespace ST
                     if (remainingAmmo <= 0) continue;
                 }
 
-                if (mount.model.GetMaxRange() < distance) continue;
-                if (attacker.name == "HMS Valiant")
-                {
-                    Debug.Log($"{mount.model.type} x{nbWeapons} dist {distance} max range {mount.model.GetMaxRange()}");
-                }
+                if (mount.model.GetMaxRange() < distanceToCheck) continue;
 
                 targetingContexts.Add(new TargetingContext()
                 {
@@ -426,7 +431,16 @@ namespace ST
         {
             var weaponMount = context.Mount;
 
+
+            var (defenseBearing, _) = target.GetBearingTo(attacker.position);
+
             var totalRange = Mathf.CeilToInt(attacker.position.DistanceTo(target.position));
+
+            if (target.GetUnprotectedSides().Contains(defenseBearing))
+            {
+                totalRange = Mathf.CeilToInt((float) totalRange / 2f);
+            }
+            
             var rangeBand = weaponMount.model.GetRangeBand(totalRange);
 
             if (!rangeBand.HasValue)
