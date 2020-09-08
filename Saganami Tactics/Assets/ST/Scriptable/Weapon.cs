@@ -59,7 +59,6 @@ namespace ST.Scriptable
         public int to;
         public int accuracy;
         public int damage;
-        public int penetration;
     }
 
     public enum WeaponType

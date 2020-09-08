@@ -15,6 +15,7 @@ namespace ST.Common.UI
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI typeText;
         [SerializeField] private TextMeshProUGUI evasionText;
+        [SerializeField] private TextMeshProUGUI spanText;
         [SerializeField] private Transform rangeBandsContent;
         [SerializeField] private SsdRangeBand rangeBandPrefab;
 #pragma warning restore 649
@@ -25,6 +26,7 @@ namespace ST.Common.UI
             nameText.text = weapon.name;
             typeText.text = weapon.type == WeaponType.Missile ? "M" : "L";
             evasionText.text = weapon.evasion != 0 ? $"Evasion: {weapon.evasion}+" : "";
+            spanText.text = $"Span: {weapon.span}";
 
             foreach (Transform child in rangeBandsContent)
             {

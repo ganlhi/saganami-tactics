@@ -15,7 +15,6 @@ namespace ST.Common.UI
         [SerializeField] private TextMeshProUGUI rangeText;
         [SerializeField] private TextMeshProUGUI accuracyText;
         [SerializeField] private TextMeshProUGUI damagesText;
-        [SerializeField] private TextMeshProUGUI penetrationText;
 #pragma warning restore 649
 
         private void UpdateUi(RangeBand band)
@@ -23,7 +22,6 @@ namespace ST.Common.UI
             rangeText.text = band.from != band.to ? $"{band.from}-{band.to}" : band.from.ToString();
             accuracyText.text = $"{band.accuracy}+";
             damagesText.text = band.damage.ToString();
-            penetrationText.text = band.penetration.ToString();
         }
     }
 }

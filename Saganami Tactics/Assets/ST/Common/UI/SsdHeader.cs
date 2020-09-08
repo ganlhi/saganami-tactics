@@ -21,6 +21,7 @@ namespace ST.Common.UI
         [SerializeField] private TextMeshProUGUI classNameAndCategoryText;
         [SerializeField] private TextMeshProUGUI factionText;
         [SerializeField] private TextMeshProUGUI costAndCrewText;
+        [SerializeField] private TextMeshProUGUI scaleText;
         [SerializeField] private Image flagImage;
 #pragma warning restore 649
 
@@ -30,6 +31,7 @@ namespace ST.Common.UI
             factionText.text = ssd.faction.Name;
             costAndCrewText.text = $"Cost: {ssd.baseCost}\nCrew: {ssd.crew} ({ssd.crewOfficers}/{ssd.crewEnlisted})";
             flagImage.sprite = ssd.faction.Flag;
+            scaleText.text = $"Scale: {ssd.scale}";
         }
     }
 }

@@ -19,15 +19,13 @@ MonoBehaviour:
   - from: 0
     to: 6
     accuracy: 4
-    damage: 2
-    penetration: 1
+    damage: 3
   - from: 7
     to: 17
     accuracy: 6
-    damage: 2
-    penetration: 1
+    damage: 3
   - from: 18
     to: 26
     accuracy: 9
-    damage: 2
-    penetration: 1
+    damage: 3
+  span: 1

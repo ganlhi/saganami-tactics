@@ -12,15 +12,16 @@ namespace ST.Scriptable
         public ShipCategory category;
         public Faction faction;
         public int baseCost;
+        public int scale;
         public int crewRate;
         public int crewOfficers;
         public int crewEnlisted;
         
         public int crew => crewOfficers + crewEnlisted;
 
-        public uint[] movement;
-        public uint[] structuralIntegrity;
-        public uint[] hull;
+        public int[] movement;
+        public int[] structuralIntegrity;
+        public int[] hull;
 
         public int decoyStrength;
         
@@ -31,35 +32,33 @@ namespace ST.Scriptable
             new SideDefenses()
             {
                 side = Side.Top,
-                armorStrength = 1,
                 wedge = true,
             },
             new SideDefenses()
             {
                 side = Side.Bottom,
-                armorStrength = 1,
                 wedge = true,
             },
             new SideDefenses()
             {
                 side = Side.Aft,
-                armorStrength = 1,
-                sidewall = new uint[1],
+                sidewall = new int[] { 0 },
+                noSidewallModifier = -1,
             },
             new SideDefenses()
             {
                 side = Side.Forward,
-                armorStrength = 1,
+                noSidewallModifier = -1,
             },
             new SideDefenses()
             {
                 side = Side.Port,
-                armorStrength = 1,
+                noSidewallModifier = -3,
             },
             new SideDefenses()
             {
                 side = Side.Starboard,
-                armorStrength = 1,
+                noSidewallModifier = -3,
             },
         };
 
@@ -317,7 +316,7 @@ namespace ST.Scriptable
     {
         public Side side;
         public Weapon model;
-        public uint[] weapons;
+        public int[] weapons;
         public int ammo;
 
         public bool Equals(WeaponMount other)
@@ -344,10 +343,10 @@ namespace ST.Scriptable
     {
         public Side side;
         public bool wedge;
-        public uint[] sidewall;
-        public uint[] counterMissiles;
-        public uint[] pointDefense;
-        public int armorStrength;
+        public int[] sidewall;
+        public int[] counterMissiles;
+        public int[] pointDefense;
+        public int noSidewallModifier;
     }
 
     [Serializable]
@@ -363,7 +362,7 @@ namespace ST.Scriptable
     public struct HitLocationSlot
     {
         public HitLocationSlotType type;
-        public uint[] boxes;
+        public int[] boxes;
     }
 
     public enum HitLocationSlotType
@@ -403,23 +402,23 @@ namespace ST.Scriptable
             }
         }
 
-        public static uint GetUndamagedValue(IEnumerable<uint> boxes, int nbDamaged)
+        public static int GetUndamagedValue(IEnumerable<int> boxes, int nbDamaged, int valueIfNone = 0)
         {
             var undamagedBoxes = boxes.Skip(nbDamaged).ToArray();
 
-            if (undamagedBoxes.Length == 0) return 0;
+            if (undamagedBoxes.Length == 0) return valueIfNone;
 
-            if (undamagedBoxes[0] == 0) return (uint) undamagedBoxes.Length;
+            if (undamagedBoxes[0] == 0) return undamagedBoxes.Length;
 
             return undamagedBoxes[0];
         }
 
-        public static uint GetMaxPivot(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetMaxPivot(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var pivotAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Pivot);
 
-            var boxes = Array.Empty<uint>();
+            var boxes = Array.Empty<int>();
             foreach (var hitLocation in ssd.hitLocations)
             {
                 var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.Pivot).ToList();
@@ -432,12 +431,12 @@ namespace ST.Scriptable
             return GetUndamagedValue(boxes, pivotAlterations);
         }
 
-        public static uint GetMaxRoll(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetMaxRoll(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var rollAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Roll);
 
-            var boxes = Array.Empty<uint>();
+            var boxes = Array.Empty<int>();
             foreach (var hitLocation in ssd.hitLocations)
             {
                 var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.Roll).ToList();
@@ -450,19 +449,19 @@ namespace ST.Scriptable
             return GetUndamagedValue(boxes, rollAlterations);
         }
 
-        public static uint GetMaxThrust(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetMaxThrust(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var mvtAlterations = alterations.Count(a => a.type == SsdAlterationType.Movement);
             var boxes = ssd.movement;
             return GetUndamagedValue(boxes, mvtAlterations);
         }
 
-        public static uint GetECM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetECM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var ecmAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.ECM);
 
-            var boxes = Array.Empty<uint>();
+            var boxes = Array.Empty<int>();
             foreach (var hitLocation in ssd.hitLocations)
             {
                 var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.ECM).ToList();
@@ -475,12 +474,12 @@ namespace ST.Scriptable
             return GetUndamagedValue(boxes, ecmAlterations);
         }
 
-        public static uint GetECCM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetECCM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var eccmAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.ECCM);
 
-            var boxes = Array.Empty<uint>();
+            var boxes = Array.Empty<int>();
             foreach (var hitLocation in ssd.hitLocations)
             {
                 var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.ECCM).ToList();
@@ -504,7 +503,7 @@ namespace ST.Scriptable
             return ssd.defenses.First(d => d.side == side).wedge;
         }
 
-        public static uint GetCM(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
+        public static int GetCM(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
         {
             var defenses = ssd.defenses.First(d => d.side == side);
             var cmAlterations = alterations.Count(a =>
@@ -512,7 +511,7 @@ namespace ST.Scriptable
             return GetUndamagedValue(defenses.counterMissiles, cmAlterations);
         }
 
-        public static uint GetPD(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
+        public static int GetPD(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
         {
             var defenses = ssd.defenses.First(d => d.side == side);
             var pdAlterations = alterations.Count(a =>
@@ -520,26 +519,28 @@ namespace ST.Scriptable
             return GetUndamagedValue(defenses.pointDefense, pdAlterations);
         }
 
-        public static uint GetSidewall(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
+        public static int GetSidewall(Ssd ssd, Side side, IEnumerable<SsdAlteration> alterations)
         {
             var sidewallAlterations = alterations.Count(a => a.type == SsdAlterationType.Sidewall && a.side == side);
-            var boxes = ssd.defenses.First(d => d.side == side).sidewall;
-            return GetUndamagedValue(boxes, sidewallAlterations);
+            var sideDefenses = ssd.defenses.First(d => d.side == side);
+            var boxes = sideDefenses.sidewall;
+            if (boxes == null || boxes.Length == 0) {}
+            return GetUndamagedValue(boxes, sidewallAlterations, (int) sideDefenses.noSidewallModifier);
         }
 
-        public static uint GetRemainingStructuralPoints(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetRemainingStructuralPoints(Ssd ssd, IEnumerable<SsdAlteration> alterations)
         {
             var structuralAlterations = alterations.Count(a => a.type == SsdAlterationType.Structural);
             return GetUndamagedValue(ssd.structuralIntegrity, structuralAlterations);
         }
 
-        public static uint GetDamageControl(Ssd ssd, IEnumerable<SsdAlteration> alterations,
+        public static int GetDamageControl(Ssd ssd, IEnumerable<SsdAlteration> alterations,
             IEnumerable<bool> repairAttempts)
         {
             var dcAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.DamageControl);
 
-            var boxes = Array.Empty<uint>();
+            var boxes = Array.Empty<int>();
             foreach (var hitLocation in ssd.hitLocations)
             {
                 var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.DamageControl).ToList();
@@ -549,7 +550,7 @@ namespace ST.Scriptable
                 }
             }
 
-            return Math.Max(0, GetUndamagedValue(boxes, dcAlterations) - (uint) repairAttempts.Count());
+            return Math.Max(0, GetUndamagedValue(boxes, dcAlterations) - (int) repairAttempts.Count());
         }
 
         public static int GetRemainingAmmo(Ssd ssd, WeaponMount mount, Dictionary<int, int> consumedAmmo)
@@ -566,12 +567,12 @@ namespace ST.Scriptable
             return remainingAmmo;
         }
 
-        public static uint GetRemainingDecoys(Ssd ssd, List<SsdAlteration> alterations)
+        public static int GetRemainingDecoys(Ssd ssd, List<SsdAlteration> alterations)
         {
             var decoysAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Decoy);
 
-            var boxes = Array.Empty<uint>();
+            var boxes = Array.Empty<int>();
             foreach (var hitLocation in ssd.hitLocations)
             {
                 var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.Decoy).ToList();

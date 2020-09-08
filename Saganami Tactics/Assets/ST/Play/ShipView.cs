@@ -263,7 +263,7 @@ namespace ST.Play
                 destroyed = true,
                 type = SsdAlterationType.Slot,
                 slotType = HitLocationSlotType.Decoy,
-                location = 1 + (uint) Array.FindIndex(ship.Ssd.hitLocations,
+                location = 1 + (int) Array.FindIndex(ship.Ssd.hitLocations,
                                loc => loc.slots.Any(slot => slot.type == HitLocationSlotType.Decoy))
             });
         }
@@ -476,7 +476,7 @@ namespace ST.Play
                 ship.alterations.Add(new SsdAlteration()
                 {
                     destroyed = destroyed,
-                    location = (uint) location,
+                    location = (int) location,
                     side = side,
                     type = type,
                     slotType = slotType
@@ -493,7 +493,7 @@ namespace ST.Play
             ship.alterations.Add(new SsdAlteration()
             {
                 destroyed = destroyed,
-                location = (uint) location,
+                location = (int) location,
                 side = side,
                 type = type,
                 slotType = slotType

@@ -14,9 +14,9 @@ namespace ST.Common.UI
             set => nameText.text = value;
         }
 
-        private uint[] _boxes;
+        private int[] _boxes;
 
-        public uint[] Boxes
+        public int[] Boxes
         {
             set
             {

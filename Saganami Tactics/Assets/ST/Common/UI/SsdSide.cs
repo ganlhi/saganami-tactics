@@ -76,8 +76,6 @@ namespace ST.Common.UI
         [SerializeField] private float minHeight = 95f;
         [SerializeField] private float lineHeight = 25f;
         [SerializeField] private TextMeshProUGUI sideText;
-        [SerializeField] private TextMeshProUGUI armorText;
-        [SerializeField] private GameObject armor;
         [SerializeField] private GameObject wedge;
         [SerializeField] private Transform slotsContent;
         [SerializeField] private SsdWeaponMount ssdWeaponMountPrefab;
@@ -89,8 +87,6 @@ namespace ST.Common.UI
 
         private void SetupUi()
         {
-            armor.SetActive(_sideDefenses.armorStrength > 0);
-            armorText.text = _sideDefenses.armorStrength.ToString();
             wedge.SetActive(_sideDefenses.wedge);
 
             foreach (Transform child in slotsContent)

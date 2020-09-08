@@ -10,7 +10,7 @@ namespace ST
         public Side side;
         public SsdAlterationType type;
         public HitLocationSlotType slotType;
-        public uint location;
+        public int location;
     }
 
     public enum SsdAlterationType

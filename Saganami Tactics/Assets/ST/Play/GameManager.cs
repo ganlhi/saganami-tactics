@@ -166,7 +166,7 @@ namespace ST.Play
                     new SsdAlteration()
                     {
                         type = SsdAlterationType.Slot, slotType = HitLocationSlotType.ForwardImpeller,
-                        location = 1 + (uint) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
+                        location = 1 + (int) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
                                        loc => loc.slots.Any(s => s.type == HitLocationSlotType.ForwardImpeller))
                     },
                     new SsdAlteration() {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile},

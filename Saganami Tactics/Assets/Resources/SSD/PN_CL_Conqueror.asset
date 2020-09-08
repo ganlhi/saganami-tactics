@@ -16,6 +16,7 @@ MonoBehaviour:
   category: {fileID: 11400000, guid: ba18da0589dd7d74d893d4d677379d0d, type: 2}
   faction: {fileID: 11400000, guid: 5af68518651b75b428109972f2138be3, type: 2}
   baseCost: 42
+  scale: 4
   crewRate: 5
   crewOfficers: 71
   crewEnlisted: 405
@@ -62,37 +63,37 @@ MonoBehaviour:
     sidewall: 
     counterMissiles: 
     pointDefense: 
-    armorStrength: 1
+    noSidewallModifier: 0
   - side: 5
     wedge: 1
     sidewall: 
     counterMissiles: 
     pointDefense: 
-    armorStrength: 1
+    noSidewallModifier: 0
   - side: 0
     wedge: 0
     sidewall: 00000000
     counterMissiles: 0100000001000000
     pointDefense: 0100000001000000
-    armorStrength: 1
+    noSidewallModifier: -1
   - side: 1
     wedge: 0
     sidewall: 
     counterMissiles: 0100000001000000
     pointDefense: 0100000001000000
-    armorStrength: 1
+    noSidewallModifier: -1
   - side: 2
     wedge: 0
-    sidewall: 0300000002000000
+    sidewall: 030000000200000000000000ffffffff
     counterMissiles: 02000000020000000100000001000000
     pointDefense: 020000000200000001000000
-    armorStrength: 1
+    noSidewallModifier: -3
   - side: 3
     wedge: 0
-    sidewall: 0300000002000000
+    sidewall: 030000000200000000000000ffffffff
     counterMissiles: 02000000020000000100000001000000
     pointDefense: 020000000200000001000000
-    armorStrength: 1
+    noSidewallModifier: -3
   hitLocations:
   - coreArmor: 0
     passThrough: 1

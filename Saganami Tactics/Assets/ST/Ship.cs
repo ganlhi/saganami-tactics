@@ -252,7 +252,7 @@ namespace ST
             var allSides = new List<Side>() {Side.Aft, Side.Forward, Side.Port, Side.Starboard};
 
             var defenses = Ssd.defenses;
-            if (Array.TrueForAll(defenses, defense => defense.sidewall == null || defense.sidewall == Array.Empty<uint>()))
+            if (Array.TrueForAll(defenses, defense => defense.sidewall == null || defense.sidewall == Array.Empty<int>()))
             {
                 return allSides;
             }

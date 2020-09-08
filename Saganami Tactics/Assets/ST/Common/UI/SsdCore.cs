@@ -9,7 +9,7 @@ namespace ST.Common.UI
 {
     public class SsdCore : MonoBehaviour
     {
-        public uint[] StructuralIntegrity
+        public int[] StructuralIntegrity
         {
             set
             {
@@ -18,7 +18,7 @@ namespace ST.Common.UI
             }
         }
 
-        public uint[] Movement
+        public int[] Movement
         {
             set
             {
@@ -27,7 +27,7 @@ namespace ST.Common.UI
             }
         }
 
-        public uint[] Hull
+        public int[] Hull
         {
             set
             {
@@ -87,9 +87,9 @@ namespace ST.Common.UI
 
         private bool _canRepair;
         private int _decoysStrength;
-        private uint[] _structuralIntegrity;
-        private uint[] _movement;
-        private uint[] _hull;
+        private int[] _structuralIntegrity;
+        private int[] _movement;
+        private int[] _hull;
         private List<SsdAlteration> _siAlterations = new List<SsdAlteration>();
         private List<SsdAlteration> _mvtAlterations = new List<SsdAlteration>();
         private List<SsdAlteration> _hullAlterations = new List<SsdAlteration>();

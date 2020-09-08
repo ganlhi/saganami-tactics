@@ -391,7 +391,7 @@ namespace ST
         {
             var (mainBearing, secondaryBearing) = target.GetBearingTo(missile.position);
 
-            uint cm, pd;
+            int cm, pd;
             if (SsdHelper.HasWedge(target.Ssd, mainBearing))
             {
                 cm = 0;
@@ -484,65 +484,7 @@ namespace ST
             return target.position;
         }
 
-        public static void HitTarget(Weapon weapon, Side targetSide, int hits, int range, Ship attacker, Ship target,
-            ref List<Tuple<ReportType, string>> reports,
-            ref List<SsdAlteration> alterations,
-            ref List<Tuple<int, int>> destroyedAmmo)
-        {
-            var weaponType = weapon.type.ToString();
-
-            var rangeBand = weapon.GetRangeBand(range);
-            var sidewallStrength = SsdHelper.GetSidewall(target.Ssd, targetSide, target.alterations);
-
-            var diceRolls = Dice.MultipleTwoD10Minus(hits);
-
-            var hitNum = 0;
-            foreach (var (result, doubleZero) in diceRolls)
-            {
-                hitNum += 1;
-                var penetrationResult = result - (int) sidewallStrength;
-
-                if (penetrationResult <= 0)
-                {
-                    reports.Add(new Tuple<ReportType, string>(ReportType.Info,
-                        $"#{hitNum} {weaponType} from {attacker.name} have been stopped by sidewall"));
-
-                    if (doubleZero)
-                    {
-                        reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                            $"#{hitNum} {weaponType} damaged: {targetSide.ToFriendlyString()} sidewall"));
-
-                        alterations.AddRange(MakeAlterationsForBoxes(
-                            new SsdAlteration() {type = SsdAlterationType.Sidewall, side = targetSide},
-                            1,
-                            target.Ssd.defenses.First(sd => sd.side == targetSide).sidewall,
-                            target.alterations,
-                            alterations
-                        ));
-                    }
-                }
-                else
-                {
-                    if (!rangeBand.HasValue) continue;
-
-                    var actualPenetration = Math.Min(penetrationResult, rangeBand.Value.penetration);
-                    var damages = rangeBand.Value.damage + actualPenetration;
-                    var location = Dice.D10();
-                    
-                    var firstLocation = location - weapon.span / 2;
-                    for (var loc = firstLocation; loc < firstLocation + weapon.span; loc++)
-                    {
-                        if (loc <= 0 || loc > 10) continue;
-                        ApplyDamagesToLocation(targetSide, (uint) loc, damages, target, weaponType, hitNum,
-                            ref reports,
-                            ref alterations,
-                            ref destroyedAmmo);
-                    }
-                }
-            }
-        }
-
-        private static void ApplyDamagesToLocation(Side side, uint location, int damages, Ship target,
+        private static void ApplyDamagesToLocation(Side side, int location, int damages, Ship target,
             string weaponType,
             int hitNum,
             ref List<Tuple<ReportType, string>> reports,
@@ -821,8 +763,67 @@ namespace ST
             }
         }
 
+        public static void HitTarget(Weapon weapon, Side targetSide, int hits, int range, Ship attacker, Ship target,
+            ref List<Tuple<ReportType, string>> reports,
+            ref List<SsdAlteration> alterations,
+            ref List<Tuple<int, int>> destroyedAmmo)
+        {
+            var weaponType = weapon.type.ToString();
+            var sideDefenses = target.Ssd.defenses.First(sd => sd.side == targetSide);
+
+            var rangeBand = weapon.GetRangeBand(range);
+            if (!rangeBand.HasValue) return;
+
+            var sidewallStrength = SsdHelper.GetSidewall(target.Ssd, targetSide, target.alterations);
+
+            var depthMod = rangeBand.Value.damage - target.Ssd.scale - (int) sidewallStrength;
+            var diceRolls = Dice.MultipleTwoD10Minus(hits);
+
+            var hitNum = 0;
+            foreach (var (result, doubleZero) in diceRolls)
+            {
+                hitNum += 1;
+                var penetrationResult = result + depthMod;
+
+                if (doubleZero)
+                {
+                    reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
+                        $"#{hitNum} {weaponType} damaged: {targetSide.ToFriendlyString()} sidewall"));
+
+                    alterations.AddRange(MakeAlterationsForBoxes(
+                        new SsdAlteration() {type = SsdAlterationType.Sidewall, side = targetSide},
+                        1,
+                        sideDefenses.sidewall,
+                        target.alterations,
+                        alterations
+                    ));
+                }
+                
+                if (penetrationResult <= 0)
+                {
+                    reports.Add(new Tuple<ReportType, string>(ReportType.Info,
+                        $"#{hitNum} {weaponType} from {attacker.name} have been stopped by sidewall"));
+                }
+                else
+                {
+                    var damages = Math.Min(rangeBand.Value.damage, penetrationResult);
+                    var location = Dice.D10();
+                    
+                    var firstLocation = location - weapon.span / 2;
+                    for (var loc = firstLocation; loc < firstLocation + weapon.span; loc++)
+                    {
+                        if (loc <= 0 || loc > 10) continue;
+                        ApplyDamagesToLocation(targetSide, (int) loc, damages, target, weaponType, hitNum,
+                            ref reports,
+                            ref alterations,
+                            ref destroyedAmmo);
+                    }
+                }
+            }
+        }
+
         private static List<SsdAlteration> MakeAlterationsForBoxes(SsdAlteration template, int damages,
-            IReadOnlyCollection<uint> boxes,
+            IReadOnlyCollection<int> boxes,
             IEnumerable<SsdAlteration> existingAlterations, IEnumerable<SsdAlteration> pendingAlterations)
         {
             var alterations = new List<SsdAlteration>();
