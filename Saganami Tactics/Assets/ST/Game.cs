@@ -456,7 +456,7 @@ namespace ST
             {
                 // Beams cannot shoot through wedges
                 reports.Add(new Tuple<ReportType, string>(ReportType.BeamsMiss,
-                    $"{weaponMount.model.type.ToString()}s from {attacker.position} have been stopped by wedge"));
+                    $"{weaponMount.model.type.ToString()}s from {attacker.name} have been stopped by wedge"));
 
                 return target.position; // TODO offset to hit wedge
             }

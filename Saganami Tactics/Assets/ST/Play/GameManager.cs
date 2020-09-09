@@ -757,6 +757,14 @@ namespace ST.Play
             {
                 Step = step;
             }
+
+            SetFutureVelocityVectorsVisibility();
+        }
+
+        private void SetFutureVelocityVectorsVisibility()
+        {
+            GetAllShips().ForEach(sv =>
+                sv.GetComponent<ShipFutureVelocityVector>().visible = Step == TurnStep.Plotting);
         }
 
         [PunRPC]
