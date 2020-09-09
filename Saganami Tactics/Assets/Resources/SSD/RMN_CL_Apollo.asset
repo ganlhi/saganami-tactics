@@ -10,89 +10,89 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6747749b3dcb407b932e19c8f79fddac, type: 3}
-  m_Name: RMN_DD_Havoc
+  m_Name: RMN_CL_Apollo
   m_EditorClassIdentifier: 
-  className: Havoc
-  category: {fileID: 11400000, guid: a8e90e0a2e56b5043affb2d3cb169e74, type: 2}
+  className: Apollo
+  category: {fileID: 11400000, guid: ba18da0589dd7d74d893d4d677379d0d, type: 2}
   faction: {fileID: 11400000, guid: 02fe47650704b3041985ca86d9edf3ae, type: 2}
-  baseCost: 35
+  baseCost: 39
   scale: 3
   crewRate: 5
-  crewOfficers: 28
-  crewEnlisted: 253
-  movement: 03000000030000000300000002000000020000000200000002000000010000000100000001000000
-  structuralIntegrity: 00000000000000000000000000000000000000000000000000000000
-  hull: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  crewOfficers: 35
+  crewEnlisted: 315
+  movement: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  structuralIntegrity: 0000000000000000000000000000000000000000000000000000000000000000
+  hull: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   decoyStrength: 2
   weaponMounts:
-  - side: 1
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
-    weapons: 0000000000000000
-    ammo: 24
-  - side: 1
-    model: {fileID: 11400000, guid: 1a1e55ca68176724a87b6dbbe3872fa8, type: 2}
-    weapons: 00000000
-    ammo: 0
   - side: 0
     model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
     weapons: 0000000000000000
-    ammo: 24
+    ammo: 40
+  - side: 1
+    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
+    weapons: 0000000000000000
+    ammo: 40
+  - side: 2
+    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
+    weapons: 0000000000000000000000000000000000000000
+    ammo: 100
+  - side: 3
+    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
+    weapons: 0000000000000000000000000000000000000000
+    ammo: 100
   - side: 0
-    model: {fileID: 11400000, guid: 1a1e55ca68176724a87b6dbbe3872fa8, type: 2}
+    model: {fileID: 11400000, guid: e14941dba2de516459420bcecbfc71db, type: 2}
+    weapons: 00000000
+    ammo: 0
+  - side: 1
+    model: {fileID: 11400000, guid: e14941dba2de516459420bcecbfc71db, type: 2}
     weapons: 00000000
     ammo: 0
   - side: 2
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
-    weapons: 0000000000000000000000000000000000000000
-    ammo: 90
-  - side: 2
-    model: {fileID: 11400000, guid: af0624b41dd3b8845b558c577e7382d5, type: 2}
-    weapons: 000000000000000000000000
+    model: {fileID: 11400000, guid: 1a1e55ca68176724a87b6dbbe3872fa8, type: 2}
+    weapons: 000000000000000000000000000000000000000000000000
     ammo: 0
   - side: 3
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
-    weapons: 0000000000000000000000000000000000000000
-    ammo: 90
-  - side: 3
-    model: {fileID: 11400000, guid: af0624b41dd3b8845b558c577e7382d5, type: 2}
-    weapons: 000000000000000000000000
+    model: {fileID: 11400000, guid: 1a1e55ca68176724a87b6dbbe3872fa8, type: 2}
+    weapons: 000000000000000000000000000000000000000000000000
     ammo: 0
   defenses:
-  - side: 1
-    wedge: 0
-    sidewall: 
-    counterMissiles: 0200000001000000
-    pointDefense: 0100000001000000
-    noSidewallModifier: -1
-  - side: 0
-    wedge: 0
-    sidewall: 00000000
-    counterMissiles: 0200000001000000
-    pointDefense: 0100000001000000
-    noSidewallModifier: -1
-  - side: 2
-    wedge: 0
-    sidewall: 0300000001000000ffffffff
-    counterMissiles: 020000000200000001000000
-    pointDefense: 020000000100000001000000
-    noSidewallModifier: -3
-  - side: 3
-    wedge: 0
-    sidewall: 0300000001000000ffffffff
-    counterMissiles: 020000000200000001000000
-    pointDefense: 020000000100000001000000
-    noSidewallModifier: -3
   - side: 4
     wedge: 1
     sidewall: 
     counterMissiles: 
     pointDefense: 
-    noSidewallModifier: -3
+    noSidewallModifier: 0
   - side: 5
     wedge: 1
     sidewall: 
     counterMissiles: 
     pointDefense: 
+    noSidewallModifier: 0
+  - side: 0
+    wedge: 0
+    sidewall: 00000000
+    counterMissiles: 030000000200000001000000
+    pointDefense: 020000000100000001000000
+    noSidewallModifier: -1
+  - side: 1
+    wedge: 0
+    sidewall: 
+    counterMissiles: 030000000200000001000000
+    pointDefense: 020000000100000001000000
+    noSidewallModifier: -1
+  - side: 2
+    wedge: 0
+    sidewall: 0300000001000000ffffffff
+    counterMissiles: 03000000020000000200000001000000
+    pointDefense: 03000000020000000100000001000000
+    noSidewallModifier: -3
+  - side: 3
+    wedge: 0
+    sidewall: 0300000001000000ffffffff
+    counterMissiles: 03000000020000000200000001000000
+    pointDefense: 03000000020000000100000001000000
     noSidewallModifier: -3
   hitLocations:
   - coreArmor: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 7
-      boxes: 000000000000000000000000000000000000000000000000
+      boxes: 0000000000000000000000000000000000000000000000000000000000000000
     - type: 6
       boxes: 
   - coreArmor: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
     structural: 0
     slots:
     - type: 10
-      boxes: 01000000
+      boxes: 02000000
     - type: 1
       boxes: 
     - type: 6
@@ -154,7 +154,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 12
-      boxes: 0000000000000000
+      boxes: 
   - coreArmor: 1
     passThrough: 0
     structural: 1
@@ -162,7 +162,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 11
-      boxes: 01000000
+      boxes: 02000000
     - type: 13
       boxes: 060000000400000002000000
     - type: 6
@@ -210,17 +210,28 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 15
-      boxes: 0000000000000000
+      boxes: 000000000000000000000000
     - type: 1
       boxes: 
     - type: 6
       boxes: 
   sampleNames:
-  - HMS Chaos
-  - HMS Devastation
-  - HMS Harrow
-  - HMS Havoc
-  - HMS Hotspur
-  - HMS Turbulent
-  - HMS Vengeance
-  - HMS Wrack
+  - HMS Adonai
+  - HMS Agni
+  - HMS Amaterasu
+  - HMS Anubis
+  - HMS Aphrodite
+  - HMS Apollo
+  - HMS Ares
+  - HMS Arethusa
+  - HMS Artemis
+  - HMS Athena
+  - HMS Chiron
+  - HMS Hera
+  - HMS Hermes
+  - HMS Iris
+  - HMS Leto
+  - HMS Perseus
+  - HMS Poseidon
+  - HMS Thetis
+  - HMS Xanthus

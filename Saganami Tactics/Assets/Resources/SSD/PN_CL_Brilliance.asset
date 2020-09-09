@@ -10,89 +10,89 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6747749b3dcb407b932e19c8f79fddac, type: 3}
-  m_Name: RMN_DD_Havoc
+  m_Name: PN_CL_Brilliance
   m_EditorClassIdentifier: 
-  className: Havoc
-  category: {fileID: 11400000, guid: a8e90e0a2e56b5043affb2d3cb169e74, type: 2}
-  faction: {fileID: 11400000, guid: 02fe47650704b3041985ca86d9edf3ae, type: 2}
+  className: Brilliance
+  category: {fileID: 11400000, guid: ba18da0589dd7d74d893d4d677379d0d, type: 2}
+  faction: {fileID: 11400000, guid: 5af68518651b75b428109972f2138be3, type: 2}
   baseCost: 35
-  scale: 3
+  scale: 4
   crewRate: 5
-  crewOfficers: 28
-  crewEnlisted: 253
+  crewOfficers: 68
+  crewEnlisted: 383
   movement: 03000000030000000300000002000000020000000200000002000000010000000100000001000000
-  structuralIntegrity: 00000000000000000000000000000000000000000000000000000000
-  hull: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
-  decoyStrength: 2
+  structuralIntegrity: 0000000000000000000000000000000000000000000000000000000000000000
+  hull: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  decoyStrength: 1
   weaponMounts:
-  - side: 1
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
+  - side: 0
+    model: {fileID: 11400000, guid: ba81b0b8a96e6654ab67cc91aa8e9cbf, type: 2}
     weapons: 0000000000000000
-    ammo: 24
+    ammo: 26
   - side: 1
-    model: {fileID: 11400000, guid: 1a1e55ca68176724a87b6dbbe3872fa8, type: 2}
-    weapons: 00000000
+    model: {fileID: 11400000, guid: ba81b0b8a96e6654ab67cc91aa8e9cbf, type: 2}
+    weapons: 0000000000000000
+    ammo: 26
+  - side: 2
+    model: {fileID: 11400000, guid: ba81b0b8a96e6654ab67cc91aa8e9cbf, type: 2}
+    weapons: 00000000000000000000000000000000
+    ammo: 52
+  - side: 3
+    model: {fileID: 11400000, guid: ba81b0b8a96e6654ab67cc91aa8e9cbf, type: 2}
+    weapons: 00000000000000000000000000000000
+    ammo: 52
+  - side: 0
+    model: {fileID: 11400000, guid: 4f999f39771a7cb448b169f4a67e7a58, type: 2}
+    weapons: 0000000000000000
     ammo: 0
-  - side: 0
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
+  - side: 1
+    model: {fileID: 11400000, guid: 4f999f39771a7cb448b169f4a67e7a58, type: 2}
     weapons: 0000000000000000
-    ammo: 24
-  - side: 0
-    model: {fileID: 11400000, guid: 1a1e55ca68176724a87b6dbbe3872fa8, type: 2}
-    weapons: 00000000
     ammo: 0
   - side: 2
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
-    weapons: 0000000000000000000000000000000000000000
-    ammo: 90
-  - side: 2
-    model: {fileID: 11400000, guid: af0624b41dd3b8845b558c577e7382d5, type: 2}
-    weapons: 000000000000000000000000
+    model: {fileID: 11400000, guid: 678227cd83719a146958a9d211ce7185, type: 2}
+    weapons: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
     ammo: 0
   - side: 3
-    model: {fileID: 11400000, guid: b829a74cc4341b64f9593f12478cef00, type: 2}
-    weapons: 0000000000000000000000000000000000000000
-    ammo: 90
-  - side: 3
-    model: {fileID: 11400000, guid: af0624b41dd3b8845b558c577e7382d5, type: 2}
-    weapons: 000000000000000000000000
+    model: {fileID: 11400000, guid: 678227cd83719a146958a9d211ce7185, type: 2}
+    weapons: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
     ammo: 0
   defenses:
-  - side: 1
-    wedge: 0
-    sidewall: 
-    counterMissiles: 0200000001000000
-    pointDefense: 0100000001000000
-    noSidewallModifier: -1
-  - side: 0
-    wedge: 0
-    sidewall: 00000000
-    counterMissiles: 0200000001000000
-    pointDefense: 0100000001000000
-    noSidewallModifier: -1
-  - side: 2
-    wedge: 0
-    sidewall: 0300000001000000ffffffff
-    counterMissiles: 020000000200000001000000
-    pointDefense: 020000000100000001000000
-    noSidewallModifier: -3
-  - side: 3
-    wedge: 0
-    sidewall: 0300000001000000ffffffff
-    counterMissiles: 020000000200000001000000
-    pointDefense: 020000000100000001000000
-    noSidewallModifier: -3
   - side: 4
     wedge: 1
     sidewall: 
     counterMissiles: 
     pointDefense: 
-    noSidewallModifier: -3
+    noSidewallModifier: 0
   - side: 5
     wedge: 1
     sidewall: 
     counterMissiles: 
     pointDefense: 
+    noSidewallModifier: 0
+  - side: 0
+    wedge: 0
+    sidewall: 00000000
+    counterMissiles: 0100000001000000
+    pointDefense: 0100000001000000
+    noSidewallModifier: -1
+  - side: 1
+    wedge: 0
+    sidewall: 
+    counterMissiles: 0100000001000000
+    pointDefense: 0100000001000000
+    noSidewallModifier: -1
+  - side: 2
+    wedge: 0
+    sidewall: 0200000001000000ffffffff
+    counterMissiles: 02000000020000000100000001000000
+    pointDefense: 0200000001000000
+    noSidewallModifier: -3
+  - side: 3
+    wedge: 0
+    sidewall: 0200000001000000ffffffff
+    counterMissiles: 02000000020000000100000001000000
+    pointDefense: 0200000001000000
     noSidewallModifier: -3
   hitLocations:
   - coreArmor: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 7
-      boxes: 000000000000000000000000000000000000000000000000
+      boxes: 0000000000000000000000000000000000000000000000000000000000000000
     - type: 6
       boxes: 
   - coreArmor: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 14
-      boxes: 060000000400000002000000
+      boxes: 050000000400000002000000
     - type: 6
       boxes: 
     - type: 12
@@ -164,7 +164,7 @@ MonoBehaviour:
     - type: 11
       boxes: 01000000
     - type: 13
-      boxes: 060000000400000002000000
+      boxes: 050000000400000002000000
     - type: 6
       boxes: 
   - coreArmor: 0
@@ -210,17 +210,14 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 15
-      boxes: 0000000000000000
+      boxes: 000000000000000000000000
     - type: 1
       boxes: 
     - type: 6
       boxes: 
   sampleNames:
-  - HMS Chaos
-  - HMS Devastation
-  - HMS Harrow
-  - HMS Havoc
-  - HMS Hotspur
-  - HMS Turbulent
-  - HMS Vengeance
-  - HMS Wrack
+  - PNS Brilliance
+  - PNS Glimmer
+  - PNS Radiance
+  - PNS Solar Flare
+  - PNS Sunspot

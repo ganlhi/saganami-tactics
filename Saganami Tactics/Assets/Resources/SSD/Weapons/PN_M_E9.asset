@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7d20f849896410b961c7831045b0ba8, type: 3}
-  m_Name: RMN_M_Mk34
+  m_Name: PN_M_E9
   m_EditorClassIdentifier: 
-  name: Mk34 Anti Ship Missile
+  name: E9 Anti Ship Missile
   type: 0
-  evasion: 6
+  evasion: 7
   bands:
   - from: 0
     to: 6
-    accuracy: 3
-    damage: 4
-  - from: 7
-    to: 18
     accuracy: 5
     damage: 4
-  - from: 19
-    to: 28
-    accuracy: 8
+  - from: 7
+    to: 17
+    accuracy: 7
+    damage: 4
+  - from: 18
+    to: 26
+    accuracy: 10
     damage: 4
   span: 1

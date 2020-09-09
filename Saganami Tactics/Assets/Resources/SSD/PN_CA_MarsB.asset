@@ -1,0 +1,220 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6747749b3dcb407b932e19c8f79fddac, type: 3}
+  m_Name: PN_CA_MarsB
+  m_EditorClassIdentifier: 
+  className: Mars-B
+  category: {fileID: 11400000, guid: 5f38bf43479456f4b93d000e46f5e8d8, type: 2}
+  faction: {fileID: 11400000, guid: 5af68518651b75b428109972f2138be3, type: 2}
+  baseCost: 119
+  scale: 6
+  crewRate: 5
+  crewOfficers: 135
+  crewEnlisted: 762
+  movement: 0300000003000000030000000300000002000000020000000200000002000000020000000200000001000000010000000100000001000000
+  structuralIntegrity: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  hull: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  decoyStrength: 2
+  weaponMounts:
+  - side: 0
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 39
+  - side: 1
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 39
+  - side: 2
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
+    weapons: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    ammo: 143
+  - side: 3
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
+    weapons: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    ammo: 143
+  - side: 0
+    model: {fileID: 11400000, guid: 55642cdb2b94711459b2f0616ee1d4fb, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 0
+  - side: 1
+    model: {fileID: 11400000, guid: 55642cdb2b94711459b2f0616ee1d4fb, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 0
+  - side: 2
+    model: {fileID: 11400000, guid: 831b3e30c00448048a7cfc94d37d9169, type: 2}
+    weapons: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    ammo: 0
+  - side: 3
+    model: {fileID: 11400000, guid: 831b3e30c00448048a7cfc94d37d9169, type: 2}
+    weapons: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    ammo: 0
+  defenses:
+  - side: 4
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    noSidewallModifier: 0
+  - side: 5
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    noSidewallModifier: 0
+  - side: 0
+    wedge: 0
+    sidewall: 00000000
+    counterMissiles: 03000000020000000100000001000000
+    pointDefense: 030000000300000003000000020000000100000001000000
+    noSidewallModifier: -1
+  - side: 1
+    wedge: 0
+    sidewall: 
+    counterMissiles: 03000000020000000100000001000000
+    pointDefense: 030000000300000003000000020000000100000001000000
+    noSidewallModifier: -1
+  - side: 2
+    wedge: 0
+    sidewall: 03000000020000000100000000000000fffffffffeffffff
+    counterMissiles: 040000000400000004000000040000000300000003000000030000000200000002000000020000000100000001000000
+    pointDefense: 05000000040000000400000004000000030000000300000002000000020000000100000001000000
+    noSidewallModifier: -3
+  hitLocations:
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 7
+      boxes: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 5
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 8
+      boxes: 00000000000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 10
+      boxes: 0100000001000000
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 14
+      boxes: 0400000003000000030000000200000001000000
+    - type: 6
+      boxes: 
+    - type: 12
+      boxes: 0000000000000000
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 11
+      boxes: 0100000001000000
+    - type: 13
+      boxes: 0400000003000000030000000200000001000000
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 9
+      boxes: 00000000000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 4
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 0
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 15
+      boxes: 000000000000000000000000000000000000000000000000
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+  sampleNames:
+  - PNS Anhur
+  - PNS Ares
+  - PNS De Conde
+  - PNS Hachiman
+  - PNS Huan-Ti
+  - PNS Ishtar
+  - PNS Rienzi
+  - PNS Tanit

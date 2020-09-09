@@ -63,25 +63,25 @@ MonoBehaviour:
     sidewall: 
     counterMissiles: 0100000001000000
     pointDefense: 0100000001000000
-    noSidewallModifier: 0
+    noSidewallModifier: -1
   - side: 0
     wedge: 0
-    sidewall: ffffffff
+    sidewall: 00000000
     counterMissiles: 0100000001000000
     pointDefense: 0100000001000000
-    noSidewallModifier: 0
+    noSidewallModifier: -1
   - side: 2
     wedge: 0
     sidewall: 0300000001000000ffffffff
     counterMissiles: 0100000001000000
     pointDefense: 0100000001000000
-    noSidewallModifier: -1
+    noSidewallModifier: -3
   - side: 3
     wedge: 0
     sidewall: 0300000001000000ffffffff
     counterMissiles: 0100000001000000
     pointDefense: 0100000001000000
-    noSidewallModifier: -1
+    noSidewallModifier: -3
   - side: 4
     wedge: 1
     sidewall: 
@@ -93,7 +93,7 @@ MonoBehaviour:
     sidewall: 
     counterMissiles: 
     pointDefense: 
-    noSidewallModifier: -3
+    noSidewallModifier: 0
   hitLocations:
   - coreArmor: 0
     passThrough: 1

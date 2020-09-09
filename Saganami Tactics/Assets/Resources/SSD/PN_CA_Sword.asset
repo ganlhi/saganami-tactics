@@ -10,60 +10,52 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6747749b3dcb407b932e19c8f79fddac, type: 3}
-  m_Name: RMN_CL_Courageous
+  m_Name: PN_CA_Sword
   m_EditorClassIdentifier: 
-  className: Courageous
-  category: {fileID: 11400000, guid: ba18da0589dd7d74d893d4d677379d0d, type: 2}
-  faction: {fileID: 11400000, guid: 02fe47650704b3041985ca86d9edf3ae, type: 2}
-  baseCost: 35
-  scale: 3
+  className: Sword
+  category: {fileID: 11400000, guid: 5f38bf43479456f4b93d000e46f5e8d8, type: 2}
+  faction: {fileID: 11400000, guid: 5af68518651b75b428109972f2138be3, type: 2}
+  baseCost: 91
+  scale: 5
   crewRate: 5
-  crewOfficers: 20
-  crewEnlisted: 180
-  movement: 03000000030000000300000002000000020000000200000002000000010000000100000001000000
-  structuralIntegrity: 00000000000000000000000000000000000000000000000000000000
-  hull: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  crewOfficers: 115
+  crewEnlisted: 653
+  movement: 030000000300000003000000020000000200000002000000020000000200000002000000010000000100000001000000
+  structuralIntegrity: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  hull: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   decoyStrength: 2
   weaponMounts:
   - side: 0
-    model: {fileID: 11400000, guid: abe875ee40d686e43949f61dd9663b53, type: 2}
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
     weapons: 0000000000000000
-    ammo: 40
+    ammo: 36
   - side: 1
-    model: {fileID: 11400000, guid: abe875ee40d686e43949f61dd9663b53, type: 2}
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
     weapons: 0000000000000000
-    ammo: 40
+    ammo: 36
   - side: 2
-    model: {fileID: 11400000, guid: abe875ee40d686e43949f61dd9663b53, type: 2}
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
     weapons: 00000000000000000000000000000000000000000000000000000000
-    ammo: 140
+    ammo: 126
   - side: 3
-    model: {fileID: 11400000, guid: abe875ee40d686e43949f61dd9663b53, type: 2}
+    model: {fileID: 11400000, guid: 6d15099c3f3abf64f977ddfe802ec6f4, type: 2}
     weapons: 00000000000000000000000000000000000000000000000000000000
-    ammo: 140
+    ammo: 126
   - side: 0
-    model: {fileID: 11400000, guid: 1a262f4e2339418469f8449bc50fb2ca, type: 2}
+    model: {fileID: 11400000, guid: 8e7c6955ee1f80241b4c1fc7a13116a2, type: 2}
     weapons: 00000000
     ammo: 0
   - side: 1
-    model: {fileID: 11400000, guid: 1a262f4e2339418469f8449bc50fb2ca, type: 2}
+    model: {fileID: 11400000, guid: 8e7c6955ee1f80241b4c1fc7a13116a2, type: 2}
     weapons: 00000000
     ammo: 0
   - side: 2
-    model: {fileID: 11400000, guid: 805f1b1469412794f82f64e8ce7c1310, type: 2}
-    weapons: 0000000000000000
+    model: {fileID: 11400000, guid: 0e51e63e315eb464db56a4fc2775d1d1, type: 2}
+    weapons: 0000000000000000000000000000000000000000
     ammo: 0
   - side: 3
-    model: {fileID: 11400000, guid: 805f1b1469412794f82f64e8ce7c1310, type: 2}
-    weapons: 0000000000000000
-    ammo: 0
-  - side: 2
-    model: {fileID: 11400000, guid: 7ebd330c8110c7943aaf099c43d592ad, type: 2}
-    weapons: 0000000000000000
-    ammo: 0
-  - side: 3
-    model: {fileID: 11400000, guid: 7ebd330c8110c7943aaf099c43d592ad, type: 2}
-    weapons: 0000000000000000
+    model: {fileID: 11400000, guid: 0e51e63e315eb464db56a4fc2775d1d1, type: 2}
+    weapons: 0000000000000000000000000000000000000000
     ammo: 0
   defenses:
   - side: 4
@@ -81,26 +73,26 @@ MonoBehaviour:
   - side: 0
     wedge: 0
     sidewall: 00000000
-    counterMissiles: 0200000001000000
-    pointDefense: 0100000001000000
+    counterMissiles: 020000000100000001000000
+    pointDefense: 020000000100000001000000
     noSidewallModifier: -1
   - side: 1
     wedge: 0
-    sidewall: 01000000
-    counterMissiles: 0200000001000000
-    pointDefense: 0100000001000000
+    sidewall: 
+    counterMissiles: 020000000100000001000000
+    pointDefense: 020000000100000001000000
     noSidewallModifier: -1
   - side: 2
     wedge: 0
-    sidewall: 0300000001000000ffffffff
-    counterMissiles: 020000000200000001000000
-    pointDefense: 020000000100000001000000
+    sidewall: 030000000200000001000000fffffffffeffffff
+    counterMissiles: 030000000200000002000000020000000100000001000000
+    pointDefense: 0400000003000000030000000300000002000000020000000100000001000000
     noSidewallModifier: -3
   - side: 3
     wedge: 0
-    sidewall: 0300000001000000ffffffff
-    counterMissiles: 020000000200000001000000
-    pointDefense: 020000000100000001000000
+    sidewall: 030000000200000001000000fffffffffeffffff
+    counterMissiles: 030000000200000002000000020000000100000001000000
+    pointDefense: 0400000003000000030000000300000002000000020000000100000001000000
     noSidewallModifier: -3
   hitLocations:
   - coreArmor: 0
@@ -112,7 +104,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 7
-      boxes: 000000000000000000000000000000000000000000000000
+      boxes: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
     - type: 6
       boxes: 
   - coreArmor: 0
@@ -134,8 +126,8 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 8
-      boxes: 0000000000000000000000000000000000000000
-    - type: 3
+      boxes: 000000000000000000000000000000000000000000000000
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -158,7 +150,7 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 14
-      boxes: 060000000400000002000000
+      boxes: 04000000030000000200000001000000
     - type: 6
       boxes: 
     - type: 12
@@ -172,7 +164,7 @@ MonoBehaviour:
     - type: 11
       boxes: 01000000
     - type: 13
-      boxes: 060000000400000002000000
+      boxes: 04000000030000000200000001000000
     - type: 6
       boxes: 
   - coreArmor: 0
@@ -194,8 +186,8 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 9
-      boxes: 0000000000000000000000000000000000000000
-    - type: 3
+      boxes: 000000000000000000000000000000000000000000000000
+    - type: 6
       boxes: 
     - type: 6
       boxes: 
@@ -218,16 +210,32 @@ MonoBehaviour:
     - type: 6
       boxes: 
     - type: 15
-      boxes: 000000000000000000000000
+      boxes: 0000000000000000000000000000000000000000
     - type: 1
       boxes: 
     - type: 6
       boxes: 
   sampleNames:
-  - HMS Audacious
-  - HMS Courageous
-  - HMS Fearless
-  - HMS Intransigent
-  - HMS Intrepid
-  - HMS Resolute
-  - HMS Valiant
+  - PNS Claymore
+  - PNS Cutlass
+  - PNS Dirk
+  - PNS Drusus
+  - PNS Durandal
+  - PNS Epee
+  - PNS Estoc
+  - PNS Excalibur
+  - PNS Falchion
+  - PNS Flamberge
+  - PNS Foil
+  - PNS Gladius
+  - PNS Jian
+  - PNS Katana
+  - PNS Khopesh
+  - PNS Poignard
+  - PNS Raiden
+  - PNS Rapier
+  - PNS Sabre
+  - PNS Scimitar
+  - PNS Shamshir
+  - PNS Sword
+  - PNS Wakizashi

@@ -1,0 +1,246 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6747749b3dcb407b932e19c8f79fddac, type: 3}
+  m_Name: RMN_CA_StarKnight
+  m_EditorClassIdentifier: 
+  className: Star Knight
+  category: {fileID: 11400000, guid: 5f38bf43479456f4b93d000e46f5e8d8, type: 2}
+  faction: {fileID: 11400000, guid: 02fe47650704b3041985ca86d9edf3ae, type: 2}
+  baseCost: 1
+  scale: 5
+  crewRate: 5
+  crewOfficers: 47
+  crewEnlisted: 424
+  movement: 030000000300000003000000020000000200000002000000020000000200000002000000010000000100000001000000
+  structuralIntegrity: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  hull: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  decoyStrength: 3
+  weaponMounts:
+  - side: 0
+    model: {fileID: 11400000, guid: 142e306939a957c4593103253e889527, type: 2}
+    weapons: 0000000000000000
+    ammo: 40
+  - side: 1
+    model: {fileID: 11400000, guid: 142e306939a957c4593103253e889527, type: 2}
+    weapons: 0000000000000000
+    ammo: 40
+  - side: 2
+    model: {fileID: 11400000, guid: 142e306939a957c4593103253e889527, type: 2}
+    weapons: 0000000000000000000000000000000000000000000000000000000000000000
+    ammo: 160
+  - side: 3
+    model: {fileID: 11400000, guid: 142e306939a957c4593103253e889527, type: 2}
+    weapons: 0000000000000000000000000000000000000000000000000000000000000000
+    ammo: 160
+  - side: 0
+    model: {fileID: 11400000, guid: 92bd8a5f2fabde4408df5948b3a553a1, type: 2}
+    weapons: 00000000
+    ammo: 0
+  - side: 1
+    model: {fileID: 11400000, guid: 92bd8a5f2fabde4408df5948b3a553a1, type: 2}
+    weapons: 00000000
+    ammo: 0
+  - side: 2
+    model: {fileID: 11400000, guid: 5f3d3fb9fc8fd6d45b373ce33465efcd, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 0
+  - side: 3
+    model: {fileID: 11400000, guid: 5f3d3fb9fc8fd6d45b373ce33465efcd, type: 2}
+    weapons: 000000000000000000000000
+    ammo: 0
+  - side: 2
+    model: {fileID: 11400000, guid: 194bebda5afde6f40897089825a594b0, type: 2}
+    weapons: 0000000000000000
+    ammo: 0
+  - side: 3
+    model: {fileID: 11400000, guid: 194bebda5afde6f40897089825a594b0, type: 2}
+    weapons: 0000000000000000
+    ammo: 0
+  defenses:
+  - side: 4
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    noSidewallModifier: 0
+  - side: 5
+    wedge: 1
+    sidewall: 
+    counterMissiles: 
+    pointDefense: 
+    noSidewallModifier: 0
+  - side: 0
+    wedge: 0
+    sidewall: 00000000
+    counterMissiles: 0400000003000000030000000200000001000000
+    pointDefense: 0300000003000000020000000100000001000000
+    noSidewallModifier: -1
+  - side: 1
+    wedge: 0
+    sidewall: 
+    counterMissiles: 0400000003000000030000000200000001000000
+    pointDefense: 0300000003000000020000000100000001000000
+    noSidewallModifier: -1
+  - side: 2
+    wedge: 0
+    sidewall: 04000000030000000100000000000000feffffff
+    counterMissiles: 0500000004000000040000000300000003000000020000000200000001000000
+    pointDefense: 0400000003000000030000000300000002000000020000000100000001000000
+    noSidewallModifier: -3
+  - side: 3
+    wedge: 0
+    sidewall: 04000000030000000100000000000000feffffff
+    counterMissiles: 0500000004000000040000000300000003000000020000000200000001000000
+    pointDefense: 0400000003000000030000000300000002000000020000000100000001000000
+    noSidewallModifier: -3
+  hitLocations:
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 7
+      boxes: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 5
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 8
+      boxes: 000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 10
+      boxes: 0300000002000000
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 14
+      boxes: 05000000040000000300000002000000
+    - type: 6
+      boxes: 
+    - type: 12
+      boxes: 0000000000000000
+  - coreArmor: 1
+    passThrough: 0
+    structural: 1
+    slots:
+    - type: 6
+      boxes: 
+    - type: 11
+      boxes: 0300000002000000
+    - type: 13
+      boxes: 05000000040000000300000002000000
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 2
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 9
+      boxes: 000000000000000000000000000000000000000000000000
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 1
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 4
+      boxes: 
+    - type: 6
+      boxes: 
+    - type: 6
+      boxes: 
+  - coreArmor: 0
+    passThrough: 0
+    structural: 0
+    slots:
+    - type: 6
+      boxes: 
+    - type: 15
+      boxes: 0000000000000000000000000000000000000000
+    - type: 1
+      boxes: 
+    - type: 6
+      boxes: 
+  sampleNames:
+  - HMS Achemist
+  - HMS Cantrip
+  - HMS Circe
+  - HMS Conjurer
+  - HMS Druidess
+  - HMS Enchanter
+  - HMS Magician
+  - HMS Magus
+  - HMS Merlin
+  - HMS Necromancer
+  - HMS Oracle
+  - HMS Runebearer
+  - HMS Santander
+  - HMS Seeress
+  - HMS Shaman
+  - HMS Sorcerer
+  - HMS Star Knight
+  - HMS Star Ranger
+  - HMS Thaumaturge
+  - HMS Warlock

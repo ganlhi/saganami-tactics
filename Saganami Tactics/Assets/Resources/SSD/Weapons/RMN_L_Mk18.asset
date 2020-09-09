@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7d20f849896410b961c7831045b0ba8, type: 3}
-  m_Name: RMN_M_Mk34
+  m_Name: RMN_L_Mk18
   m_EditorClassIdentifier: 
-  name: Mk34 Anti Ship Missile
-  type: 0
-  evasion: 6
+  name: Mk18 96 cm Laser
+  type: 1
+  evasion: 0
   bands:
   - from: 0
-    to: 6
+    to: 1
+    accuracy: 1
+    damage: 9
+  - from: 2
+    to: 2
+    accuracy: 2
+    damage: 6
+  - from: 3
+    to: 3
     accuracy: 3
-    damage: 4
-  - from: 7
-    to: 18
-    accuracy: 5
-    damage: 4
-  - from: 19
-    to: 28
-    accuracy: 8
     damage: 4
   span: 1
