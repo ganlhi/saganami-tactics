@@ -175,15 +175,6 @@ namespace ST
                 }
                 else
                 {
-                    if (attacker.position.DistanceTo(target.endMarkerPosition) <=
-                        GameSettings.Default.MissileShortRange)
-                    {
-                        // Special case: current position of target is too far for short range attack
-                        // but future position of target is too close to a long range attack. 
-                        // This means the target can be attacked at short range next turn.
-                        return targetingContexts;
-                    }
-
                     targetPos = target.endMarkerPosition;
                 }
 
