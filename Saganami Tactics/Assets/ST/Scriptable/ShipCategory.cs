@@ -7,5 +7,6 @@ namespace ST.Scriptable
     {
         public string Name;
         public string Code;
+        public int DisplayOrder;
     }
 }

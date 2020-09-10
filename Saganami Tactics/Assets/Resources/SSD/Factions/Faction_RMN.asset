@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Royal Manticoran Navy
   Flag: {fileID: 21300000, guid: 17e51a908a2617e4ba089252b084ef22, type: 3}
+  DisplayOrder: 1

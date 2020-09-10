@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Armed Merchant Cruiser
   Code: AMC
+  DisplayOrder: 5

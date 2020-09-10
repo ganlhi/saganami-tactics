@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: People's Navy
   Flag: {fileID: 21300000, guid: 8ed9417a09ef9c545b2312a0433a87f5, type: 3}
+  DisplayOrder: 2

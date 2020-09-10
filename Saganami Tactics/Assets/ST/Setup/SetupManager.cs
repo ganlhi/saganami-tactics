@@ -60,8 +60,8 @@ namespace ST.Setup
         private void Start()
         {
             _ssds = SsdHelper.AvailableSsds.Values.ToList();
-            _categories = _ssds.Select(s => s.category).Distinct().ToList();
-            _factions = _ssds.Select(s => s.faction).Distinct().ToList();
+            _categories = SsdHelper.AvailableCategories;
+            _factions = SsdHelper.AvailableFactions;
 
             _factionChanged.AddListener(OnFactionChanged);
             _categoryChanged.AddListener(OnCategoryChanged);
@@ -96,7 +96,7 @@ namespace ST.Setup
         private void Init()
         {
             PhotonNetwork.AutomaticallySyncScene = true;
-            
+
             exitButton.onClick.AddListener(() =>
             {
                 PhotonNetwork.LeaveRoom();
@@ -146,7 +146,7 @@ namespace ST.Setup
                 _factions.First(f => f.Name == factionSelector.itemList[factionSelector.index].itemTitle);
 
             var ssdsInFaction = _ssds.Where(s => s.faction == selectedFaction);
-            var availableCategories = ssdsInFaction.Select(s => s.category);
+            var availableCategories = _categories.Where(cat => ssdsInFaction.Any(ssd => ssd.category == cat));
 
             categorySelector.itemList = availableCategories.Select(c => new HorizontalSelector.Item
             {
@@ -168,7 +168,9 @@ namespace ST.Setup
                 _categories.First(c => c.Name == categorySelector.itemList[categorySelector.index].itemTitle);
 
             var ssdsInFactionAndCategory =
-                _ssds.Where(s => s.faction == selectedFaction && s.category == selectedCategory);
+                _ssds.Where(s => s.faction == selectedFaction && s.category == selectedCategory).ToList();
+
+            ssdsInFactionAndCategory.Sort((a, b) => string.Compare(a.name, b.name, StringComparison.Ordinal));
 
             ssdSelector.itemList = ssdsInFactionAndCategory.Select(s => new HorizontalSelector.Item
             {
@@ -370,7 +372,7 @@ namespace ST.Setup
         private void CreateGameStateAndContinue()
         {
             PhotonNetwork.CurrentRoom.ResetPlayersReadiness();
-            
+
             var allShips = new List<ShipState>();
             var allTeams = new Team[]
             {
@@ -422,7 +424,7 @@ namespace ST.Setup
             DontDestroyOnLoad(gameStateGo);
             var container = gameStateGo.AddComponent<HasGameState>();
             container.gameState = gameState;
-            
+
             PhotonNetwork.LoadLevel(GameSettings.Default.SceneDeploy);
         }
 

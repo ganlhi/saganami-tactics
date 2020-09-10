@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Merchant Ship
   Code: MS
+  DisplayOrder: 6

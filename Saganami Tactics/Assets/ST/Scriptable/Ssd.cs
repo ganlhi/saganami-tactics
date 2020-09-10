@@ -16,7 +16,7 @@ namespace ST.Scriptable
         public int crewRate;
         public int crewOfficers;
         public int crewEnlisted;
-        
+
         public int crew => crewOfficers + crewEnlisted;
 
         public int[] movement;
@@ -24,7 +24,7 @@ namespace ST.Scriptable
         public int[] hull;
 
         public int decoyStrength;
-        
+
         public WeaponMount[] weaponMounts;
 
         public SideDefenses[] defenses = new[]
@@ -42,7 +42,7 @@ namespace ST.Scriptable
             new SideDefenses()
             {
                 side = Side.Aft,
-                sidewall = new int[] { 0 },
+                sidewall = new int[] {0},
                 noSidewallModifier = -1,
             },
             new SideDefenses()
@@ -388,6 +388,8 @@ namespace ST.Scriptable
     public static class SsdHelper
     {
         private static Dictionary<string, Ssd> _availableSsds;
+        private static List<ShipCategory> _availableCategories;
+        private static List<Faction> _availableFactions;
 
         public static Dictionary<string, Ssd> AvailableSsds
         {
@@ -399,6 +401,40 @@ namespace ST.Scriptable
                 _availableSsds = ssds.ToDictionary((ssd) => ssd.className);
 
                 return _availableSsds;
+            }
+        }
+
+        public static List<ShipCategory> AvailableCategories
+        {
+            get
+            {
+                if (_availableCategories != null) return _availableCategories;
+
+                var categories = Resources.LoadAll<ShipCategory>("SSD/Categories");
+                _availableCategories = categories
+                    .Where(cat => AvailableSsds.Values.Any(ssd => ssd.category == cat))
+                    .ToList();
+
+                _availableCategories.Sort((a, b) => a.DisplayOrder.CompareTo(b.DisplayOrder));
+
+                return _availableCategories;
+            }
+        }
+
+        public static List<Faction> AvailableFactions
+        {
+            get
+            {
+                if (_availableFactions != null) return _availableFactions;
+
+                var factions = Resources.LoadAll<Faction>("SSD/Factions");
+                _availableFactions = factions
+                    .Where(fac => AvailableSsds.Values.Any(ssd => ssd.faction == fac))
+                    .ToList();
+
+                _availableFactions.Sort((a, b) => a.DisplayOrder.CompareTo(b.DisplayOrder));
+
+                return _availableFactions;
             }
         }
 
@@ -524,7 +560,10 @@ namespace ST.Scriptable
             var sidewallAlterations = alterations.Count(a => a.type == SsdAlterationType.Sidewall && a.side == side);
             var sideDefenses = ssd.defenses.First(d => d.side == side);
             var boxes = sideDefenses.sidewall;
-            if (boxes == null || boxes.Length == 0) {}
+            if (boxes == null || boxes.Length == 0)
+            {
+            }
+
             return GetUndamagedValue(boxes, sidewallAlterations, (int) sideDefenses.noSidewallModifier);
         }
 

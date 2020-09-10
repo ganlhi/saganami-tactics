@@ -7,5 +7,6 @@ namespace ST.Scriptable
     {
         public string Name;
         public Sprite Flag;
+        public int DisplayOrder;
     }
 }

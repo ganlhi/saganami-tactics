@@ -102,9 +102,11 @@ namespace ST.Common.UI
             {
                 var ssdWeaponMount = Instantiate(ssdWeaponMountPrefab, slotsContent).GetComponent<SsdWeaponMount>();
                 ssdWeaponMount.WeaponMount = weaponMount;
+                ssdWeaponMount.Ammo = weaponMount.ammo;
 
                 HitLocationSlotType slotType;
-                switch (weaponMount.model.type) {
+                switch (weaponMount.model.type)
+                {
                     case WeaponType.Missile:
                         slotType = HitLocationSlotType.Missile;
                         break;
@@ -117,7 +119,7 @@ namespace ST.Common.UI
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
+
                 ssdWeaponMount.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
                 {
                     side = _side,
@@ -153,7 +155,7 @@ namespace ST.Common.UI
                 var ssdSideDefense = Instantiate(ssdSideDefensePrefab, slotsContent).GetComponent<SsdSideDefense>();
                 ssdSideDefense.Name = "Counter Missiles";
                 ssdSideDefense.Boxes = _sideDefenses.counterMissiles;
-                
+
                 ssdSideDefense.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
                 {
                     side = _side,
@@ -170,7 +172,7 @@ namespace ST.Common.UI
                 var ssdSideDefense = Instantiate(ssdSideDefensePrefab, slotsContent).GetComponent<SsdSideDefense>();
                 ssdSideDefense.Name = "Point Defenses";
                 ssdSideDefense.Boxes = _sideDefenses.pointDefense;
-                
+
                 ssdSideDefense.OnRepair += (sender, args) => OnRepair?.Invoke(this, new SsdAlteration()
                 {
                     side = _side,
@@ -194,7 +196,8 @@ namespace ST.Common.UI
                 var weaponMount = _weaponMounts[i];
 
                 HitLocationSlotType slotType;
-                switch (weaponMount.model.type) {
+                switch (weaponMount.model.type)
+                {
                     case WeaponType.Missile:
                         slotType = HitLocationSlotType.Missile;
                         break;

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Light Cruiser
   Code: CL
+  DisplayOrder: 2
