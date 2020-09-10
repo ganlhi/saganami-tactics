@@ -9,8 +9,9 @@ namespace ST.Common.UI
     {
         public Ssd Ssd
         {
-            set => UpdateUi(value); 
+            set => UpdateUi(value);
         }
+
         public string ShipName
         {
             set => shipNameText.text = value;
@@ -22,6 +23,7 @@ namespace ST.Common.UI
         [SerializeField] private TextMeshProUGUI factionText;
         [SerializeField] private TextMeshProUGUI costAndCrewText;
         [SerializeField] private TextMeshProUGUI scaleText;
+        [SerializeField] private TextMeshProUGUI serviceLifeText;
         [SerializeField] private Image flagImage;
 #pragma warning restore 649
 
@@ -32,6 +34,9 @@ namespace ST.Common.UI
             costAndCrewText.text = $"Cost: {ssd.baseCost}\nCrew: {ssd.crew} ({ssd.crewOfficers}/{ssd.crewEnlisted})";
             flagImage.sprite = ssd.faction.Flag;
             scaleText.text = $"Scale: {ssd.scale}";
+            serviceLifeText.text = "Service life: " + (ssd.serviceYearFrom != 0 && ssd.serviceYearTo != 0
+                                       ? $"{ssd.serviceYearFrom}-{ssd.serviceYearTo} PD"
+                                       : "N/A");
         }
     }
 }

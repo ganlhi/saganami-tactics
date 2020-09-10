@@ -16,6 +16,8 @@ namespace ST.Scriptable
         public int crewRate;
         public int crewOfficers;
         public int crewEnlisted;
+        public uint serviceYearFrom;
+        public uint serviceYearTo;
 
         public int crew => crewOfficers + crewEnlisted;
 
