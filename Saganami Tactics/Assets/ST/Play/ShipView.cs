@@ -84,6 +84,7 @@ namespace ST.Play
                 ship.Roll,
                 ship.Thrust,
                 ship.deployedDecoy,
+                ship.repairAttempts.ToArray(),
                 andThen);
         }
 
@@ -290,6 +291,7 @@ namespace ST.Play
             int roll,
             int thrust,
             bool deployedDecoy,
+            bool[] repairAttempts,
             ShipPostSyncAction andThen)
         {
             if (ship.uid == string.Empty)
@@ -309,6 +311,7 @@ namespace ST.Play
             ship.Roll = roll;
             ship.Thrust = thrust;
             ship.deployedDecoy = deployedDecoy;
+            ship.repairAttempts = repairAttempts.ToList();
 
             switch (andThen)
             {
