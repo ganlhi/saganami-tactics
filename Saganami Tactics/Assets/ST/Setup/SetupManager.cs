@@ -344,7 +344,14 @@ namespace ST.Setup
         {
             if (_teamShips.ContainsKey(team))
             {
-                _teamShips[team].RemoveAt(index);
+                var newList = new List<Tuple<Ssd, string>>();
+
+                for (var i = 0; i < _teamShips[team].Count; i++)
+                {
+                    if (i != index) newList.Add(_teamShips[team][i]);
+                }
+                
+                _teamShips[team] = newList;
                 SendUpdatedTotalCost(team);
             }
         }
