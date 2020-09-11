@@ -9,6 +9,7 @@ using ST.Common;
 using ST.Play;
 using ST.Scriptable;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace ST.Deploy
@@ -37,6 +38,8 @@ namespace ST.Deploy
 
         private Vector3 _fwdDirection;
         private Vector3 _rightDirection;
+        
+        private bool _shouldGoToMainMenuOnLeftRoom;
 
         public ShipView SelectedShip
         {
@@ -68,6 +71,19 @@ namespace ST.Deploy
         {
             base.OnPlayerEnteredRoom(newPlayer);
             InitWhenReady();
+        }
+
+        public override void OnLeftRoom()
+        {
+            base.OnLeftRoom();
+            if (_shouldGoToMainMenuOnLeftRoom)
+                SceneManager.LoadScene(GameSettings.Default.SceneMainMenu);
+        }
+
+        public void ExitToMainMenu()
+        {
+            _shouldGoToMainMenuOnLeftRoom = true;
+            PhotonNetwork.LeaveRoom();
         }
 
         private void InitWhenReady()
