@@ -219,7 +219,7 @@ namespace ST.Setup
         }
 
         [PunRPC]
-        private void RPC_AddedShip(string ssdName, Team team, int index)
+        private void RPC_AddedShip(string ssdName, Team team, string uid)
         {
             if (team != PhotonNetwork.LocalPlayer.GetTeam()) return;
 
@@ -228,12 +228,12 @@ namespace ST.Setup
             listItem.OnShowSsd += (sender, args) => ShowSsd(listItem.Ship.Item1, listItem.Ship.Item2);
             listItem.OnDelete += (sender, args) =>
             {
-                photonView.RPC("RPC_RemoveShip", RpcTarget.MasterClient, team, index);
+                photonView.RPC("RPC_RemoveShip", RpcTarget.MasterClient, team, uid);
                 StartCoroutine(Utils.DelayedAction(() => { Destroy(listItem.gameObject); }, .5f));
             };
             listItem.OnNameChange += (sender, newName) =>
             {
-                photonView.RPC("RPC_SetName", RpcTarget.MasterClient, team, index, newName);
+                photonView.RPC("RPC_SetName", RpcTarget.MasterClient, team, uid, newName);
                 listItem.Ship = new Tuple<Ssd, string>(listItem.Ship.Item1, newName);
             };
         }
@@ -312,68 +312,57 @@ namespace ST.Setup
 
         #region Main client
 
-        private readonly Dictionary<Team, List<Tuple<Ssd, string>>> _teamShips =
-            new Dictionary<Team, List<Tuple<Ssd, string>>>();
+        private readonly Dictionary<Team, Dictionary<string, Tuple<Ssd, string>>> _teamShips =
+            new Dictionary<Team, Dictionary<string, Tuple<Ssd, string>>>();
 
         [PunRPC]
         private void RPC_AddSsd(string ssdName, Team team)
         {
+            var uid = Utils.GenerateId();
             var item = new Tuple<Ssd, string>(SsdHelper.AvailableSsds[ssdName], "");
 
             if (!_teamShips.ContainsKey(team))
             {
-                _teamShips.Add(team, new List<Tuple<Ssd, string>>()
+                _teamShips.Add(team, new Dictionary<string, Tuple<Ssd, string>>()
                 {
-                    item,
+                    {uid, item},
                 });
             }
             else
             {
-                _teamShips[team].Add(item);
+                _teamShips[team].Add(uid, item);
             }
 
-            var index = _teamShips[team].Count - 1;
-
-            photonView.RPC("RPC_AddedShip", RpcTarget.All, ssdName, team, index);
+            photonView.RPC("RPC_AddedShip", RpcTarget.All, ssdName, team, uid);
 
             SendUpdatedTotalCost(team);
         }
 
         [PunRPC]
-        private void RPC_RemoveShip(Team team, int index)
+        private void RPC_RemoveShip(Team team, string uid)
         {
-            if (_teamShips.ContainsKey(team))
-            {
-                var newList = new List<Tuple<Ssd, string>>();
-
-                for (var i = 0; i < _teamShips[team].Count; i++)
-                {
-                    if (i != index) newList.Add(_teamShips[team][i]);
-                }
-                
-                _teamShips[team] = newList;
-                SendUpdatedTotalCost(team);
-            }
+            if (!_teamShips.ContainsKey(team)) return;
+            _teamShips[team].Remove(uid);
+            SendUpdatedTotalCost(team);
         }
 
         [PunRPC]
-        private void RPC_SetName(Team team, int index, string newName)
+        private void RPC_SetName(Team team, string uid, string newName)
         {
-            if (_teamShips.ContainsKey(team))
-            {
-                var cur = _teamShips[team][index];
-                _teamShips[team][index] = new Tuple<Ssd, string>(cur.Item1, newName);
-                SendUpdatedTotalCost(team);
-            }
+            if (!_teamShips.ContainsKey(team)) return;
+            var cur = _teamShips[team][uid];
+            _teamShips[team][uid] = new Tuple<Ssd, string>(cur.Item1, newName);
+            SendUpdatedTotalCost(team);
         }
 
         private void SendUpdatedTotalCost(Team team)
         {
             if (!_teamShips.ContainsKey(team)) return;
-            var totalCost = _teamShips[team].Sum(t => t.Item1.baseCost);
+            var teamShips = _teamShips[team].Values.ToList();
+            var totalCost = teamShips.Sum(t => t.Item1.baseCost);
             photonView.RPC("RPC_UpdateTotalCost", RpcTarget.All, team, totalCost,
                 totalCost > PhotonNetwork.CurrentRoom.GetMaxPoints(),
-                _teamShips[team].TrueForAll(t => !string.IsNullOrEmpty(t.Item2)));
+                teamShips.TrueForAll(t => !string.IsNullOrEmpty(t.Item2)));
         }
 
         private void CreateGameStateAndContinue()
@@ -395,7 +384,7 @@ namespace ST.Setup
 
                 var teamShipStates = new List<ShipState>();
 
-                foreach (var (ssd, shipName) in _teamShips[team])
+                foreach (var (ssd, shipName) in _teamShips[team].Values)
                 {
                     var shipState = new ShipState()
                     {
