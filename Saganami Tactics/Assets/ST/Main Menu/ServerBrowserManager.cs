@@ -90,12 +90,13 @@ namespace ST.Main_Menu
 
         public void Refresh()
         {
-            PhotonNetwork.LeaveLobby();
             StartCoroutine(RejoinLobby());
         }
 
         private IEnumerator RejoinLobby()
         {
+            if (PhotonNetwork.InLobby) PhotonNetwork.LeaveLobby();
+
             do
             {
                 yield return null;
