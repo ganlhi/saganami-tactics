@@ -64,8 +64,9 @@ namespace ST.Common.UI
 
             var nbDestroyed = _alterations.Count(a => a.destroyed);
             var nbDamaged = _alterations.Count(a => !a.destroyed);
-            
-            ssdBoxes.CanRepair = _canRepair && _slot.boxes.Length > 0 && nbDamaged > 0; 
+
+            ssdBoxes.CanRepair = _canRepair && _slot.boxes.Length > 0 && nbDamaged > 0 &&
+                                 _slot.type != HitLocationSlotType.Decoy; // just to be sure
             ssdBoxes.Damages = new Tuple<int, int>(nbDestroyed, nbDamaged);
         }
     }

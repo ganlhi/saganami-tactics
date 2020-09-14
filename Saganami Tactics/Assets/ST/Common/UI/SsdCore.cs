@@ -69,7 +69,7 @@ namespace ST.Common.UI
             set
             {
                 _canRepair = value;
-                UpdateCanRepair();
+                UpdateHull();
             }
         }
         
@@ -105,7 +105,6 @@ namespace ST.Common.UI
         {
             hullBoxes.OnRepair += (sender, args) =>
             {
-                Debug.Log($"hullBoxes.OnRepair");
                 OnRepairHull?.Invoke(this, EventArgs.Empty);
                 
             };
@@ -134,11 +133,6 @@ namespace ST.Common.UI
 
             hullBoxes.CanRepair = nbDamaged > 0 && _canRepair;
             hullBoxes.Damages = new Tuple<int, int>(nbDestroyed, nbDamaged);
-        }
-
-        private void UpdateCanRepair()
-        {
-            hullBoxes.CanRepair = _hullAlterations.Count > 0 && _canRepair;
         }
     }
 }
