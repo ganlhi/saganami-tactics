@@ -142,9 +142,15 @@ namespace ST
 
         public static List<TargetingContext> IdentifyTargets(Ship attacker, List<Ship> allShips)
         {
+            var isOnePlayerMode = allShips.Select(s => s.team).Distinct().Count() < 2;
+
             var targets = new List<TargetingContext>();
 
-            var ennemyShips = allShips.Where(s => s.team != attacker.team && s.Status == ShipStatus.Ok);
+            var otherOkShips = allShips.Where(s => s.uid != attacker.uid && s.Status == ShipStatus.Ok);
+
+            var ennemyShips = isOnePlayerMode
+                ? otherOkShips
+                : otherOkShips.Where(s => s.team != attacker.team);
 
             foreach (var ennemyShip in ennemyShips)
             {
@@ -674,7 +680,7 @@ namespace ST
                                     remainingDamages -= 1;
                                     break;
                                 }
-                                
+
                                 var hullAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
                                     {
@@ -791,7 +797,7 @@ namespace ST
                         alterations
                     ));
                 }
-                
+
                 if (penetrationResult <= 0)
                 {
                     reports.Add(new Tuple<ReportType, string>(ReportType.Info,
@@ -801,7 +807,7 @@ namespace ST
                 {
                     var damages = Math.Min(rangeBand.Value.damage, penetrationResult);
                     var location = Dice.D10();
-                    
+
                     var firstLocation = location - weapon.span / 2;
                     for (var loc = firstLocation; loc < firstLocation + weapon.span; loc++)
                     {
@@ -834,7 +840,7 @@ namespace ST
                     a.slotType == template.slotType);
 
             var nbUndamaged = SsdHelper.GetUndamagedValue(boxes, nbDamaged);
-            
+
             if (nbUndamaged <= 0) return alterations;
 
             var todoDamages = Math.Min(damages, nbUndamaged);
@@ -979,7 +985,11 @@ namespace ST
 
         public static bool ShouldEndGame(IEnumerable<Ship> ships)
         {
-            var okShips = ships.Where(s => s.Status == ShipStatus.Ok).ToList();
+            var enumerable = ships.ToList();
+            var isOnePlayerMode = enumerable.Select(s => s.team).Distinct().Count() < 2;
+            if (isOnePlayerMode) return false;
+
+            var okShips = enumerable.Where(s => s.Status == ShipStatus.Ok).ToList();
             return okShips.Select(s => s.team).Distinct().ToList().Count < 2;
         }
 
