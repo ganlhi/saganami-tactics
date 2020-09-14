@@ -449,6 +449,7 @@ namespace ST.Play
             var marker = Instantiate(prefab, ship.endMarkerPosition, ship.endMarkerRotation)
                 .GetComponent<ShipMarker>();
 
+            marker.shipView = this;
             marker.ownedByClient = OwnedByClient;
             marker.gameObject.name = "ShipMarker - " + ship.name;
             marker.gameObject.SetActive(false);

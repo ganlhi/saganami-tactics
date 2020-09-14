@@ -8,6 +8,7 @@ namespace ST.Play
         #pragma warning disable 0649
 
         public bool ownedByClient;
+        public ShipView shipView;
         
         [SerializeField]
         private GameObject forLocalPlayer;

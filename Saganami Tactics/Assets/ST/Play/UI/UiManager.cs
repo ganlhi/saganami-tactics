@@ -68,7 +68,7 @@ namespace ST.Play.UI
             _gameManager.OnSelectShip += (sender, selection) => { shipsList.SetSelectedShip(selection.Item1); };
 
             shipsList.OnSelectShip += (sender, shipView) => { _gameManager.SelectedShip = shipView; };
-            shipsList.OnFocusCameraOnShip += (sender, shipView) => { _gameManager.LockCameraToShip(shipView); };
+            shipsList.OnFocusCameraOnShip += (sender, shipView) => { _gameManager.LockCameraToShipOrMarker(shipView); };
         }
 
         #endregion Ships
@@ -241,12 +241,16 @@ namespace ST.Play.UI
         private HoverPanel hoverPanel;
 #pragma warning restore 649
 
-        public void SetHoverInfo([CanBeNull] ShipView shipView, [CanBeNull] MissileView missileView)
+        public void SetHoverInfo([CanBeNull] ShipView shipView, [CanBeNull] ShipMarker endMarker, [CanBeNull] MissileView missileView)
         {
             hoverPanel.SelectedShip = _gameManager.SelectedShip;
             if (shipView != null)
             {
                 hoverPanel.Ship = shipView;
+            }
+            else if (endMarker != null)
+            {
+                hoverPanel.Ship = endMarker.shipView;
             }
             else if (missileView != null)
             {

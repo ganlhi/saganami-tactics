@@ -21,8 +21,18 @@ namespace ST.Play.UI
             if (camera.settings.cameraLocked && camera.settings.lockTargetTransform != null)
             {
                 icon.colorType = UIManagerImage.ColorType.SECONDARY;
-                shipName.text = camera.settings.lockTargetTransform.GetComponent<ShipView>()?.ship.name;
                 shipName.gameObject.SetActive(true);
+                
+                if (camera.settings.lockTargetTransform.TryGetComponent<ShipView>(out var shipView))
+                {
+                    shipName.text = shipView.ship.name;
+                } else if (camera.settings.lockTargetTransform.TryGetComponent<ShipMarker>(out var shipMarker))
+                {
+                    shipName.text = shipMarker.shipView.ship.name + " (fut.)";
+                } else if (camera.settings.lockTargetTransform.TryGetComponent<MissileView>(out var missileView))
+                {
+                    shipName.text = "Missiles";
+                }
             }
             else
             {

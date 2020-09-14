@@ -167,7 +167,7 @@ MonoBehaviour:
   inputs:
     useKeyCodeInputs: 1
     keycodes:
-      RotateCamera: 324
+      RotateCamera: 325
       LockCamera: 32
       characterFocus: 0
       CameraMoveLeft: 113

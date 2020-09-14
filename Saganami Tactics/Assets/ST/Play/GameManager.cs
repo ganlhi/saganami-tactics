@@ -850,6 +850,37 @@ namespace ST.Play
             camera.settings.cameraLocked = true;
         }
 
+        public void LockCameraToShipMarker(ShipMarker shipMarker)
+        {
+            camera.settings.lockTargetTransform = shipMarker.transform;
+            camera.settings.cameraLocked = true;
+        }
+
+        public void LockCameraToShipOrMarker(ShipView ship)
+        {
+            if (camera.settings.cameraLocked)
+            {
+                if (camera.settings.lockTargetTransform == ship.transform)
+                {
+                    LockCameraToShipMarker(ship.EndMarker);
+                }
+                else
+                {
+                    LockCameraToShip(ship);
+                }
+            }
+            else
+            {
+                LockCameraToShip(ship);
+            }
+        }
+
+        public void LockCameraToMissile(MissileView missile)
+        {
+            camera.settings.lockTargetTransform = missile.transform;
+            camera.settings.cameraLocked = true;
+        }
+
         public void LockCameraToSelectedShip()
         {
             LockCameraToShip(_selectedShip);

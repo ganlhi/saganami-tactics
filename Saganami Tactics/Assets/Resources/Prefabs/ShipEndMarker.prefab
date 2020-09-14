@@ -231,7 +231,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7882523596826159455}
   - component: {fileID: 7886352315472791644}
-  m_Layer: 0
+  - component: {fileID: 1240620621951924102}
+  m_Layer: 8
   m_Name: ShipEndMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,9 +268,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ownedByClient: 0
+  shipView: {fileID: 0}
   forLocalPlayer: {fileID: 7886634306753150081}
   forDistantPlayer: {fileID: 7886098364255299565}
   forDistantPlayerMesh: {fileID: 7863556583940537869}
+--- !u!65 &1240620621951924102
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7886352315472791645}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.1, y: 0.15, z: 0.3}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7886634306753150081
 GameObject:
   m_ObjectHideFlags: 0

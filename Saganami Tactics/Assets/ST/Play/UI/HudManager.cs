@@ -13,6 +13,7 @@ namespace ST.Play.UI
         private Camera _camera;
 
         [CanBeNull] private ShipView _hoverShip;
+        [CanBeNull] private ShipMarker _hoverEndMarker;
         [CanBeNull] private MissileView _hoverMissile;
 
 #pragma warning disable 649
@@ -76,6 +77,7 @@ namespace ST.Play.UI
         private void DetectOveredObject()
         {
             _hoverShip = null;
+            _hoverEndMarker = null;
             _hoverMissile = null;
 
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
@@ -88,23 +90,30 @@ namespace ST.Play.UI
                 {
                     _hoverShip = shipView;
                 }
+                else if (go.TryGetComponent<ShipMarker>(out var shipMarker))
+                {
+                    _hoverEndMarker = shipMarker;
+                }
                 else if (go.TryGetComponent<MissileView>(out var missileView))
                 {
                     _hoverMissile = missileView;
                 }
             }
 
-            _uiManager.SetHoverInfo(_hoverShip, _hoverMissile);
+            _uiManager.SetHoverInfo(_hoverShip, _hoverEndMarker, _hoverMissile);
         }
 
         private void HandleClick()
         {
-            // When in targeting mode, no selection via the HUD
-//            if (_gameManager.Step == TurnStep.Targeting) return;
-
-            if (Input.GetMouseButtonUp(0) && _hoverShip != null)
+            if (Input.GetMouseButtonUp(0))
             {
-                _gameManager.SelectedShip = _hoverShip;
+                if (_hoverShip != null) _gameManager.SelectedShip = _hoverShip;
+                if (_hoverEndMarker != null) _gameManager.SelectedShip = _hoverEndMarker.shipView;
+            } else if (Input.GetMouseButton(1))
+            {
+                if (_hoverShip != null) _gameManager.LockCameraToShip(_hoverShip);
+                if (_hoverEndMarker != null) _gameManager.LockCameraToShipMarker(_hoverEndMarker);
+                if (_hoverMissile != null) _gameManager.LockCameraToMissile(_hoverMissile);
             }
         }
 
