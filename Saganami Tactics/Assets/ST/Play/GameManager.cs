@@ -466,6 +466,7 @@ namespace ST.Play
                     {
                         _pendingAlterations.Add(target, new List<SsdAlteration>());
                     }
+
                     var pendingAlterations = _pendingAlterations[target];
 
                     var animTargetPos = Game.FireBeam(targetingContext, shipView.ship, target.ship,
@@ -502,6 +503,7 @@ namespace ST.Play
                 {
                     _pendingAlterations.Add(target, new List<SsdAlteration>());
                 }
+
                 var pendingAlterations = _pendingAlterations[target];
                 var pendingDestroyedAmmo = new List<Tuple<int, int>>();
 
@@ -775,7 +777,8 @@ namespace ST.Play
         private void SetFutureVelocityVectorsVisibility()
         {
             GetAllShips().ForEach(sv =>
-                sv.GetComponent<ShipFutureVelocityVector>().visible = Step == TurnStep.Plotting);
+                sv.GetComponent<ShipFutureVelocityVector>().visible =
+                    Step == TurnStep.Plotting && sv.ship.Status == ShipStatus.Ok);
         }
 
         [PunRPC]
