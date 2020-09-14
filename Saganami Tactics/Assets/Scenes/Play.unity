@@ -6323,7 +6323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 1648275788}
-  stateHolder: {fileID: 11400000, guid: 8a847470696e10c4497fce1ced7258c5, type: 2}
+  stateHolder: {fileID: 11400000, guid: 49528ffd35afcc3408587c6d25aabc60, type: 2}
   beamsLines: {fileID: 1797007797}
 --- !u!114 &592222521
 MonoBehaviour:

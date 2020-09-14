@@ -476,6 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e030b4a24f9472a89b96bfbe28b3c91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visible: 0
   widthCoefficient: 0.006
   dotsCountCoefficient: 0.1
 --- !u!114 &4083142128612587972

@@ -669,6 +669,12 @@ namespace ST
                                 break;
                             case HitLocationSlotType.Hull:
                                 var nb = Dice.TwoD10Minus().Item1;
+                                if (nb == 0)
+                                {
+                                    remainingDamages -= 1;
+                                    break;
+                                }
+                                
                                 var hullAlterations = MakeAlterationsForBoxes(
                                     new SsdAlteration()
                                     {
@@ -685,7 +691,7 @@ namespace ST
                                 {
                                     alterations.AddRange(hullAlterations);
                                     reports.Add(new Tuple<ReportType, string>(ReportType.DamageTaken,
-                                        $"#{hitNum} {weaponType} damaged: Hull x{nb}"));
+                                        $"#{hitNum} {weaponType} damaged: Hull x{hullAlterations.Count}"));
                                 }
                                 else
                                 {
@@ -705,11 +711,7 @@ namespace ST
                                     ));
                                 }
 
-                                if (remainingDamages <= nb)
-                                    remainingDamages = 0;
-                                else
-                                    remainingDamages -= nb;
-
+                                remainingDamages = Math.Max(0, remainingDamages - nb);
                                 break;
                             default:
                                 throw new ArgumentOutOfRangeException();
@@ -831,9 +833,11 @@ namespace ST
                     a.type == template.type &&
                     a.slotType == template.slotType);
 
-            if (nbDamaged >= boxes.Count) return alterations;
+            var nbUndamaged = SsdHelper.GetUndamagedValue(boxes, nbDamaged);
+            
+            if (nbUndamaged <= 0) return alterations;
 
-            var todoDamages = Math.Min(damages, boxes.Count - nbDamaged);
+            var todoDamages = Math.Min(damages, nbUndamaged);
 
             for (var i = 0; i < todoDamages; i++)
             {

@@ -31,12 +31,7 @@ MonoBehaviour:
       position: {x: -15, y: 0, z: 0}
       rotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
       velocity: {x: 4, y: 0, z: 0}
-      alterations:
-      - destroyed: 0
-        side: 0
-        type: 0
-        slotType: 6
-        location: 2
+      alterations: []
     - uid: _E4XYL6Qmkmbe7pySipRiw
       name: PNS Bastogne
       ssdName: Bastogne

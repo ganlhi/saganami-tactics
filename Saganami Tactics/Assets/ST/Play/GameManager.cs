@@ -160,19 +160,31 @@ namespace ST.Play
 //                
 //                DispatchPendingDestroyedAmmo();
 
-                _pendingAlterations.Add(SelectedShip, new List<SsdAlteration>()
-                {
-                    new SsdAlteration() {type = SsdAlterationType.Movement, slotType = HitLocationSlotType.None},
+//                _pendingAlterations.Add(SelectedShip, new List<SsdAlteration>()
+//                {
+////                    new SsdAlteration() {type = SsdAlterationType.Movement, slotType = HitLocationSlotType.None},
+////                    new SsdAlteration()
+////                    {
+////                        type = SsdAlterationType.Slot, slotType = HitLocationSlotType.ForwardImpeller,
+////                        location = 1 + (int) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
+////                                       loc => loc.slots.Any(s => s.type == HitLocationSlotType.ForwardImpeller))
+////                    },
+////                    new SsdAlteration() {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile},
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+//                });
+                _pendingAlterations.Add(SelectedShip, Game.MakeAlterationsForBoxes(
                     new SsdAlteration()
-                    {
-                        type = SsdAlterationType.Slot, slotType = HitLocationSlotType.ForwardImpeller,
-                        location = 1 + (int) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
-                                       loc => loc.slots.Any(s => s.type == HitLocationSlotType.ForwardImpeller))
-                    },
-                    new SsdAlteration() {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile},
-                    new SsdAlteration()
-                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull, location = 2},
-                });
+                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+                    3,
+                    SelectedShip.ship.Ssd.hull,
+                    SelectedShip.ship.alterations,
+                    new List<SsdAlteration>()
+                ));
 
                 DispatchPendingAlterations();
             }
@@ -382,7 +394,6 @@ namespace ST.Play
 
         private void PopulateAttackPendingData(ShipView target,
             List<Tuple<ReportType, string>> reports,
-            List<SsdAlteration> pendingAlterations,
             List<Tuple<int, int>> pendingDestroyedAmmo)
         {
             // Reports
@@ -398,15 +409,6 @@ namespace ST.Play
                     _pendingReports[target].AddRange(pendingReports);
                 else
                     _pendingReports.Add(target, pendingReports.ToList());
-            }
-
-            //Alterations
-            if (pendingAlterations.Any())
-            {
-                if (_pendingAlterations.ContainsKey(target))
-                    _pendingAlterations[target].AddRange(pendingAlterations);
-                else
-                    _pendingAlterations.Add(target, pendingAlterations.ToList());
             }
 
             // Destroyed ammo
@@ -458,8 +460,13 @@ namespace ST.Play
                     if (target == null || target.ship.Status != ShipStatus.Ok) continue;
 
                     var reports = new List<Tuple<ReportType, string>>();
-                    var pendingAlterations = new List<SsdAlteration>();
                     var pendingDestroyedAmmo = new List<Tuple<int, int>>();
+
+                    if (!_pendingAlterations.ContainsKey(target))
+                    {
+                        _pendingAlterations.Add(target, new List<SsdAlteration>());
+                    }
+                    var pendingAlterations = _pendingAlterations[target];
 
                     var animTargetPos = Game.FireBeam(targetingContext, shipView.ship, target.ship,
                         ref reports,
@@ -468,7 +475,7 @@ namespace ST.Play
 
                     beamAnims.Add(new Tuple<Vector3, Vector3>(shipView.ship.position, animTargetPos));
 
-                    PopulateAttackPendingData(target, reports, pendingAlterations, pendingDestroyedAmmo);
+                    PopulateAttackPendingData(target, reports, pendingDestroyedAmmo);
                 }
             });
 
@@ -491,7 +498,11 @@ namespace ST.Play
                     ref reports);
                 missileView.UpdateMissile(missile);
 
-                var pendingAlterations = new List<SsdAlteration>();
+                if (!_pendingAlterations.ContainsKey(target))
+                {
+                    _pendingAlterations.Add(target, new List<SsdAlteration>());
+                }
+                var pendingAlterations = _pendingAlterations[target];
                 var pendingDestroyedAmmo = new List<Tuple<int, int>>();
 
                 if (missile.status == MissileStatus.Hitting && missile.number > 0)
@@ -503,7 +514,7 @@ namespace ST.Play
                         ref pendingDestroyedAmmo);
                 }
 
-                PopulateAttackPendingData(target, reports, pendingAlterations, pendingDestroyedAmmo);
+                PopulateAttackPendingData(target, reports, pendingDestroyedAmmo);
             });
 
             photonView.RPC("RPC_WaitForMissilesUpdates", RpcTarget.All, missileViews.Count);
