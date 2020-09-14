@@ -724,6 +724,8 @@ namespace ST.Play
                         case HitLocationSlotType.CounterMissile:
                         case HitLocationSlotType.PointDefense:
                             return $"{side.ToFriendlyString()} {SsdHelper.SlotTypeToString(slotType)}";
+                        case HitLocationSlotType.Hull:
+                            return "hull";
                         default:
                             return $"{SsdHelper.SlotTypeToString(slotType)} (location {location})";
                     }
