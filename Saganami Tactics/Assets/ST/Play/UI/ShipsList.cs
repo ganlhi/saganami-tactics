@@ -53,19 +53,23 @@ namespace ST.Play.UI
                 btn.Selected = shipView == _selectedShip;
                 btn.OnSelect += (sender, args) => { OnSelectShip?.Invoke(this, shipView); };
                 btn.OnFocusCamera += (sender, args) => { OnFocusCameraOnShip?.Invoke(this, shipView); };
+                
                 var shipLog = shipView.GetComponent<ShipLog>();
                 shipLog.OnReportsLogged += (sender, args) =>
                 {
+                    var turn = shipLog.Reports.Last().turn;
+                    var turnReports = shipLog.Reports.Where(r => r.turn == turn).ToList();
+                    
                     ReportSeverity? severity = null;
-                    if (shipLog.Reports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Danger))
+                    if (turnReports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Danger))
                     {
                         severity = ReportSeverity.Danger;
                     }
-                    else if (shipLog.Reports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Warning))
+                    else if (turnReports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Warning))
                     {
                         severity = ReportSeverity.Warning;
                     }
-                    else if (shipLog.Reports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Info))
+                    else if (turnReports.Any(r => Report.GetSeverity(r.type) == ReportSeverity.Info))
                     {
                         severity = ReportSeverity.Info;
                     }
