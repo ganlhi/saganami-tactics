@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a93588aab9574c7bb4aa8f0548fdc84a, type: 3}
   m_Name: GameSettings
   m_EditorClassIdentifier: 
-  MoveDuration: 2
+  MoveDuration: 3
   BeamDuration: 1
-  MissilesMovementPerSecond: 6
+  MissilesMovementPerSecond: 4
   MissileShortRange: 6
   BlueTeam: {r: 0, g: 0.48235294, b: 1, a: 1}
   YellowTeam: {r: 0.98039216, g: 0.81960785, b: 0, a: 1}
