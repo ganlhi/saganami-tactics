@@ -883,7 +883,7 @@ namespace ST.Play
 
         public void LockCameraToSelectedShip()
         {
-            LockCameraToShip(_selectedShip);
+            LockCameraToShipOrMarker(_selectedShip);
         }
 
         private IEnumerator WaitForShipsAndMissilesInit()
