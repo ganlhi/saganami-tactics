@@ -113,11 +113,11 @@ namespace ST
         public int UsedPivots => Math.Abs(Yaw) + Math.Abs(Pitch);
         public int UsedRolls => Math.Abs(Roll);
 
-        public int MaxPivots => (int) SsdHelper.GetMaxPivot(Ssd, alterations);
+        public int MaxPivots => (int) SsdHelper.GetMaxPivot(Ssd, alterations, UsedRolls, Thrust);
 
-        public int MaxRolls => (int) SsdHelper.GetMaxRoll(Ssd, alterations);
+        public int MaxRolls => (int) SsdHelper.GetMaxRoll(Ssd, alterations, UsedPivots, Thrust);
 
-        public int MaxThrust => (int) SsdHelper.GetMaxThrust(Ssd, alterations);
+        public int MaxThrust => (int) SsdHelper.GetMaxThrust(Ssd, alterations, UsedPivots, UsedRolls);
 
         #endregion Plotting
 
@@ -245,6 +245,11 @@ namespace ST
         public bool HasRepairsToDo()
         {
             return alterations.Any(a => !a.destroyed && a.type != SsdAlterationType.Movement);
+        }
+
+        public bool IsBridgeNotOperational()
+        {
+            return SsdHelper.GetBridge(Ssd, alterations) < 1;
         }
 
         public List<Side> GetUnprotectedSides()

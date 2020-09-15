@@ -133,8 +133,9 @@ namespace ST.Play.UI
 
             plottingPanel.Thrust = ship.Thrust;
             plottingPanel.MaxThrust = ship.MaxThrust;
-            plottingPanel.UsedPivots = (float) ship.UsedPivots / ship.MaxPivots;
-            plottingPanel.UsedRolls = (float) ship.UsedRolls / ship.MaxRolls;
+            plottingPanel.UsedPivots = ship.MaxPivots == 0 ? 1f : (float) ship.UsedPivots / ship.MaxPivots;
+            plottingPanel.UsedRolls = ship.MaxRolls == 0 ? 1f : (float) ship.UsedRolls / ship.MaxRolls;
+            plottingPanel.BridgeNotOperational = ship.IsBridgeNotOperational();
         }
 
         private void SetPlottingPanelVisibility()
@@ -222,7 +223,7 @@ namespace ST.Play.UI
                     s.ship.Status == ShipStatus.Ok &&
                     s.ship.position.DistanceTo(ship.position) < 50);
 
-                var canMove = SsdHelper.GetMaxThrust(ship.Ssd, ship.alterations) > 0;
+                var canMove = SsdHelper.GetMaxThrust(ship.Ssd, ship.alterations, 0, 0) > 0;
 
                 crewActionsPanel.CanDisengage = isFarEnough && canMove;
 

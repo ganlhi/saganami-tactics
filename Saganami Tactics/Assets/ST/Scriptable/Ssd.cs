@@ -451,7 +451,7 @@ namespace ST.Scriptable
             return undamagedBoxes[0];
         }
 
-        public static int GetMaxPivot(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetMaxPivot(Ssd ssd, IEnumerable<SsdAlteration> alterations, int usedRolls, int thrust)
         {
             var pivotAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Pivot);
@@ -466,10 +466,18 @@ namespace ST.Scriptable
                 }
             }
 
-            return GetUndamagedValue(boxes, pivotAlterations);
+            var pivot = GetUndamagedValue(boxes, pivotAlterations);
+            if (pivot == 0) return 0;
+
+            if (GetBridge(ssd, alterations) < 1)
+            {
+                return usedRolls == 0 && thrust == 0 ? 1 : 0;
+            }
+
+            return pivot;
         }
 
-        public static int GetMaxRoll(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetMaxRoll(Ssd ssd, IEnumerable<SsdAlteration> alterations, int usedPivots, int thrust)
         {
             var rollAlterations = alterations.Count(a =>
                 a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Roll);
@@ -484,14 +492,31 @@ namespace ST.Scriptable
                 }
             }
 
-            return GetUndamagedValue(boxes, rollAlterations);
+            var roll = GetUndamagedValue(boxes, rollAlterations);
+            if (roll == 0) return 0;
+
+            if (GetBridge(ssd, alterations) < 1)
+            {
+                return usedPivots == 0 && thrust == 0 ? 1 : 0;
+            }
+
+            return roll;
         }
 
-        public static int GetMaxThrust(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        public static int GetMaxThrust(Ssd ssd, IEnumerable<SsdAlteration> alterations, int usedPivots, int usedRolls)
         {
             var mvtAlterations = alterations.Count(a => a.type == SsdAlterationType.Movement);
             var boxes = ssd.movement;
-            return GetUndamagedValue(boxes, mvtAlterations);
+            
+            var thrust = GetUndamagedValue(boxes, mvtAlterations);
+            if (thrust == 0) return 0;
+
+            if (GetBridge(ssd, alterations) < 1)
+            {
+                return usedPivots == 0 && usedRolls == 0 ? 1 : 0;
+            }
+
+            return thrust;
         }
 
         public static int GetECM(Ssd ssd, IEnumerable<SsdAlteration> alterations)
@@ -592,6 +617,24 @@ namespace ST.Scriptable
             }
 
             return Math.Max(0, GetUndamagedValue(boxes, dcAlterations) - (int) repairAttempts.Count());
+        }
+
+        public static int GetBridge(Ssd ssd, IEnumerable<SsdAlteration> alterations)
+        {
+            var bridgeAlterations = alterations.Count(a =>
+                a.type == SsdAlterationType.Slot && a.slotType == HitLocationSlotType.Bridge);
+
+            var boxes = Array.Empty<int>();
+            foreach (var hitLocation in ssd.hitLocations)
+            {
+                var slots = hitLocation.slots.Where(s => s.type == HitLocationSlotType.Bridge).ToList();
+                if (slots.Any())
+                {
+                    boxes = slots.First().boxes;
+                }
+            }
+
+            return GetUndamagedValue(boxes, bridgeAlterations);
         }
 
         public static int GetRemainingAmmo(Ssd ssd, WeaponMount mount, Dictionary<int, int> consumedAmmo)

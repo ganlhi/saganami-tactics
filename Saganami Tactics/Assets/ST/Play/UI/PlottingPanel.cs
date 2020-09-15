@@ -22,6 +22,7 @@ namespace ST.Play.UI
         [SerializeField] private Button thrustPlusBtn;
         [SerializeField] private Button thrustMinusBtn;
         [SerializeField] private TextMeshProUGUI thrustValue;
+        [SerializeField] private GameObject bridgeNotOperationalMessage;
 #pragma warning restore 649
 
         private Animator _animator;
@@ -30,6 +31,7 @@ namespace ST.Play.UI
         private float _usedPivots;
         private float _usedRolls;
         private int _thrust;
+        private bool _bridgeNotOperational;
 
         public bool Active
         {
@@ -80,6 +82,16 @@ namespace ST.Play.UI
         }
 
         public int MaxThrust { get; set; }
+
+        public bool BridgeNotOperational
+        {
+            get => _bridgeNotOperational;
+            set
+            {
+                _bridgeNotOperational = value;
+                bridgeNotOperationalMessage.SetActive(value);
+            }
+        }
 
         public event EventHandler<int> OnYaw;
         public event EventHandler<int> OnPitch;

@@ -160,31 +160,31 @@ namespace ST.Play
 //                
 //                DispatchPendingDestroyedAmmo();
 
-//                _pendingAlterations.Add(SelectedShip, new List<SsdAlteration>()
-//                {
-////                    new SsdAlteration() {type = SsdAlterationType.Movement, slotType = HitLocationSlotType.None},
-////                    new SsdAlteration()
-////                    {
-////                        type = SsdAlterationType.Slot, slotType = HitLocationSlotType.ForwardImpeller,
-////                        location = 1 + (int) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
-////                                       loc => loc.slots.Any(s => s.type == HitLocationSlotType.ForwardImpeller))
-////                    },
-////                    new SsdAlteration() {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile},
-//                    new SsdAlteration()
-//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
-//                    new SsdAlteration()
-//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
-//                    new SsdAlteration()
-//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
-//                });
-                _pendingAlterations.Add(SelectedShip, Game.MakeAlterationsForBoxes(
+                _pendingAlterations.Add(SelectedShip, new List<SsdAlteration>()
+                {
+//                    new SsdAlteration() {type = SsdAlterationType.Movement, slotType = HitLocationSlotType.None},
                     new SsdAlteration()
-                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
-                    3,
-                    SelectedShip.ship.Ssd.hull,
-                    SelectedShip.ship.alterations,
-                    new List<SsdAlteration>()
-                ));
+                    {
+                        type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Bridge,
+                        location = 1 + (int) Array.FindIndex(SelectedShip.ship.Ssd.hitLocations,
+                                       loc => loc.slots.Any(s => s.type == HitLocationSlotType.Bridge))
+                    },
+//                    new SsdAlteration() {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Missile},
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+                });
+//                _pendingAlterations.Add(SelectedShip, Game.MakeAlterationsForBoxes(
+//                    new SsdAlteration()
+//                        {type = SsdAlterationType.Slot, slotType = HitLocationSlotType.Hull},
+//                    3,
+//                    SelectedShip.ship.Ssd.hull,
+//                    SelectedShip.ship.alterations,
+//                    new List<SsdAlteration>()
+//                ));
 
                 DispatchPendingAlterations();
             }
