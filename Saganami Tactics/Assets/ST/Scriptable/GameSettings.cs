@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -43,6 +45,12 @@ namespace ST.Scriptable
 
         #endregion Team colors
 
+        #region Ships scales
+
+        public List<ShipScale> shipsScales;
+
+        #endregion Ships scales
+        
         [CanBeNull] private static GameSettings _default = null;
 
         public static GameSettings Default
@@ -56,6 +64,13 @@ namespace ST.Scriptable
 
                 return _default;
             }
+        }
+
+        [Serializable]
+        public struct ShipScale
+        {
+            public ShipCategory category;
+            public float scale;
         }
     }
 }

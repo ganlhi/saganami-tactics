@@ -57,10 +57,20 @@ namespace ST.Play
 
         private void Start()
         {
+            ScaleShipModel();
+            
             if (PhotonNetwork.IsMasterClient)
             {
                 SyncShip(ShipPostSyncAction.None);
             }
+        }
+
+        private void ScaleShipModel()
+        {
+            var cat = ship.Ssd.category;
+            var scale = GameSettings.Default.shipsScales.FirstOrDefault(s => s.category == cat).scale;
+            if (Math.Abs(scale) < float.Epsilon || Math.Abs(scale - 1) < float.Epsilon) return;
+            shipObject.transform.localScale = new Vector3(scale, scale, scale);
         }
 
         #region MasterClient

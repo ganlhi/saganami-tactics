@@ -20,3 +20,16 @@ MonoBehaviour:
   YellowTeam: {r: 0.98039216, g: 0.81960785, b: 0, a: 1}
   GreenTeam: {r: 0.105882354, g: 0.8862745, b: 0.3372549, a: 1}
   MagentaTeam: {r: 0.8980392, g: 0.105882354, b: 0.7921569, a: 1}
+  shipsScales:
+  - category: {fileID: 11400000, guid: 5f38bf43479456f4b93d000e46f5e8d8, type: 2}
+    scale: 1
+  - category: {fileID: 11400000, guid: ba18da0589dd7d74d893d4d677379d0d, type: 2}
+    scale: 0.75
+  - category: {fileID: 11400000, guid: a8e90e0a2e56b5043affb2d3cb169e74, type: 2}
+    scale: 0.5
+  - category: {fileID: 11400000, guid: 30810d414093e904aa355b96b75e3e80, type: 2}
+    scale: 1.5
+  - category: {fileID: 11400000, guid: 18d1534ac30203c42ab8cc8240bc105f, type: 2}
+    scale: 1.8
+  - category: {fileID: 11400000, guid: 626d32ccd9860f143bb2faf2437a221a, type: 2}
+    scale: 1.8
