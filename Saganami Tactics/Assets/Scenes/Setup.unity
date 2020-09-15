@@ -963,7 +963,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 60, y: 0}
-  m_SizeDelta: {x: 350, y: 0}
+  m_SizeDelta: {x: 600, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &370554922
 GameObject:
@@ -4327,7 +4327,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3691755861256895419, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000030517578
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 3692875884446950050, guid: cbf21296edbc512489f79e5ba37bd3e8, type: 3}
       propertyPath: m_IsActive

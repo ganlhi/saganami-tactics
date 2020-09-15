@@ -117,6 +117,8 @@ namespace ST.Setup
             factionSelector.UpdateUI();
 
             OnFactionChanged();
+            
+            totalCostValueText.text = $"0 / {PhotonNetwork.CurrentRoom.GetMaxPoints()}";
         }
 
         private void InitOtherPlayersCostAndReadiness()
@@ -247,7 +249,7 @@ namespace ST.Setup
                     costOverflow ? UIManagerText.ColorType.NEGATIVE : UIManagerText.ColorType.PRIMARY;
                 totalCostValueManager.colorType =
                     costOverflow ? UIManagerText.ColorType.NEGATIVE : UIManagerText.ColorType.PRIMARY;
-                totalCostValueText.text = totalCost.ToString();
+                totalCostValueText.text = $"{totalCost} / {PhotonNetwork.CurrentRoom.GetMaxPoints()}";
 
                 readyButton.interactable = totalCost > 0 && !costOverflow && allShipsNamed;
             }
